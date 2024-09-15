@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DisplacementMap?>
+<?import javafx.scene.effect.FloatMap?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.shape.Arc?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tuto.login.LoginController">
+   <left>
+      <AnchorPane prefHeight="400.0" prefWidth="187.0" style="-fx-background-color: green;" BorderPane.alignment="CENTER">
+         <children>
+            <Circle fill="#9ed9a1" layoutX="94.0" layoutY="67.0" radius="56.0" stroke="BLACK" strokeType="INSIDE" />
+            <Arc fill="#00ff1e" layoutX="94.0" layoutY="88.0" length="270.0" radiusX="32.0" radiusY="29.0" startAngle="-45.0" stroke="BLACK" strokeType="INSIDE" type="CHORD" />
+            <Circle fill="#0dff29" layoutX="94.0" layoutY="43.0" radius="16.0" stroke="BLACK" strokeType="INSIDE" />
+            <Label alignment="CENTER" layoutX="44.0" layoutY="123.0" prefHeight="17.0" prefWidth="99.0" text="BIENVENUE!" textFill="WHITE" />
+            <Label layoutX="40.0" layoutY="377.0" text="© Pharmagest 2024" textFill="WHITE" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" blendMode="ADD" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="155.0" stroke="BLACK" strokeType="INSIDE" width="186.0">
+               <effect>
+                  <DisplacementMap>
+                     <mapData>
+                        <FloatMap />
+                     </mapData>
+                  </DisplacementMap>
+               </effect>
+            </Rectangle>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="190.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="225.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="260.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="295.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="330.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
+            <Label layoutX="54.0" layoutY="164.0" text="DASHBOARD">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label fx:id="usernameLabel" layoutX="73.0" layoutY="140.0" prefHeight="17.0" prefWidth="37.0" />
+         </children></AnchorPane>
+   </left>
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #9ed9a1;" BorderPane.alignment="CENTER">
+         <children>
+            <Button layoutX="231.0" layoutY="167.0" mnemonicParsing="false" prefHeight="66.0" prefWidth="155.0" style="-fx-background-color: #3ea947;" text="Approvisionnement" textFill="WHITE" />
+            <Button fx:id="caisseButton" layoutX="275.0" layoutY="84.0" mnemonicParsing="false" onAction="#caisseButtonOnAction" prefHeight="66.0" prefWidth="110.0" style="-fx-background-color: #3ea947;" text="Caissse" textFill="WHITE" />
+            <Button fx:id="venteButton" layoutX="151.0" layoutY="84.0" mnemonicParsing="false" onAction="#venteButtonOnAction" prefHeight="66.0" prefWidth="110.0" style="-fx-background-color: #3ea947;" text="Vente" textFill="WHITE" />
+            <Button layoutX="29.0" layoutY="167.0" mnemonicParsing="false" prefHeight="66.0" prefWidth="155.0" style="-fx-background-color: #3ea947;" text="Bilan Financier" textFill="WHITE" />
+            <Button fx:id="maintenanceButton" layoutX="29.0" layoutY="84.0" mnemonicParsing="false" onAction="#maintenanceButtonOnAction" prefHeight="66.0" prefWidth="110.0" style="-fx-background-color: #3ea947;" text="Maintenance" textFill="WHITE" />
+            <Button fx:id="quitButton" layoutX="14.0" layoutY="302.0" mnemonicParsing="false" onAction="#quitButtonOnAction" prefHeight="34.0" prefWidth="185.0" style="-fx-background-color: red;" text="Quitter" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="changeUserButton" layoutX="216.0" layoutY="302.0" mnemonicParsing="false" onAction="#changeUserButtonOnAction" prefHeight="44.0" prefWidth="185.0" style="-fx-background-color: green;" text="Changer d'utilisateur" textFill="WHITE">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
