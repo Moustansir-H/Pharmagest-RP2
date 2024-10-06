@@ -1,4 +1,4 @@
-package mcci.businessschool.bts.sio.slam.pharmagest.lignedecommande;
+package mcci.businessschool.bts.sio.slam.pharmagest.commande.ligne;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
 
