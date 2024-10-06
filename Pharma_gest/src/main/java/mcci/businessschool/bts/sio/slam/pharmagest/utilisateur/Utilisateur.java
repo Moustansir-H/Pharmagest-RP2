@@ -30,5 +30,13 @@ public abstract class Utilisateur {
         this.motDePasse = motDePasse;
     }
 
+    public void seConnecter() {
 
+        // TODO Implémentation de la connexion
+
+    }
+
+    public void deconnecter() {
+        // TODO Implémentation de la déconnexion
+    }
 }

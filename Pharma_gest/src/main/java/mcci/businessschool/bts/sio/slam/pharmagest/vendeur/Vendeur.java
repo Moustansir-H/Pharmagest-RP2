@@ -18,4 +18,12 @@ public class Vendeur extends Utilisateur {
                 ", motDePasse='" + super.getMotDePasse() + '\'' +
                 '}';
     }
+
+    public void effectuerVente() {
+        // TODO Implémentation de l'effectuation de vente
+    }
+
+    public void gererPaiement() {
+        // TODO Implémentation de la gestion du paiement
+    }
 }
