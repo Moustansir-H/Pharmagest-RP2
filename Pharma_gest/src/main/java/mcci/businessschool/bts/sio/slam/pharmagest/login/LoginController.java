@@ -1,21 +1,20 @@
-package tuto.login;
+package mcci.businessschool.bts.sio.slam.pharmagest.login;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.scene.Scene;
-
+import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 
 public class LoginController {
@@ -69,29 +68,30 @@ public class LoginController {
             validateLogin();
 
 
-
             //loginMessageLabel.setText("You try to login!");
         } else {
             loginMessageLabel.setText("Veuillez remplir tous les champs!");
         }
     }
+
     @FXML
-    public void cancelButtonOnAction(ActionEvent e){
-        Stage stage=(Stage) cancelButton.getScene().getWindow();
+    public void cancelButtonOnAction(ActionEvent e) {
+        Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
+
     public void validateLogin() {
         DatabaseConnection connectNow = new DatabaseConnection();
         Connection connectDB = connectNow.getConnection();
 
         String verifyLogin = "SELECT count(0) FROM public.\"Utilisateur\" " + "WHERE \"Username\" ='" + UsernameTxt.getText() + "'AND \"Password\" = '" + PasswordTxt.getText() + "';";
 
-        try{
+        try {
             Statement statement = connectDB.createStatement();
             ResultSet queryResult = statement.executeQuery(verifyLogin);
 
             while (queryResult.next()) {
-                if (queryResult.getInt(1)==1){
+                if (queryResult.getInt(1) == 1) {
                     loginMessageLabel.setText("Bienvenu dans l'application");
 
 
@@ -109,12 +109,13 @@ public class LoginController {
                     loginMessageLabel.setText("Login invalide, Veuillez ressayer.");
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @FXML
-    public void quitButtonOnAction(ActionEvent e) throws IOException{
+    public void quitButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Deconnexion.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
@@ -123,8 +124,9 @@ public class LoginController {
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
     }
+
     @FXML
-    public void changeUserButtonOnAction(ActionEvent e) throws IOException{
+    public void changeUserButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
@@ -135,8 +137,9 @@ public class LoginController {
         stage.setTitle("Login");
 
     }
+
     @FXML
-    public void annulDexButtonOnAction(ActionEvent e) throws IOException{
+    public void annulDexButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
@@ -145,13 +148,15 @@ public class LoginController {
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
     }
+
     @FXML
     public void confirmDexOnAction(ActionEvent e) throws IOException {
         Stage stage = (Stage) confirmDex.getScene().getWindow();
         stage.close();
     }
+
     @FXML
-    public void maintenanceButtonOnAction(ActionEvent e) throws IOException{
+    public void maintenanceButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Maintenance.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
@@ -160,8 +165,9 @@ public class LoginController {
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
     }
+
     @FXML
-    public void retourMaintenanceOnAction(ActionEvent e) throws IOException{
+    public void retourMaintenanceOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
@@ -170,8 +176,9 @@ public class LoginController {
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
     }
+
     @FXML
-    public void venteButtonOnAction(ActionEvent e) throws IOException{
+    public void venteButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Vente.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
@@ -180,8 +187,9 @@ public class LoginController {
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
     }
+
     @FXML
-    public void caisseButtonOnAction(ActionEvent e) throws IOException{
+    public void caisseButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Caisse.fxml"));
         Scene nouvelleScene = new Scene(loader.load());

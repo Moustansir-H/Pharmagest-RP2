@@ -1,4 +1,4 @@
-package tuto.login;
+package mcci.businessschool.bts.sio.slam.pharmagest.login;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,9 +8,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LoginApplication extends Application {
+    private final static String LOGIN_PATH = "/login/Login.fxml";
+
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("Login.fxml"));
+
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource(LOGIN_PATH));
         Scene scene = new Scene(fxmlLoader.load(), 520, 400);
         stage.setTitle("Login");
         stage.setScene(scene);
