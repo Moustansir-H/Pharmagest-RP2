@@ -9,35 +9,29 @@ public class ChargeurDeConfiguration {
     private Properties properties;
 
 
-    public ChargeurDeConfiguration(Properties properties, String fichierDeProprietes) {
+    public ChargeurDeConfiguration(Properties properties, String fichierDeProprietes) throws Exception {
         this.properties = properties;
         try (InputStream ressource = getClass().getClassLoader().getResourceAsStream(fichierDeProprietes)) {
             if (ressource == null) {
-                System.out.println("Desole, impossible de trouver la ressource " + fichierDeProprietes);
-                return;
+                throw new Exception("Desole, impossible de trouver la ressource " + fichierDeProprietes);
             }
             // Charge les propriétés du fichier
             properties.load(ressource);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            throw new Exception("Impossible de charger la ressource");
         }
     }
 
     // Méthode pour récupérer une propriété
     public String getProperty(String key) {
-        return properties.getProperty(key);
+        String valeurDeLaPropriete = properties.getProperty(key);
+        if (valeurDeLaPropriete == null) {
+            System.out.println("Le propriete " + key + " n'existe pas");
+        }
+        return valeurDeLaPropriete;
     }
 
-    public static void main(String[] args) {
-        // Charger les propriétés depuis le fichier application.properties
-        Properties properties = new Properties();
-        ChargeurDeConfiguration chargeurDeConfiguration = new ChargeurDeConfiguration(properties, "application.properties");
-
-        // Récupérer des valeurs spécifiques
-        String dbUrl = chargeurDeConfiguration.getProperty("datasource.url");
-        String dbPass = chargeurDeConfiguration.getProperty("datasource.password");
-
-        // Afficher les valeurs
-        System.out.println("URL de la base de données : " + dbUrl + " mot de passe: " + dbPass);
+    public Properties getProperties() {
+        return properties;
     }
 }
