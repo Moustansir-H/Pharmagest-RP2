@@ -1,4 +1,4 @@
-package mcci.businessschool.bts.sio.slam.pharmagest.utilisateur;
+package mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.pharmacien.Pharmacien;
+import mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.Utilisateur;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -63,14 +64,14 @@ public class UtilisateurControleur {
 
 
         // Chargement initial des utilisateurs
-        loadUtilisateurs();
+       // loadUtilisateurs();
 
         // Forcer la mise à jour des données dans le TableView
         tableView.refresh();
     }
 
     // Méthode pour charger les utilisateurs depuis la base de données
-    private void loadUtilisateurs() {
+    /*private void loadUtilisateurs() {
         // utilisateurData.clear();
         DatabaseConnection connectNow = new DatabaseConnection();
         try (Connection connectDB = connectNow.getConnection();
@@ -88,6 +89,7 @@ public class UtilisateurControleur {
 
         // Mise à jour des données dans le TableView
         tableView.setItems(utilisateurData);
-    }
+    }*/
+
 
 }

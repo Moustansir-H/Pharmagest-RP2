@@ -56,6 +56,11 @@
             <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.3.8</version> <!-- Assurez-vous d'avoir la version la plus récente -->
+        </dependency>
     </dependencies>
 
     <build>
