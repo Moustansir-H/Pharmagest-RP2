@@ -1,4 +1,4 @@
-package configuration;
+package mcci.businessschool.bts.sio.slam.pharmagest.commande.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;

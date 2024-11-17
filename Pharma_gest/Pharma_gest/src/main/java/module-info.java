@@ -2,9 +2,15 @@ module mcci.businessschool.bts.sio.slam.pharmagest {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
-    //requires javafx.base;
+    requires javafx.base;
 
-    //opens model to javafx.base;
     opens mcci.businessschool.bts.sio.slam.pharmagest.login to javafx.fxml;
     exports mcci.businessschool.bts.sio.slam.pharmagest.login;
+
+    opens mcci.businessschool.bts.sio.slam.pharmagest.maintenance to javafx.fxml;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.maintenance;
+
+    opens mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur to javafx.fxml;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.utilisateur to javafx.base;
 }

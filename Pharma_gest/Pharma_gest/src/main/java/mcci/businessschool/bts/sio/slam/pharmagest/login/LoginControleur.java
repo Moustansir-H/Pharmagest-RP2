@@ -17,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 
-public class LoginController {
+public class LoginControleur {
     @FXML
     private Button loginButton;
     @FXML
@@ -62,7 +62,7 @@ public class LoginController {
 
 
     @FXML
-    public void loginButtonOnAction(ActionEvent event) throws IOException {
+    public void loginButtonOnAction(ActionEvent event) throws Exception {
         if (!UsernameTxt.getText().isBlank() && !PasswordTxt.getText().isBlank()) {
             //          Validation BDD
             validateLogin();
@@ -80,11 +80,10 @@ public class LoginController {
         stage.close();
     }
 
-    public void validateLogin() {
-        DatabaseConnection connectNow = new DatabaseConnection();
-        Connection connectDB = connectNow.getConnection();
+    public void validateLogin() throws Exception {
+        Connection connectDB = DatabaseConnection.getConnexion();
 
-        String verifyLogin = "SELECT count(0) FROM public.\"Utilisateur\" " + "WHERE \"Username\" ='" + UsernameTxt.getText() + "'AND \"Password\" = '" + PasswordTxt.getText() + "';";
+        String verifyLogin = "SELECT count(*) FROM public.\"utilisateur\" " + "WHERE \"identifiant\" ='" + UsernameTxt.getText() + "'AND \"motdepasse\" = '" + PasswordTxt.getText() + "';";
 
         try {
             Statement statement = connectDB.createStatement();
@@ -96,7 +95,7 @@ public class LoginController {
 
 
                     // Nouvelle scène
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
                     Scene nouvelleScene = new Scene(loader.load());
                     // La référence de la scène actuelle
                     Stage stage = (Stage) loginButton.getScene().getWindow();
@@ -117,7 +116,7 @@ public class LoginController {
     @FXML
     public void quitButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Deconnexion.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/deconnexion/Deconnexion.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
         // La référence de la scène actuelle
         Stage stage = (Stage) changeUserButton.getScene().getWindow();
@@ -128,7 +127,7 @@ public class LoginController {
     @FXML
     public void changeUserButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/login/Login.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
         // La référence de la scène actuelle
         Stage stage = (Stage) changeUserButton.getScene().getWindow();
@@ -141,7 +140,7 @@ public class LoginController {
     @FXML
     public void annulDexButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
         // La référence de la scène actuelle
         Stage stage = (Stage) annulDex.getScene().getWindow();
@@ -158,7 +157,7 @@ public class LoginController {
     @FXML
     public void maintenanceButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Maintenance.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/maintenance/Maintenance.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
         // La référence de la scène actuelle
         Stage stage = (Stage) maintenanceButton.getScene().getWindow();
@@ -169,7 +168,7 @@ public class LoginController {
     @FXML
     public void retourMaintenanceOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
         // La référence de la scène actuelle
         Stage stage = (Stage) retourMaintenance.getScene().getWindow();
@@ -180,7 +179,7 @@ public class LoginController {
     @FXML
     public void venteButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Vente.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vente/Vente.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
         // La référence de la scène actuelle
         Stage stage = (Stage) venteButton.getScene().getWindow();
@@ -191,7 +190,7 @@ public class LoginController {
     @FXML
     public void caisseButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Caisse.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/caisse/Caisse.fxml"));
         Scene nouvelleScene = new Scene(loader.load());
         // La référence de la scène actuelle
         Stage stage = (Stage) caisseButton.getScene().getWindow();

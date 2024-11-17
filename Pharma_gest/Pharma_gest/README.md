@@ -13,6 +13,7 @@ title Diagramme UML - Système de gestion de pharmacie PHARMAGEST
 abstract class Utilisateur {
     - String identifiant
     - String motDePasse
+    - Role role
     + seConnecter()
     + deconnecter()
 }
@@ -122,6 +123,12 @@ enum StatutPaiement {
     Valide
     Rejete
 }
+
+enum Role {
+    Pharmacien
+    Vendeur
+}
+
 
 class Unite {
     - String nomUnite

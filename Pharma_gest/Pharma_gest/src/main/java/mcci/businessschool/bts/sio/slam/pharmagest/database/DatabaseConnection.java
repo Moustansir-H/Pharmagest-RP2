@@ -1,6 +1,6 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.database;
 
-import configuration.ChargeurDeConfiguration;
+import mcci.businessschool.bts.sio.slam.pharmagest.commande.configuration.ChargeurDeConfiguration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,7 +13,7 @@ public class DatabaseConnection {
 
     private static DatabaseConnection databaseConnectionInstance; // Null si on appel pas
 
-    public DatabaseConnection() throws Exception {
+    private DatabaseConnection() throws Exception {
         //Chargement de application.propertie
         chargeurDeConfiguration = new ChargeurDeConfiguration(new Properties(), "application.properties");
 
