@@ -1,4 +1,4 @@
-package mcci.businessschool.bts.sio.slam.pharmagest.maintenance;
+package mcci.businessschool.bts.sio.slam.pharmagest.maintenance.controleur;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
