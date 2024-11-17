@@ -1,4 +1,4 @@
-package mcci.businessschool.bts.sio.slam.pharmagest.login;
+package mcci.businessschool.bts.sio.slam.pharmagest.login.controleur;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,12 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
+import mcci.businessschool.bts.sio.slam.pharmagest.login.service.LoginService;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 
 public class LoginControleur {
@@ -60,12 +57,18 @@ public class LoginControleur {
     @FXML
     private TextField mailUtilisateur;*/
 
+    private LoginService loginService;
+
+    public LoginControleur() throws Exception {
+        this.loginService = new LoginService();
+    }
+
 
     @FXML
     public void loginButtonOnAction(ActionEvent event) throws Exception {
         if (!UsernameTxt.getText().isBlank() && !PasswordTxt.getText().isBlank()) {
             //          Validation BDD
-            validateLogin();
+            seLoguer();
 
 
             //loginMessageLabel.setText("You try to login!");
@@ -80,38 +83,25 @@ public class LoginControleur {
         stage.close();
     }
 
-    public void validateLogin() throws Exception {
-        Connection connectDB = DatabaseConnection.getConnexion();
+    public void seLoguer() throws IOException {
+        boolean estConnecter = loginService.seConnecter(UsernameTxt.getText(), PasswordTxt.getText());
 
-        String verifyLogin = "SELECT count(*) FROM public.\"utilisateur\" " + "WHERE \"identifiant\" ='" + UsernameTxt.getText() + "'AND \"motdepasse\" = '" + PasswordTxt.getText() + "';";
+        if (estConnecter) {
+            loginMessageLabel.setText("Bienvenu dans l'application");
 
-        try {
-            Statement statement = connectDB.createStatement();
-            ResultSet queryResult = statement.executeQuery(verifyLogin);
-
-            while (queryResult.next()) {
-                if (queryResult.getInt(1) == 1) {
-                    loginMessageLabel.setText("Bienvenu dans l'application");
-
-
-                    // Nouvelle scène
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
-                    Scene nouvelleScene = new Scene(loader.load());
-                    // La référence de la scène actuelle
-                    Stage stage = (Stage) loginButton.getScene().getWindow();
-                    // Afficher la nouvelle scène
-                    stage.setScene(nouvelleScene);
-                    stage.setTitle(UsernameTxt.getText());
-
-
-                } else {
-                    loginMessageLabel.setText("Login invalide, Veuillez ressayer.");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            // Nouvelle scène
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
+            Scene nouvelleScene = new Scene(loader.load());
+            // La référence de la scène actuelle
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            // Afficher la nouvelle scène
+            stage.setScene(nouvelleScene);
+            stage.setTitle(UsernameTxt.getText());
+        } else {
+            loginMessageLabel.setText("Login invalide, Veuillez ressayer.");
         }
     }
+
 
     @FXML
     public void quitButtonOnAction(ActionEvent e) throws IOException {

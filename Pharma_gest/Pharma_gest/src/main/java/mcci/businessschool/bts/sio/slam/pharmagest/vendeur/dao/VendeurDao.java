@@ -45,11 +45,4 @@ public class VendeurDao {
         }
     }
 
-
-    /*public static void main(String[] args) throws Exception {
-        PharmacienDao pharmacienDao = new PharmacienDao();
-        pharmacienDao.ajouterPharmacien(3);
-    }*/
-
-
 }

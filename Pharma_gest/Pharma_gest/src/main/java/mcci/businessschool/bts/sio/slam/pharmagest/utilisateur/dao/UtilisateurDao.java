@@ -114,11 +114,4 @@ public class UtilisateurDao {
         }
     }
 
-    /*public static void main(String[] args) throws Exception {
-        UtilisateurDao utilisateurDao = new UtilisateurDao();
-        Utilisateur utilisateur = new Pharmacien(4, "tata", "tata");
-        utilisateurDao.modifierUtilisateur(utilisateur);
-    }*/
-
-
 }
