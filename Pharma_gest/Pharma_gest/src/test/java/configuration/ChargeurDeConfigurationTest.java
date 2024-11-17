@@ -1,5 +1,6 @@
 package configuration;
 
+import mcci.businessschool.bts.sio.slam.pharmagest.commande.configuration.ChargeurDeConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

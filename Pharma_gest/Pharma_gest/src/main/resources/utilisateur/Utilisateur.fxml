@@ -1,43 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur.UtilisateurControleur">
+    <left>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: green;"
+                    BorderPane.alignment="CENTER">
+            <children>
+                <TextField fx:id="identifiantUtilisateur" layoutX="80.0" layoutY="19.0" prefHeight="25.0"
+                           prefWidth="107.0"/>
+                <TextField fx:id="motdepasseUtilisateur" layoutX="80.0" layoutY="55.0" prefHeight="25.0"
+                           prefWidth="107.0"/>
+                <ComboBox fx:id="roleUtilisateur" layoutX="80.0" layoutY="92.0" prefHeight="25.0" prefWidth="107.0"/>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: green;" BorderPane.alignment="CENTER">
-         <children>
-            <TextField fx:id="nomUtilisateur" layoutX="80.0" layoutY="19.0" prefHeight="25.0" prefWidth="107.0" />
-            <TextField fx:id="prenomUtilisateur" layoutX="80.0" layoutY="55.0" prefHeight="25.0" prefWidth="107.0" />
-            <TextField fx:id="mailUtilisateur" layoutX="79.0" layoutY="92.0" prefHeight="25.0" prefWidth="108.0" />
-            <Button fx:id="AjoutUser" layoutX="75.0" layoutY="129.0" mnemonicParsing="false" text="Ajouter utilisateur" />
-            <Label layoutX="14.0" layoutY="23.0" text="Nom" textFill="WHITE" />
-            <Label layoutX="13.0" layoutY="59.0" text="Prenom" textFill="WHITE" />
-            <Label layoutX="13.0" layoutY="96.0" text="Email" textFill="WHITE" />
-         </children></AnchorPane>
-   </left>
-   <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <TableView layoutY="186.0" prefHeight="200.0" prefWidth="390.0">
-              <columns>
-                <TableColumn prefWidth="75.0" text="ID" />
-                <TableColumn prefWidth="75.0" text="Utilisateur" />
-              </columns>
-            </TableView>
-            <Button layoutX="5.0" layoutY="141.0" mnemonicParsing="false" text="Recherhe" />
-            <Button fx:id="SupUser" layoutX="77.0" layoutY="141.0" mnemonicParsing="false" text="Supprimer" />
-            <Button fx:id="ModUser" layoutX="155.0" layoutY="141.0" mnemonicParsing="false" text="Modifier" />
-            <Button layoutX="230.0" layoutY="141.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="164.0" text="Tous les utilisateurs" />
-            <TextField layoutX="3.0" layoutY="81.0" prefHeight="25.0" prefWidth="91.0" />
-            <TextField layoutX="126.0" layoutY="81.0" />
-            <Label layoutX="4.0" layoutY="63.0" text="ID utilisateur" />
-            <Label layoutX="126.0" layoutY="63.0" text="Nouveau Email" />
-         </children></AnchorPane>
-   </center>
+
+                <Button fx:id="ajoutUtilisateur" layoutX="75.0" layoutY="129.0" mnemonicParsing="false"
+                        text="Ajouter utilisateur" onAction="#ajouterUtilisateur"/>
+                <Label layoutX="14.0" layoutY="23.0" text="Identifiant" textFill="WHITE"/>
+                <Label layoutX="13.0" layoutY="59.0" text="MDP" textFill="WHITE"/>
+                <Label layoutX="13.0" layoutY="96.0" text="Role" textFill="WHITE"/>
+                <Button fx:id="retourMaintenance" layoutX="60.0" layoutY="348.0" mnemonicParsing="false"
+                        onAction="#retourMaintenanceOnAction" prefHeight="25.0" prefWidth="79.0"
+                        style="-fx-background-color: red;" text="Retour" textFill="WHITE"/>
+                <TextField fx:id="rechercheUtilisateur" layoutX="10.0" layoutY="200.0" prefHeight="25.0"
+                           prefWidth="180.0"
+                           promptText="Rechercher..."/>
+                <Button fx:id="boutonRechercheUtilisateur" layoutX="60.0" layoutY="240.0" mnemonicParsing="false"
+                        text="Rechercher" onAction="#rechercherUtilisateur"/>
+                <Label layoutX="18.0" layoutY="180.0" text="Filtrer utilisateurs" textFill="WHITE"/>
+            </children>
+        </AnchorPane>
+    </left>
+    <center>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <children>
+                <TableView fx:id="tableView" layoutX="10.0" layoutY="176.0" onSort="#initialize" prefHeight="200.0"
+                           prefWidth="390.0">
+                    <columns>
+                        <TableColumn fx:id="idColumn" prefWidth="75.0" text="Utilisateur"/>
+                        <TableColumn fx:id="roleColumn" prefWidth="75.0" text="Role"/>
+                        <TableColumn fx:id="motDePasseColumn" prefWidth="75.0" text="Mot de passe"/>
+                        <TableColumn fx:id="idBaseColumn" prefWidth="75.0" text="Id"/>
+                    </columns>
+                </TableView>
+                <Button layoutX="5.0" layoutY="141.0" mnemonicParsing="false" text="Recherhe"/>
+                <Button fx:id="supprimerUtilisateur" layoutX="77.0" layoutY="141.0" mnemonicParsing="false"
+                        text="Supprimer" onAction="#supprimerUtilisateur"/>
+                <Button fx:id="modifierUtilisateur" layoutX="155.0" layoutY="141.0" mnemonicParsing="false"
+                        text="Modifier" onAction="#modifierUtilisateur"/>
+                <Button fx:id="boutonTousUtilisateurs" layoutX="230.0" layoutY="141.0" mnemonicParsing="false"
+                        prefHeight="25.0" prefWidth="164.0" text="Tous les utilisateurs"
+                        onAction="#afficherTousUtilisateurs"/>
+
+                <TextField fx:id="nouveauIdentifiantUtilisateur" layoutX="10.0" layoutY="80.0" prefHeight="25.0"
+                           prefWidth="134.0"/>
+                <Label layoutX="10.0" layoutY="5.0" text="Nouveau role"/>
+                <Label layoutX="14.0" layoutY="62.0" text="Nouvel Identifiant"/>
+                <TextField fx:id="nouveauMotdePasseUtilisateur" layoutX="163.0" layoutY="80.0" prefHeight="25.0"
+                           prefWidth="134.0"/>
+                <Label layoutX="168.0" layoutY="62.0" text="Nouveau mot de passe"/>
+                <ComboBox fx:id="nouveauRoleUtilisateur" layoutX="10.0" layoutY="25.0" prefHeight="25.0"
+                          prefWidth="107.0"/>
+            </children>
+        </AnchorPane>
+    </center>
 </BorderPane>

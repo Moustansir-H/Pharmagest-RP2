@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
             prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.login.LoginController">
+            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.maintenance.controleur.MaintenanceControleur">
     <left>
         <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: green;"
                     BorderPane.alignment="CENTER">
@@ -61,8 +61,8 @@
                         style="-fx-background-color: #3ea947;" text="Utilisateur" textFill="WHITE"/>
                 <Button layoutX="258.0" layoutY="210.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="109.0"
                         style="-fx-background-color: #3ea947;" text="MAJ Prix" textFill="WHITE"/>
-                <Button fx:id="retourMaintenance" layoutX="71.0" layoutY="321.0" mnemonicParsing="false"
-                        onAction="#retourMaintenanceOnAction" prefHeight="43.0" prefWidth="246.0"
+                <Button fx:id="retourDashboard" layoutX="71.0" layoutY="321.0" mnemonicParsing="false"
+                        onAction="#retourDashboardOnAction" prefHeight="43.0" prefWidth="246.0"
                         style="-fx-background-color: red;" text="Retour" textFill="WHITE"/>
             </children>
         </AnchorPane>
