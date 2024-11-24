@@ -15,4 +15,8 @@ module mcci.businessschool.bts.sio.slam.pharmagest {
     opens mcci.businessschool.bts.sio.slam.pharmagest.login.service to javafx.fxml;
     exports mcci.businessschool.bts.sio.slam.pharmagest.maintenance.controleur;
     opens mcci.businessschool.bts.sio.slam.pharmagest.maintenance.controleur to javafx.fxml;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.dashboard.controleur;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.dashboard.controleur to javafx.fxml;
+
+
 }
