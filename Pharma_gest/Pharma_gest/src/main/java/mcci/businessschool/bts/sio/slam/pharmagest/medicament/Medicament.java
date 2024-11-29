@@ -14,7 +14,7 @@ public class Medicament {
     private Famille famille;
     private Unite unite;
 
-    // Constructeur et getters/setters
+    // Constructeur et getters/setters=
 
     public Medicament(String nom, String forme, double prixAchat, double prixVente, int stock,
                       int seuilCommande, int qteMax, Famille famille, Unite unite) {
