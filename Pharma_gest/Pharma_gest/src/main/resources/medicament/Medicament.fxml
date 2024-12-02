@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="538.0" prefWidth="824.0"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.medicament.controleur.MedicamentControleur">
+    <top>
+        <AnchorPane prefHeight="73.0" prefWidth="824.0" style="-fx-background-color: green;" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="77.0" fitWidth="127.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                </ImageView>
+                <Label layoutX="138.0" layoutY="38.0" prefHeight="33.0" prefWidth="135.0" text="MEDICAMENT">
+                    <font>
+                        <Font name="Berlin Sans FB" size="19.0" />
+                    </font>
+                </Label>
+            </children>
+        </AnchorPane>
+    </top>
+    <center>
+        <AnchorPane prefHeight="423.0" prefWidth="787.0" style="-fx-background-color: #9ed9a1;" BorderPane.alignment="CENTER">
+            <children>
+                <TableView layoutX="14.0" layoutY="75.0" prefHeight="271.0" prefWidth="824.0">
+                    <columns>
+                        <TableColumn prefWidth="64.00000286102295" text="ID" />
+                        <TableColumn prefWidth="76.0000228881836" text="NOM" />
+                        <TableColumn prefWidth="74.66665649414062" text="FORME" />
+                        <TableColumn prefWidth="86.66670227050781" text="PRIX ACHAT" />
+                        <TableColumn prefWidth="75.0" text="PRIX VENTE" />
+                        <TableColumn prefWidth="75.0" text="STOCK" />
+                        <TableColumn prefWidth="119.99996948242188" text="SEUIL COMMANDE" />
+                        <TableColumn prefWidth="63.33331298828125" text="QTE MAX" />
+                        <TableColumn prefWidth="82.6666259765625" text="FAMILLE_ID" />
+                        <TableColumn prefWidth="106.0" text="FOURNISSEUR_ID" />
+                    </columns>
+                </TableView>
+                <Button layoutX="97.0" layoutY="376.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="147.0" style="-fx-background-color: green;" text="VALIDER" />
+                <Button fx:id="retourMedicament" layoutX="542.0" layoutY="364.0" mnemonicParsing="false" onAction="#retourMedicamentOnAction" prefHeight="49.0" prefWidth="147.0" style="-fx-background-color: red;" text="RETOUR" />
+            <Button fx:id="crudmedicamentButton" layoutX="527.0" layoutY="14.0" mnemonicParsing="false" onAction="#crudMedicamentOnAction" prefHeight="49.0" prefWidth="116.0" style="-fx-background-color: white;" text="RETOUR" />
+            </children>
+        </AnchorPane>
+    </center>
+</BorderPane>
