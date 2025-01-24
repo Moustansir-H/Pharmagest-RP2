@@ -1,9 +1,11 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.medicament;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.Famille;
+import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
 import mcci.businessschool.bts.sio.slam.pharmagest.unite.Unite;
 
 public class Medicament {
+    private int id;
     private String nom;
     private String forme;
     private double prixAchat;
@@ -12,12 +14,13 @@ public class Medicament {
     private int seuilCommande;
     private int qteMax;
     private Famille famille;
+    private Fournisseur fournisseur;
     private Unite unite;
 
-    // Constructeur et getters/setters=
-
-    public Medicament(String nom, String forme, double prixAchat, double prixVente, int stock,
-                      int seuilCommande, int qteMax, Famille famille, Unite unite) {
+    // Constructeur avec id
+    public Medicament(int id, String nom, String forme, double prixAchat, double prixVente, int stock,
+                      int seuilCommande, int qteMax, Famille famille, Fournisseur fournisseur, Unite unite) {
+        this.id = id;
         this.nom = nom;
         this.forme = forme;
         this.prixAchat = prixAchat;
@@ -26,10 +29,35 @@ public class Medicament {
         this.seuilCommande = seuilCommande;
         this.qteMax = qteMax;
         this.famille = famille;
+        this.fournisseur = fournisseur;
+        this.unite = unite;
+    }
+
+    // Constructeur et getters/setters=
+
+    public Medicament(String nom, String forme, double prixAchat, double prixVente, int stock,
+                      int seuilCommande, int qteMax, Famille famille, Fournisseur fournisseur, Unite unite) {
+        this.nom = nom;
+        this.forme = forme;
+        this.prixAchat = prixAchat;
+        this.prixVente = prixVente;
+        this.stock = stock;
+        this.seuilCommande = seuilCommande;
+        this.qteMax = qteMax;
+        this.famille = famille;
+        this.fournisseur = fournisseur;
         this.unite = unite;
     }
 
     // Getters et setters pour chaque attribut
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNom() {
         return nom;
@@ -95,11 +123,37 @@ public class Medicament {
         this.famille = famille;
     }
 
+
+    public Fournisseur getFournisseur() {
+        return fournisseur;
+    }
+
+    public void setFournisseur(Fournisseur fournisseur) {
+        this.fournisseur = fournisseur;
+    }
+
     public Unite getUnite() {
         return unite;
     }
 
     public void setUnite(Unite unite) {
         this.unite = unite;
+    }
+
+    @Override
+    public String toString() {
+        return "Medicament{" +
+                "id=" + id + // Ajout de l'id dans le toString
+                ", nom='" + nom + '\'' +
+                ", forme='" + forme + '\'' +
+                ", prixAchat=" + prixAchat +
+                ", prixVente=" + prixVente +
+                ", stock=" + stock +
+                ", seuilCommande=" + seuilCommande +
+                ", qteMax=" + qteMax +
+                ", famille=" + (famille != null ? famille.getNom() : "Aucune") +
+                ", fournisseur=" + (fournisseur != null ? fournisseur.getNom() : "Aucun") +
+                ", unite=" + (unite != null ? unite.getNomUnite() : "Aucune") +
+                '}';
     }
 }

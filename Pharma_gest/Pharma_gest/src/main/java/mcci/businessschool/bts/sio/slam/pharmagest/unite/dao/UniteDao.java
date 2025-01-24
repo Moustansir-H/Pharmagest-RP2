@@ -35,4 +35,18 @@ public class UniteDao {
 
         return unite;
     }
+
+    public int getUniteIdByName(String nomUnite) throws SQLException {
+        String query = "SELECT id FROM unite WHERE nomunite = ?";
+        try (PreparedStatement pstmt = baseDeDonneeConnexion.prepareStatement(query)) {
+            pstmt.setString(1, nomUnite);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        }
+        throw new SQLException("Aucune unité trouvée avec le nom : " + nomUnite);
+    }
+
 }
