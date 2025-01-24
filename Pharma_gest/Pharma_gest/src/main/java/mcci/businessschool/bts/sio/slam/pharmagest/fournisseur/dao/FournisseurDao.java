@@ -37,4 +37,18 @@ public class FournisseurDao {
 
         return fournisseur;
     }
+
+    public int getFournisseurIdByName(String nom) throws SQLException {
+        String query = "SELECT id FROM fournisseur WHERE nom = ?";
+        try (PreparedStatement pstmt = baseDeDonneeConnexion.prepareStatement(query)) {
+            pstmt.setString(1, nom);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        }
+        throw new SQLException("Aucun fournisseur trouvé avec le nom : " + nom);
+    }
+
 }
