@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="633.0" prefWidth="839.0"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.medicament.controleur.MedicamentControleur">
+   <center>
+      <AnchorPane prefHeight="426.0" prefWidth="509.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="63.0" layoutY="46.0" prefHeight="17.0" prefWidth="65.0" text="Nom :">
+               <font>
+                  <Font name="Arial Black" size="12.0" />
+               </font>
+            </Label>
+            <TextField layoutX="161.0" layoutY="42.0" opacity="0.17" prefHeight="25.0" prefWidth="88.0" />
+            <Label layoutX="63.0" layoutY="84.0" prefHeight="17.0" prefWidth="65.0" text="Forme :">
+               <font>
+                  <Font name="Arial Black" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="288.0" layoutY="46.0" prefHeight="17.0" prefWidth="65.0" text="Prix vente:">
+               <font>
+                  <Font name="Arial Black" size="10.0" />
+               </font>
+            </Label>
+            <Label layoutX="288.0" layoutY="76.0" prefHeight="17.0" prefWidth="65.0" text="Stock :">
+               <font>
+                  <Font name="Arial Black" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="492.0" layoutY="46.0" prefHeight="17.0" prefWidth="65.0" text="Qte max :">
+               <font>
+                  <Font name="Arial Black" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="492.0" layoutY="76.0" prefHeight="17.0" prefWidth="77.0" text="Famille_ID :">
+               <font>
+                  <Font name="Arial Black" size="12.0" />
+               </font>
+            </Label>
+            <TextField layoutX="376.0" layoutY="42.0" opacity="0.17" prefHeight="25.0" prefWidth="88.0" />
+            <TextField layoutX="596.0" layoutY="42.0" opacity="0.17" prefHeight="25.0" prefWidth="88.0" />
+            <TextField layoutX="376.0" layoutY="72.0" opacity="0.17" prefHeight="25.0" prefWidth="88.0" />
+            <Label layoutX="63.0" layoutY="121.0" prefHeight="17.0" prefWidth="65.0" text="Prix achat :">
+               <font>
+                  <Font name="Arial Black" size="10.0" />
+               </font>
+            </Label>
+            <Label layoutX="282.0" layoutY="113.0" prefHeight="17.0" prefWidth="77.0" text="Seuil commande:">
+               <font>
+                  <Font name="Arial Black" size="8.0" />
+               </font>
+            </Label>
+            <Label layoutX="483.0" layoutY="113.0" prefHeight="17.0" prefWidth="95.0" text="Fournisseur_ID :">
+               <font>
+                  <Font name="Arial Black" size="10.0" />
+               </font>
+            </Label>
+            <TextField layoutX="376.0" layoutY="109.0" opacity="0.17" prefHeight="25.0" prefWidth="88.0" />
+            <TextField layoutX="161.0" layoutY="117.0" opacity="0.17" prefHeight="25.0" prefWidth="88.0" />
+            <ComboBox layoutX="160.0" layoutY="80.0" opacity="0.36" prefHeight="25.0" prefWidth="90.0" />
+            <ComboBox layoutX="597.0" layoutY="109.0" opacity="0.54" prefHeight="25.0" prefWidth="86.0" />
+            <ComboBox layoutX="596.0" layoutY="72.0" opacity="0.63" prefHeight="25.0" prefWidth="87.0" />
+            <Button layoutX="124.0" layoutY="162.0" mnemonicParsing="false" text="Ajouter" />
+            <Button layoutX="277.0" layoutY="162.0" mnemonicParsing="false" text="Modifier" />
+            <Button layoutX="426.0" layoutY="162.0" mnemonicParsing="false" text="Supprimer" />
+            <TableView layoutX="1.0" layoutY="244.0" prefHeight="271.0" prefWidth="829.0">
+               <columns>
+                  <TableColumn prefWidth="64.00000286102295" text="ID" />
+                  <TableColumn prefWidth="76.0000228881836" text="NOM" />
+                  <TableColumn prefWidth="74.66665649414062" text="FORME" />
+                  <TableColumn prefWidth="86.66670227050781" text="PRIX ACHAT" />
+                  <TableColumn prefWidth="75.0" text="PRIX VENTE" />
+                  <TableColumn prefWidth="75.0" text="STOCK" />
+                  <TableColumn prefWidth="119.99996948242188" text="SEUIL COMMANDE" />
+                  <TableColumn prefWidth="63.33331298828125" text="QTE MAX" />
+                  <TableColumn prefWidth="82.6666259765625" text="FAMILLE_ID" />
+                  <TableColumn prefWidth="106.0" text="FOURNISSEUR_ID" />
+               </columns>
+            </TableView>
+            <Label layoutX="695.0" layoutY="84.0" prefHeight="17.0" prefWidth="65.0" text="ID :">
+               <font>
+                  <Font name="Arial Black" size="12.0" />
+               </font>
+            </Label>
+            <ComboBox layoutX="735.0" layoutY="80.0" opacity="0.63" prefHeight="25.0" prefWidth="31.0" />
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

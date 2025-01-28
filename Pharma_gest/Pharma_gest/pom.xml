@@ -61,6 +61,12 @@
             <artifactId>postgresql</artifactId>
             <version>42.3.8</version> <!-- Assurez-vous d'avoir la version la plus récente -->
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
