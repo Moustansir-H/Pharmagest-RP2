@@ -172,7 +172,7 @@ public class MedicamentDAO {
         }
     }
     
-
+    /*
     // Méthode main pour tester la suppression depuis la console
     public static void main(String[] args) throws Exception {
         // Créer un objet MedicamentDAO
@@ -195,7 +195,7 @@ public class MedicamentDAO {
             // Fermer le scanner
             scanner.close();
         }
-    }
+    }*/
 
     /* Modification
     public static void main(String[] args) throws Exception {
