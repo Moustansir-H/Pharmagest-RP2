@@ -4,7 +4,7 @@ import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.Famille;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.dao.FamilleDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
-import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDao;
+import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDAO;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
 import mcci.businessschool.bts.sio.slam.pharmagest.unite.Unite;
 import mcci.businessschool.bts.sio.slam.pharmagest.unite.dao.UniteDao;
@@ -12,19 +12,18 @@ import mcci.businessschool.bts.sio.slam.pharmagest.unite.dao.UniteDao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class MedicamentDAO {
     private final FamilleDao familleDao;
-    private final FournisseurDao fournisseurDao;
+    private final FournisseurDAO fournisseurDao;
     private final UniteDao uniteDao;
     private Connection baseDeDonneeConnexion;
 
     public MedicamentDAO() throws Exception {
         this.baseDeDonneeConnexion = DatabaseConnection.getConnexion();
         this.familleDao = new FamilleDao();
-        this.fournisseurDao = new FournisseurDao();
+        this.fournisseurDao = new FournisseurDAO();
         this.uniteDao = new UniteDao();
     }
 
