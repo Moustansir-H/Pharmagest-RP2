@@ -8,11 +8,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class FournisseurDao {
+public class FournisseurDAO {
 
     private Connection baseDeDonneeConnexion;
 
-    public FournisseurDao() throws Exception {
+    public FournisseurDAO() throws Exception {
         this.baseDeDonneeConnexion = DatabaseConnection.getConnexion();
     }
 

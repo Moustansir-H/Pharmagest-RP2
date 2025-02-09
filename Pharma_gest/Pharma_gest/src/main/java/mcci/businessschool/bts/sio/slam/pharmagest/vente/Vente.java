@@ -7,6 +7,7 @@ import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.Vendeur;
 import java.util.Date;
 
 public class Vente {
+    private int id;
     private Date dateVente;
     private double montantTotal;
     private TypeVente typeVente;
@@ -27,6 +28,13 @@ public class Vente {
 
     // Getters et setters
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Date getDateVente() {
         return dateVente;
@@ -75,4 +83,6 @@ public class Vente {
     public void setPaiement(Paiement paiement) {
         this.paiement = paiement;
     }
+
+
 }
