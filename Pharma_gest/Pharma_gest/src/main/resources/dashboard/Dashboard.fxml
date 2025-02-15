@@ -53,8 +53,9 @@
         <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #9ed9a1;"
                     BorderPane.alignment="CENTER">
             <children>
-                <Button layoutX="231.0" layoutY="167.0" mnemonicParsing="false" prefHeight="66.0" prefWidth="155.0"
-                        style="-fx-background-color: #3ea947;" text="Approvisionnement" textFill="WHITE"/>
+                <Button fx:id="approvisionnementButton" layoutX="231.0" layoutY="167.0" mnemonicParsing="false"
+                        prefHeight="66.0" prefWidth="155.0" style="-fx-background-color: #3ea947;"
+                        text="Approvisionnement" textFill="WHITE" onAction="#ouvrirApprovisionnement"/>
                 <Button fx:id="caisseButton" layoutX="275.0" layoutY="84.0" mnemonicParsing="false"
                         onAction="#caisseButtonOnAction" prefHeight="66.0" prefWidth="110.0"
                         style="-fx-background-color: #3ea947;" text="Caissse" textFill="WHITE"/>

@@ -1,17 +1,17 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.vente.service;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
-import mcci.businessschool.bts.sio.slam.pharmagest.vente.dao.VenteDAO;
+import mcci.businessschool.bts.sio.slam.pharmagest.vente.dao.VenteDao;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class VenteService {
 
-    private VenteDAO venteDAO;
+    private VenteDao venteDAO;
 
     public VenteService() throws Exception {
-        this.venteDAO = new VenteDAO();
+        this.venteDAO = new VenteDao();
     }
 
     /**

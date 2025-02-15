@@ -4,7 +4,7 @@ import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.Famille;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.dao.FamilleDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
-import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDAO;
+import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
 import mcci.businessschool.bts.sio.slam.pharmagest.unite.Unite;
 import mcci.businessschool.bts.sio.slam.pharmagest.unite.dao.UniteDao;
@@ -14,16 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MedicamentDAO {
+public class MedicamentDao {
     private final FamilleDao familleDao;
-    private final FournisseurDAO fournisseurDao;
+    private final FournisseurDao fournisseurDao;
     private final UniteDao uniteDao;
     private Connection baseDeDonneeConnexion;
 
-    public MedicamentDAO() throws Exception {
+    public MedicamentDao() throws Exception {
         this.baseDeDonneeConnexion = DatabaseConnection.getConnexion();
         this.familleDao = new FamilleDao();
-        this.fournisseurDao = new FournisseurDAO();
+        this.fournisseurDao = new FournisseurDao();
         this.uniteDao = new UniteDao();
     }
 
@@ -69,6 +69,76 @@ public class MedicamentDAO {
 
         return medicaments;
     }
+
+    public Medicament recupererMedicamentParId(int id) {
+        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
+                "famille_id, fournisseur_id, unite_id FROM medicament WHERE id = ?";
+
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String nom = rs.getString("nom");
+                String forme = rs.getString("forme");
+                double prixAchat = rs.getDouble("prixachat");
+                double prixVente = rs.getDouble("prixvente");
+                int stock = rs.getInt("stock");
+                int seuilCommande = rs.getInt("seuilcommande");
+                int qteMax = rs.getInt("qtemax");
+
+                int familleId = rs.getInt("famille_id");
+                int fournisseurId = rs.getInt("fournisseur_id");
+                int uniteId = rs.getInt("unite_id");
+
+                // Récupérer les relations via les DAO
+                Famille famille = familleDao.getFamilleById(familleId);
+                Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
+                Unite unite = uniteDao.recupererUniteeParId(uniteId);
+
+                // Retourner le médicament trouvé
+                return new Medicament(nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur, unite);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération du médicament : " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public List<Medicament> recupererMedicamentsSousSeuilParFournisseur(int fournisseurId) {
+        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
+                "famille_id, fournisseur_id, unite_id " +
+                "FROM medicament WHERE stock <= seuilcommande AND fournisseur_id = ?";
+
+        List<Medicament> medicaments = new ArrayList<>();
+
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setInt(1, fournisseurId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                medicaments.add(new Medicament(
+                        rs.getInt("id"),
+                        rs.getString("nom"),
+                        rs.getString("forme"),
+                        rs.getDouble("prixachat"),
+                        rs.getDouble("prixvente"),
+                        rs.getInt("stock"),
+                        rs.getInt("seuilcommande"),
+                        rs.getInt("qtemax"),
+                        familleDao.getFamilleById(rs.getInt("famille_id")),
+                        fournisseurDao.getFournisseurById(rs.getInt("fournisseur_id")),
+                        uniteDao.recupererUniteeParId(rs.getInt("unite_id"))
+                ));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la récupération des médicaments sous seuil pour le fournisseur : " + e.getMessage());
+        }
+
+        return medicaments;
+    }
+
 
     public Integer ajouterMedicament(Medicament medicament) throws SQLException {
         String insertSQL = """
@@ -170,7 +240,13 @@ public class MedicamentDAO {
             System.err.println("Erreur lors de la suppression du médicament : " + e.getMessage());
         }
     }
-    
+
+    public int calculerQuantiteACommander(Medicament medicament) {
+        return Math.max(0, medicament.getQteMax() - medicament.getStock()); // ✅ Toujours >= 0
+    }
+
+
+
     /*
     // Méthode main pour tester la suppression depuis la console
     public static void main(String[] args) throws Exception {
@@ -445,5 +521,27 @@ public class MedicamentDAO {
         }
     }
     */
+
+    /*
+    public static void main(String[] args) {
+        try {
+            MedicamentDao medicamentDao = new MedicamentDao();
+            List<Medicament> medicamentsSousSeuil = medicamentDao.recupererMedicamentsSousSeuil();
+
+            System.out.println("\n📢 Médicaments sous ou égaux au seuil de commande :");
+            if (medicamentsSousSeuil.isEmpty()) {
+                System.out.println("⚠️ Aucun médicament en dessous du seuil !");
+            } else {
+                for (Medicament med : medicamentsSousSeuil) {
+                    System.out.println("🔹 " + med.getNom() + " | Stock : " + med.getStock() + " | Seuil : " + med.getSeuilCommande());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors du test des médicaments sous seuil : " + e.getMessage());
+        }
+    }
+
+     */
+
 
 }
