@@ -1,55 +1,53 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.commande;
 
-import mcci.businessschool.bts.sio.slam.pharmagest.commande.ligne.LigneDeCommande;
-import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
-
-import java.util.List;
+import mcci.businessschool.bts.sio.slam.pharmagest.pharmacien.Pharmacien;
 
 public class Commande {
+    private int id;
     private double montant;
-    private List<LigneDeCommande> lignesDeCommande;
-    private Fournisseur fournisseur;
+    private Pharmacien pharmacien;
 
-    public Commande(double montant, Fournisseur fournisseur) {
+    public Commande(int id, double montant, Pharmacien pharmacien) {
+        this.id = id;
         this.montant = montant;
-        this.fournisseur = fournisseur;
+        this.pharmacien = pharmacien;
     }
 
-    public void genererCommande() {
-        // TODO Implémentation de la génération de commande
+    public Commande(double montant, Pharmacien pharmacien) {
+        this.montant = montant;
+        this.pharmacien = pharmacien;
     }
 
-    public void validerCommande() {
-        // TODO Implémentation de la validation de commande
+    public int getId() {
+        return id;
     }
-
-    public void envoyerCommandePDF() {
-        // TODO Implémentation pour envoyer la commande en PDF
-    }
-
-    // Getters et setters
 
     public double getMontant() {
         return montant;
+    }
+
+    public Pharmacien getPharmacien() {
+        return pharmacien;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setMontant(double montant) {
         this.montant = montant;
     }
 
-    public List<LigneDeCommande> getLignesDeCommande() {
-        return lignesDeCommande;
+    public void setPharmacien(Pharmacien pharmacien) {
+        this.pharmacien = pharmacien;
     }
 
-    public void setLignesDeCommande(List<LigneDeCommande> lignesDeCommande) {
-        this.lignesDeCommande = lignesDeCommande;
-    }
-
-    public Fournisseur getFournisseur() {
-        return fournisseur;
-    }
-
-    public void setFournisseur(Fournisseur fournisseur) {
-        this.fournisseur = fournisseur;
+    @Override
+    public String toString() {
+        return "Commande{" +
+                "id=" + id +
+                ", montant=" + montant +
+                ", pharmacien=" + pharmacien +
+                '}';
     }
 }

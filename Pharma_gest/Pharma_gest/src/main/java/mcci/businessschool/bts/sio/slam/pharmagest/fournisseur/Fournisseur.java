@@ -7,22 +7,26 @@ public class Fournisseur {
     private String nom;
     private String adresse;
     private String contact;
+    private String email; // ✅ Ajout de l'email
 
-    // Constructeurs
-    public Fournisseur(int id, String nom, String adresse, String contact) {
+    // ✅ Constructeur complet avec email
+    public Fournisseur(int id, String nom, String adresse, String contact, String email) {
         this.id = id;
         this.nom = nom;
         this.adresse = adresse;
         this.contact = contact;
+        this.email = email;
     }
 
-    public Fournisseur(String nom, String adresse, String contact) {
+    // ✅ Constructeur sans id (utile pour les nouvelles insertions)
+    public Fournisseur(String nom, String adresse, String contact, String email) {
         this.nom = nom;
         this.adresse = adresse;
         this.contact = contact;
+        this.email = email;
     }
 
-    // Getters et setters
+    // ✅ Getters et Setters
     public int getId() {
         return id;
     }
@@ -55,9 +59,16 @@ public class Fournisseur {
         this.contact = contact;
     }
 
-    // Méthode pour récupérer le prix d'un médicament (optionnel)
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    // ✅ Méthode pour récupérer le prix d'un médicament (optionnel)
     public double getPrix(Medicament medicament) {
-        // TODO Implémentation réelle ou suppression si non nécessaire
         throw new UnsupportedOperationException("Cette méthode n'est pas encore implémentée.");
     }
 
@@ -68,6 +79,7 @@ public class Fournisseur {
                 ", nom='" + nom + '\'' +
                 ", adresse='" + adresse + '\'' +
                 ", contact='" + contact + '\'' +
+                ", email='" + email + '\'' + // ✅ Ajout de l'email dans l'affichage
                 '}';
     }
 }

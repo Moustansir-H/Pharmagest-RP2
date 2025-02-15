@@ -37,6 +37,7 @@ public class Medicament {
 
     public Medicament(String nom, String forme, double prixAchat, double prixVente, int stock,
                       int seuilCommande, int qteMax, Famille famille, Fournisseur fournisseur, Unite unite) {
+        this.id = -1;
         this.nom = nom;
         this.forme = forme;
         this.prixAchat = prixAchat;

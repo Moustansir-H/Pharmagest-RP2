@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.commande.controleur.GenerationCommandeControleur">
+
+    <top>
+        <Label text="Génération de Commande"
+               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10px;"/>
+    </top>
+
+    <center>
+        <VBox spacing="15" alignment="CENTER" style="-fx-padding: 20px;">
+
+            <!-- Sélection du Fournisseur -->
+            <HBox spacing="10" alignment="CENTER">
+                <Label text="Fournisseur :"/>
+                <ComboBox fx:id="fournisseurComboBox" prefWidth="250"/>
+            </HBox>
+
+            <!-- Tableau des Médicaments à Commander -->
+            <TableView fx:id="commandeTable" prefHeight="200" editable="true">
+                <columns>
+                    <TableColumn fx:id="colCommandeMedicament" text="Médicament" prefWidth="150"/>
+                    <TableColumn fx:id="colCommandeQuantite" text="Quantité" prefWidth="100" editable="true"/>
+                    <TableColumn fx:id="colCommandePrixUnitaire" text="Prix Unitaire (€)" prefWidth="100"/>
+                    <TableColumn fx:id="colCommandeTotal" text="Total (€)" prefWidth="100"/>
+                </columns>
+            </TableView>
+
+
+            <!-- Affichage du Montant Total -->
+            <Label fx:id="montantTotalLabel" text="Total : 0 €"
+                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+
+            <!-- Boutons d'Action -->
+            <HBox spacing="20" alignment="CENTER">
+                <Button fx:id="validerCommandeButton" text="Valider Commande" onAction="#validerCommande"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                <Button text="Retour" onAction="#retournerAuMenu"
+                        style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

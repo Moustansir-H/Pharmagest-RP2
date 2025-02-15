@@ -11,10 +11,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaiementDAO {
-    private Connection connexion;
+public class PaiementDao {
+    private final Connection connexion;
 
-    public PaiementDAO() throws Exception {
+    public PaiementDao() throws Exception {
         this.connexion = DatabaseConnection.getConnexion();
     }
 

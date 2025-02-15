@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class DashboardControleur {
+
     @FXML
     private Button caisseButton;
 
@@ -24,6 +25,12 @@ public class DashboardControleur {
 
     @FXML
     private Button changeUserButton;
+
+    @FXML
+    private Button approvisionnementButton;
+
+    @FXML
+    private Button ouvrirGenerationCommande;
 
     @FXML
     public void caisseButtonOnAction(ActionEvent e) throws IOException {
@@ -81,4 +88,31 @@ public class DashboardControleur {
         stage.setTitle("Login");
 
     }
+
+    @FXML
+    public void ouvrirApprovisionnement(ActionEvent e) throws IOException {
+        // Charger la vue de l'approvisionnement
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/approvisionnement/Approvisionnement.fxml"));
+        Scene nouvelleScene = new Scene(loader.load());
+
+        // Récupérer la fenêtre actuelle et y placer la nouvelle scène
+        Stage stage = (Stage) approvisionnementButton.getScene().getWindow();
+        stage.setScene(nouvelleScene);
+        stage.setTitle("Approvisionnement");
+    }
+
+    @FXML
+    public void ouvrirGenerationCommande(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/GenerationCommande.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Génération de Commande");
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors de l'ouverture de la génération de commande : " + e.getMessage());
+        }
+    }
+
+
 }

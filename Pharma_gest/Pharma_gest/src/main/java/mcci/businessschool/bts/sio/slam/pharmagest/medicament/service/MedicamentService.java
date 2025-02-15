@@ -1,23 +1,23 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.medicament.service;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.dao.FamilleDao;
-import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDAO;
+import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
-import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDAO;
+import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.unite.dao.UniteDao;
 
 import java.util.List;
 
 public class MedicamentService {
-    private MedicamentDAO medicamentDAO;
+    private MedicamentDao medicamentDAO;
     private FamilleDao familleDAO;
-    private FournisseurDAO fournisseurDao;
+    private FournisseurDao fournisseurDao;
     private UniteDao uniteDao;
 
     public MedicamentService() throws Exception {
-        this.medicamentDAO = new MedicamentDAO();
+        this.medicamentDAO = new MedicamentDao();
         this.familleDAO = new FamilleDao();
-        this.fournisseurDao = new FournisseurDAO();
+        this.fournisseurDao = new FournisseurDao();
         this.uniteDao = new UniteDao();
     }
 

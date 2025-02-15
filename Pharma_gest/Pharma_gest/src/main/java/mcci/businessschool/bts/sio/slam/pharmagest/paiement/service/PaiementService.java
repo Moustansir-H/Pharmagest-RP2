@@ -2,16 +2,16 @@ package mcci.businessschool.bts.sio.slam.pharmagest.paiement.service;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.StatutPaiement;
-import mcci.businessschool.bts.sio.slam.pharmagest.paiement.dao.PaiementDAO;
+import mcci.businessschool.bts.sio.slam.pharmagest.paiement.dao.PaiementDao;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class PaiementService {
-    private PaiementDAO paiementDAO;
+    private PaiementDao paiementDAO;
 
     public PaiementService() throws Exception {
-        this.paiementDAO = new PaiementDAO();
+        this.paiementDAO = new PaiementDao();
     }
 
     /**

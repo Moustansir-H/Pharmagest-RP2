@@ -9,10 +9,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VenteDAO {
-    private Connection baseDeDonneeConnexion;
+public class VenteDao {
+    private final Connection baseDeDonneeConnexion;
 
-    public VenteDAO() throws Exception {
+    public VenteDao() throws Exception {
         this.baseDeDonneeConnexion = DatabaseConnection.getConnexion();
     }
 
