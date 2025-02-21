@@ -15,6 +15,15 @@ public class Pharmacien extends Utilisateur {
         super(identifiant, motDePasse);
     }
 
+    public Pharmacien(Integer id) {
+        super(id, "Inconnu", "Inconnu");
+    }
+
+    public Pharmacien(Integer id, String identifiant) {
+        super(id, identifiant, "Inconnu"); // Mot de passe par défaut
+    }
+
+
     @Override
     public String toString() {
         return "Pharmacien{" +

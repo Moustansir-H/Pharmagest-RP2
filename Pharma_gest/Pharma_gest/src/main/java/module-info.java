@@ -5,6 +5,8 @@ module mcci.businessschool.bts.sio.slam.pharmagest {
     requires javafx.base;
     requires java.desktop;
     requires itextpdf;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
 
     opens mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur to javafx.fxml;
     exports mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur;
@@ -28,7 +30,12 @@ module mcci.businessschool.bts.sio.slam.pharmagest {
     exports mcci.businessschool.bts.sio.slam.pharmagest.commande.controleur to javafx.fxml;
     opens mcci.businessschool.bts.sio.slam.pharmagest.commande.service to javafx.fxml;
     exports mcci.businessschool.bts.sio.slam.pharmagest.commande.service to javafx.fxml;
-    opens mcci.businessschool.bts.sio.slam.pharmagest.commande.ligne to javafx.base;
-    exports mcci.businessschool.bts.sio.slam.pharmagest.commande.ligne to javafx.fxml;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.commande.dao to javafx.base;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.commande.dao to javafx.fxml;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.commande;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.fournisseur;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.pharmacien;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.commande to javafx.base;
+
 
 }

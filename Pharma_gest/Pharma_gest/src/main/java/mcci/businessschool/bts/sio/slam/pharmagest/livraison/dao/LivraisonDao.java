@@ -1,10 +1,8 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.livraison.dao;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.Commande;
-import mcci.businessschool.bts.sio.slam.pharmagest.commande.dao.CommandeDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
-import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.livraison.Livraison;
 
 import java.sql.*;
@@ -12,129 +10,97 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LivraisonDao {
-    private final Connection baseDeDonneeConnexion;
-    private final CommandeDao commandeDao;
-    private final FournisseurDao fournisseurDao;
+    private Connection connection;
 
     public LivraisonDao() throws Exception {
-        this.baseDeDonneeConnexion = DatabaseConnection.getConnexion();
-        this.commandeDao = new CommandeDao();
-        this.fournisseurDao = new FournisseurDao();
+        this.connection = DatabaseConnection.getConnexion();
     }
 
-    // 🔹 Ajouter une livraison avec un fournisseur
-    public Integer ajouterLivraison(Livraison livraison, int commandeId, int fournisseurId) {
-        String sql = """
-                    INSERT INTO livraison (datelivraison, status, commande_id, fournisseur_id) 
-                    VALUES (?, ?, ?, ?) 
-                    RETURNING id
-                """;
-
-        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
-            stmt.setDate(1, new java.sql.Date(livraison.getDatelivraison().getTime()));
+    // ✅ Ajouter une livraison
+    public void ajouterLivraison(Livraison livraison) throws SQLException {
+        String sql = "INSERT INTO livraison (datelivraison, status, commande_id, fournisseur_id) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setDate(1, Date.valueOf(livraison.getDateLivraison())); // Conversion LocalDate -> SQL Date
             stmt.setString(2, livraison.getStatus());
-            stmt.setInt(3, commandeId);
-            stmt.setInt(4, fournisseurId);
+            stmt.setInt(3, livraison.getCommande().getId());
+            stmt.setInt(4, livraison.getFournisseur().getId());
 
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int id = rs.getInt("id");
-                System.out.println("Livraison ajoutée avec succès !");
-                return id;
+            stmt.executeUpdate();
+
+            // Récupération de l'ID généré
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    livraison.setId(rs.getInt(1));
+                    System.out.println("✅ Livraison ajoutée avec succès, ID : " + livraison.getId());
+                }
             }
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de l'ajout de la livraison : " + e.getMessage());
-        }
-
-        return null;
-    }
-
-    // 🔹 Récupérer une livraison par ID
-    public Livraison recupererLivraisonParId(int idLivraison) {
-        String sql = "SELECT datelivraison, status, commande_id, fournisseur_id FROM livraison WHERE id = ?";
-
-        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
-            stmt.setInt(1, idLivraison);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                Date dateLivraison = rs.getDate("datelivraison");
-                String status = rs.getString("status");
-                int commandeId = rs.getInt("commande_id");
-                int fournisseurId = rs.getInt("fournisseur_id");
-
-                Commande commande = commandeDao.recupererCommandeParId(commandeId);
-                Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
-
-                return new Livraison(idLivraison, dateLivraison, status, commande, fournisseur);
-            }
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération de la livraison : " + e.getMessage());
-        }
-
-        return null;
-    }
-
-    // 🔹 Mettre à jour le statut de la livraison
-    public void mettreAJourStatutLivraison(int idLivraison, String status) {
-        String sql = "UPDATE livraison SET status = ? WHERE id = ?";
-
-        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
-            stmt.setString(1, status);
-            stmt.setInt(2, idLivraison);
-
-            int lignesModifiees = stmt.executeUpdate();
-            if (lignesModifiees > 0) {
-                System.out.println("Statut de livraison mis à jour avec succès !");
-            }
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la mise à jour du statut : " + e.getMessage());
         }
     }
 
-    // 🔹 Récupérer toutes les livraisons
-    public List<Livraison> recupererToutesLesLivraisons() {
-        String sql = "SELECT id, datelivraison, status, commande_id, fournisseur_id FROM livraison";
+    // ✅ Récupérer toutes les livraisons
+    public List<Livraison> recupererToutesLesLivraisons() throws SQLException {
         List<Livraison> livraisons = new ArrayList<>();
+        String sql = "SELECT l.id, l.datelivraison, l.status, l.commande_id, l.fournisseur_id, f.nom AS fournisseur_nom " +
+                "FROM livraison l " +
+                "JOIN fournisseur f ON l.fournisseur_id = f.id";
 
-        try (Statement stmt = baseDeDonneeConnexion.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                int id = rs.getInt("id");
-                Date dateLivraison = rs.getDate("datelivraison");
-                String status = rs.getString("status");
-                int commandeId = rs.getInt("commande_id");
-                int fournisseurId = rs.getInt("fournisseur_id");
+                Commande commande = new Commande(rs.getInt("commande_id")); // Commande simplifiée
+                Fournisseur fournisseur = new Fournisseur(rs.getInt("fournisseur_id"), rs.getString("fournisseur_nom"));
 
-                Commande commande = commandeDao.recupererCommandeParId(commandeId);
-                Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
-
-                Livraison livraison = new Livraison(id, dateLivraison, status, commande, fournisseur);
+                Livraison livraison = new Livraison(
+                        rs.getInt("id"),
+                        rs.getDate("datelivraison").toLocalDate(),
+                        rs.getString("status"),
+                        commande,
+                        fournisseur
+                );
                 livraisons.add(livraison);
             }
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération des livraisons : " + e.getMessage());
         }
-
         return livraisons;
     }
 
-    // 🔹 Supprimer une livraison
-    public void supprimerLivraison(int idLivraison) {
-        String sql = "DELETE FROM livraison WHERE id = ?";
-
-        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
-            stmt.setInt(1, idLivraison);
-
-            int lignesSupprimees = stmt.executeUpdate();
-            if (lignesSupprimees > 0) {
-                System.out.println("Livraison supprimée avec succès !");
+    // ✅ Mettre à jour le statut d'une livraison
+    public void mettreAJourStatutLivraison(int livraisonId, String nouveauStatut) throws SQLException {
+        String sql = "UPDATE livraison SET status = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nouveauStatut);
+            stmt.setInt(2, livraisonId);
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("✅ Statut de la livraison ID " + livraisonId + " mis à jour : " + nouveauStatut);
             } else {
-                System.out.println("Aucune livraison trouvée avec id = " + idLivraison);
+                System.out.println("⚠️ Aucune livraison trouvée avec ID " + livraisonId);
             }
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la suppression de la livraison : " + e.getMessage());
         }
     }
+
+    public Livraison recupererLivraisonParId(int livraisonId) throws SQLException {
+        String sql = "SELECT l.id, l.datelivraison, l.status, l.commande_id, l.fournisseur_id, f.nom AS fournisseur_nom " +
+                "FROM livraison l " +
+                "JOIN fournisseur f ON l.fournisseur_id = f.id " +
+                "WHERE l.id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, livraisonId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Commande commande = new Commande(rs.getInt("commande_id"));
+                    Fournisseur fournisseur = new Fournisseur(rs.getInt("fournisseur_id"), rs.getString("fournisseur_nom"));
+
+                    return new Livraison(
+                            rs.getInt("id"),
+                            rs.getDate("datelivraison").toLocalDate(),
+                            rs.getString("status"),
+                            commande,
+                            fournisseur
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
 }
