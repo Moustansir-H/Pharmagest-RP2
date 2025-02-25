@@ -15,28 +15,38 @@ public class ApprovisionnementControleur {
     private Button generationCommandeButton;
 
     @FXML
+    private Button receptionCommandeButton;
+
+    @FXML
     private Button retourDashboard;
 
 
     @FXML
-    private void ouvrirReceptionCommande(ActionEvent event) {
+    public void ouvrirReceptionCommande(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/approvisionnement/ReceptionCommande.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
+            // Charger le fichier FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/ReceptionCommande.fxml"));
+            Scene nouvelleScene = new Scene(loader.load());
+
+            // Obtenir la fenêtre actuelle
+            Stage stage = (Stage) receptionCommandeButton.getScene().getWindow();
+
+            // Mettre à jour la scène avec la nouvelle vue
+            stage.setScene(nouvelleScene);
             stage.setTitle("Réception des Commandes");
-            stage.show();
+
         } catch (IOException e) {
             System.err.println("❌ Erreur lors de l'ouverture de la réception de commande : " + e.getMessage());
+            e.printStackTrace();  // 🔴 Afficher l'erreur complète pour le débogage
         }
     }
+
 
     @FXML
     public void ouvrirGenerationCommande(ActionEvent event) {
         try {
             // Nouvelle scène
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/GenerationCommande.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/CreationCommande.fxml"));
             Scene nouvelleScene = new Scene(loader.load());
             // La référence de la scène actuelle
             Stage stage = (Stage) generationCommandeButton.getScene().getWindow();

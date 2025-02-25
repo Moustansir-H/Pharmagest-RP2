@@ -1,5 +1,6 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao;
 
+import mcci.businessschool.bts.sio.slam.pharmagest.commande.LigneDeCommande;
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.Famille;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.dao.FamilleDao;
@@ -106,37 +107,101 @@ public class MedicamentDao {
         return null;
     }
 
-    public List<Medicament> recupererMedicamentsSousSeuilParFournisseur(int fournisseurId) {
-        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
-                "famille_id, fournisseur_id, unite_id " +
-                "FROM medicament WHERE stock <= seuilcommande AND fournisseur_id = ?";
+    public Medicament recupererMedicamentParNom(String nom) {
+        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, famille_id, fournisseur_id, unite_id FROM medicament WHERE nom = ?";
 
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setString(1, nom);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                String forme = rs.getString("forme");
+                double prixAchat = rs.getDouble("prixachat");
+                double prixVente = rs.getDouble("prixvente");
+                int stock = rs.getInt("stock");
+                int seuilCommande = rs.getInt("seuilcommande");
+                int qteMax = rs.getInt("qtemax");
+
+                int familleId = rs.getInt("famille_id");
+                int fournisseurId = rs.getInt("fournisseur_id");
+                int uniteId = rs.getInt("unite_id");
+
+                Famille famille = familleDao.getFamilleById(familleId);
+                Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
+                Unite unite = uniteDao.recupererUniteeParId(uniteId);
+
+                return new Medicament(id, nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur, unite);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la récupération du médicament par nom : " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public List<Medicament> recupererMedicamentsSousSeuil() throws SQLException {
         List<Medicament> medicaments = new ArrayList<>();
+        String sql = """
+                    SELECT m.id, m.nom, m.stock, m.qtemax, m.prixachat, 
+                           f.id AS fournisseur_id, f.nom AS fournisseur_nom
+                    FROM medicament m
+                    JOIN fournisseur f ON m.fournisseur_id = f.id
+                    WHERE m.stock <= m.seuilcommande
+                """;
+
+        try (Statement stmt = baseDeDonneeConnexion.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Fournisseur fournisseur = new Fournisseur(rs.getInt("fournisseur_id"), rs.getString("fournisseur_nom"));
+                Medicament medicament = new Medicament(
+                        rs.getInt("id"),
+                        rs.getString("nom"),
+                        rs.getInt("stock"),
+                        rs.getInt("qtemax"),
+                        rs.getDouble("prixachat"),
+                        fournisseur
+                );
+                medicaments.add(medicament);
+            }
+        }
+        return medicaments;
+    }
+
+    public List<LigneDeCommande> recupererMedicamentsSousSeuilParFournisseur(int fournisseurId) throws SQLException {
+        List<LigneDeCommande> lignesDeCommande = new ArrayList<>();
+        String sql = """
+                    SELECT m.id, m.nom, m.stock, m.qtemax, m.prixachat, m.seuilcommande,
+                           f.id AS fournisseur_id, f.nom AS fournisseur_nom
+                    FROM medicament m
+                    JOIN fournisseur f ON m.fournisseur_id = f.id
+                    WHERE m.stock <= m.seuilcommande AND m.fournisseur_id = ?
+                """;
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
             stmt.setInt(1, fournisseurId);
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Fournisseur fournisseur = new Fournisseur(rs.getInt("fournisseur_id"), rs.getString("fournisseur_nom"));
+                    Medicament medicament = new Medicament(
+                            rs.getInt("id"),
+                            rs.getString("nom"),
+                            rs.getInt("stock"),
+                            rs.getInt("qtemax"),
+                            rs.getDouble("prixachat"),
+                            rs.getInt("seuilcommande"),
+                            fournisseur
+                    );
 
-            while (rs.next()) {
-                medicaments.add(new Medicament(
-                        rs.getInt("id"),
-                        rs.getString("nom"),
-                        rs.getString("forme"),
-                        rs.getDouble("prixachat"),
-                        rs.getDouble("prixvente"),
-                        rs.getInt("stock"),
-                        rs.getInt("seuilcommande"),
-                        rs.getInt("qtemax"),
-                        familleDao.getFamilleById(rs.getInt("famille_id")),
-                        fournisseurDao.getFournisseurById(rs.getInt("fournisseur_id")),
-                        uniteDao.recupererUniteeParId(rs.getInt("unite_id"))
-                ));
+                    // ✅ Calcul de la quantité à commander
+                    int quantiteACommander = Math.max(0, medicament.getQteMax() - medicament.getStock());
+
+                    if (quantiteACommander > 0) {
+                        lignesDeCommande.add(new LigneDeCommande(null, medicament, quantiteACommander, medicament.getPrixAchat(), 0, 0.0, 0.0));
+                    }
+                }
             }
-        } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération des médicaments sous seuil pour le fournisseur : " + e.getMessage());
         }
-
-        return medicaments;
+        return lignesDeCommande;
     }
 
 
@@ -244,6 +309,26 @@ public class MedicamentDao {
     public int calculerQuantiteACommander(Medicament medicament) {
         return Math.max(0, medicament.getQteMax() - medicament.getStock()); // ✅ Toujours >= 0
     }
+
+    public void mettreAJourStock(int medicamentId, int quantiteAjoutee) throws SQLException {
+        String sql = "UPDATE medicament SET stock = stock + ? WHERE id = ?";
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setInt(1, quantiteAjoutee);
+            stmt.setInt(2, medicamentId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new SQLException("❌ Échec de la mise à jour du stock du médicament ID " + medicamentId);
+            }
+
+            System.out.println("✅ Stock mis à jour pour Médicament ID " + medicamentId + " (+ " + quantiteAjoutee + " unités)");
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur SQL lors de la mise à jour du stock : " + e.getMessage());
+            throw e;
+        }
+    }
+
+
 
 
 
@@ -542,6 +627,31 @@ public class MedicamentDao {
     }
 
      */
+
+    public static void main(String[] args) {
+        try {
+            // Initialiser l'objet MedicamentDao
+            MedicamentDao medicamentDao = new MedicamentDao();
+
+            // Récupérer les médicaments sous le seuil
+            List<Medicament> medicamentsSousSeuil = medicamentDao.recupererMedicamentsSousSeuil();
+
+            // Afficher les résultats
+            System.out.println("\n📢 Médicaments sous ou égaux au seuil de commande :");
+            if (medicamentsSousSeuil.isEmpty()) {
+                System.out.println("⚠️ Aucun médicament en dessous du seuil !");
+            } else {
+                for (Medicament med : medicamentsSousSeuil) {
+                    System.out.println("🔹 " + med.getNom() +
+                            " | Stock : " + med.getStock() +
+                            " | Seuil : " + med.getSeuilCommande() +
+                            " | Fournisseur : " + (med.getFournisseur() != null ? med.getFournisseur().getNom() : "Aucun"));
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors du test des médicaments sous seuil : " + e.getMessage());
+        }
+    }
 
 
 }

@@ -18,6 +18,14 @@ public class Fournisseur {
         this.email = email;
     }
 
+    public Fournisseur(int id, String nom) {
+        this.id = id;
+        this.nom = nom;
+        this.adresse = "Adresse inconnue";
+        this.contact = "Contact inconnu";
+        this.email = "Email inconnu";
+    }
+
     // ✅ Constructeur sans id (utile pour les nouvelles insertions)
     public Fournisseur(String nom, String adresse, String contact, String email) {
         this.nom = nom;
@@ -25,6 +33,7 @@ public class Fournisseur {
         this.contact = contact;
         this.email = email;
     }
+
 
     // ✅ Getters et Setters
     public int getId() {

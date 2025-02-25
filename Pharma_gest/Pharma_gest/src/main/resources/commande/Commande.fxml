@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<VBox spacing="10" xmlns="http://javafx.com/javafx/8.0" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.commande.controleur.CommandeControleur">
+
+    <Label text="📋 Liste des Commandes" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="tableCommandes">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colPharmacien" text="Pharmacien" prefWidth="150"/>
+            <TableColumn fx:id="colFournisseur" text="Fournisseur" prefWidth="150"/>
+            <TableColumn fx:id="colMontant" text="Montant (€)" prefWidth="100"/>
+            <TableColumn fx:id="colStatut" text="Statut" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <Button fx:id="btnVoirLignes" text="Voir les lignes" onAction="#voirLignesCommande"/>
+    <Button fx:id="btnValiderCommande" text="Valider la commande" onAction="#validerCommande"/>
+
+</VBox>

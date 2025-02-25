@@ -50,6 +50,40 @@ public class Medicament {
         this.unite = unite;
     }
 
+    public Medicament(int id) {
+        this.id = id;
+        this.nom = "Inconnu";
+        this.forme = "Inconnue";
+        this.prixAchat = 0.0;
+        this.prixVente = 0.0;
+        this.stock = 0;
+        this.seuilCommande = 0;
+        this.qteMax = 0;
+        this.famille = null;
+        this.fournisseur = null;
+        this.unite = null;
+    }
+
+    public Medicament(int id, String nom, int stock, int qteMax, double prixAchat, Fournisseur fournisseur) {
+        this.id = id;
+        this.nom = nom;
+        this.stock = stock;
+        this.qteMax = qteMax;
+        this.prixAchat = prixAchat;
+        this.fournisseur = fournisseur;
+    }
+
+    public Medicament(int id, String nom, int stock, int qteMax, double prixAchat, int seuilCommande, Fournisseur fournisseur) {
+        this.id = id;
+        this.nom = nom;
+        this.stock = stock;
+        this.qteMax = qteMax;
+        this.prixAchat = prixAchat;
+        this.seuilCommande = seuilCommande;
+        this.fournisseur = fournisseur;
+    }
+
+
     // Getters et setters pour chaque attribut
 
     public int getId() {

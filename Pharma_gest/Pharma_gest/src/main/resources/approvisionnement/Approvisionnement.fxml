@@ -28,7 +28,7 @@
             <children>
                 <Button fx:id="receptionCommandeButton" layoutX="160.0" layoutY="180.0" mnemonicParsing="false"
                         prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: green; -fx-text-fill: white;"
-                        text="Réception Commande"/>
+                        text="Réception Commande" onAction="#ouvrirReceptionCommande"/>
 
                 <Button fx:id="generationCommandeButton" layoutX="460.0" layoutY="180.0" mnemonicParsing="false"
                         prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: green; -fx-text-fill: white;"

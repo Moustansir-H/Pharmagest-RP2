@@ -3,42 +3,29 @@ package mcci.businessschool.bts.sio.slam.pharmagest.livraison;
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.Commande;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Livraison {
-    // ✅ Ajouter les attributs manquants
-    private int id;  // ID de la livraison
-    private Date datelivraison;
+    private int id;
+    private LocalDate dateLivraison;
     private String status;
     private Commande commande;
     private Fournisseur fournisseur;
 
-    // ✅ Constructeur simple
-    public Livraison(Date datelivraison, String status) {
-        this.datelivraison = datelivraison;
-        this.status = status;
-    }
-
-    // ✅ Constructeur complet avec ID, Commande et Fournisseur
-    public Livraison(int id, Date datelivraison, String status, Commande commande, Fournisseur fournisseur) {
+    // ✅ Constructeurs
+    public Livraison(int id, LocalDate dateLivraison, String status, Commande commande, Fournisseur fournisseur) {
         this.id = id;
-        this.datelivraison = datelivraison;
+        this.dateLivraison = dateLivraison;
         this.status = status;
         this.commande = commande;
         this.fournisseur = fournisseur;
     }
 
-    // ✅ Méthodes pour gérer la livraison
-    public void suivreLivraison() {
-        // TODO Implémentation du suivi de la livraison
-    }
-
-    public void recevoirCommande() {
-        // TODO Implémentation de la réception de la commande
-    }
-
-    public void mettreAJourStock() {
-        // TODO Implémentation de la mise à jour du stock
+    public Livraison(LocalDate dateLivraison, String status, Commande commande, Fournisseur fournisseur) {
+        this.dateLivraison = dateLivraison;
+        this.status = status;
+        this.commande = commande;
+        this.fournisseur = fournisseur;
     }
 
     // ✅ Getters et Setters
@@ -50,12 +37,12 @@ public class Livraison {
         this.id = id;
     }
 
-    public Date getDatelivraison() {
-        return datelivraison;
+    public LocalDate getDateLivraison() {
+        return dateLivraison;
     }
 
-    public void setDatelivraison(Date datelivraison) {
-        this.datelivraison = datelivraison;
+    public void setDateLivraison(LocalDate dateLivraison) {
+        this.dateLivraison = dateLivraison;
     }
 
     public String getStatus() {
@@ -80,5 +67,17 @@ public class Livraison {
 
     public void setFournisseur(Fournisseur fournisseur) {
         this.fournisseur = fournisseur;
+    }
+
+    // ✅ toString()
+    @Override
+    public String toString() {
+        return "Livraison{" +
+                "id=" + id +
+                ", dateLivraison=" + dateLivraison +
+                ", status='" + status + '\'' +
+                ", commandeId=" + (commande != null ? commande.getId() : "Inconnue") +
+                ", fournisseur=" + (fournisseur != null ? fournisseur.getNom() : "Inconnu") +
+                '}';
     }
 }
