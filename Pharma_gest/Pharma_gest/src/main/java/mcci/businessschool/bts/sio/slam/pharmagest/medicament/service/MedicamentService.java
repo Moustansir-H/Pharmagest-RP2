@@ -22,19 +22,23 @@ public class MedicamentService {
     }
 
     public List<Medicament> recupererMedicaments() {
-
         return medicamentDAO.recupererMedicaments();
     }
 
-    public void ajouterMedicament(Medicament medicament) {
+    // Ajout de la méthode pour récupérer un médicament par son ID
+    public Medicament recupererMedicamentParId(int id) {
+        return medicamentDAO.recupererMedicamentParId(id);
+    }
 
+    public void ajouterMedicament(Medicament medicament) {
+        // Implémentation à ajouter
     }
 
     public void modifierMedicament(Medicament medicament) {
-
+        // Implémentation à ajouter
     }
 
     public void supprimerMedicamentParId(Integer id) {
-
+        // Implémentation à ajouter
     }
 }

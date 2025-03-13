@@ -36,6 +36,20 @@ module mcci.businessschool.bts.sio.slam.pharmagest {
     exports mcci.businessschool.bts.sio.slam.pharmagest.fournisseur;
     exports mcci.businessschool.bts.sio.slam.pharmagest.pharmacien;
     opens mcci.businessschool.bts.sio.slam.pharmagest.commande to javafx.base;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.livraison.controleur to javafx.fxml;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.livraison.controleur to javafx.fxml;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.vente.dao to javafx.base;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.vente.dao to javafx.fxml;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.vente to javafx.base;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.vente to javafx.fxml;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur to javafx.fxml;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur to javafx.fxml;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.facture to javafx.base;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.paiement;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.prescription;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.medicament;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.vendeur;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.patient;
 
 
 }

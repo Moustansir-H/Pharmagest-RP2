@@ -28,7 +28,7 @@ public class MedicamentDao {
         this.uniteDao = new UniteDao();
     }
 
-    // Méthode pour récupérer tous les médicaments
+    // Récupère tous les médicaments depuis la base
     public List<Medicament> recupererMedicaments() {
         String selectMedicamentSql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
                 "famille_id, fournisseur_id, unite_id FROM medicament";
@@ -39,6 +39,7 @@ public class MedicamentDao {
              ResultSet rs = stmt.executeQuery(selectMedicamentSql)) {
 
             while (rs.next()) {
+                int medId = rs.getInt("id");
                 String nom = rs.getString("nom");
                 String forme = rs.getString("forme");
                 double prixAchat = rs.getDouble("prixachat");
@@ -51,18 +52,15 @@ public class MedicamentDao {
                 int fournisseurId = rs.getInt("fournisseur_id");
                 int uniteId = rs.getInt("unite_id");
 
-                // Récupérer les relations via les DAO
                 Famille famille = familleDao.getFamilleById(familleId);
                 Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
                 Unite unite = uniteDao.recupererUniteeParId(uniteId);
 
-                // Créer une instance de Medicament
-                Medicament medicament = new Medicament(
-                        nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax,
-                        famille, fournisseur, unite
-                );
+                // Utiliser le constructeur qui prend l'ID en paramètre
+                Medicament medicament = new Medicament(medId, nom, forme, prixAchat, prixVente, stock,
+                        seuilCommande, qteMax, famille, fournisseur, unite);
 
-                medicaments.add(medicament); // Ajouter le médicament à la liste
+                medicaments.add(medicament);
             }
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération des médicaments : " + e.getMessage());
@@ -71,15 +69,14 @@ public class MedicamentDao {
         return medicaments;
     }
 
+    // Récupère un médicament par son ID
     public Medicament recupererMedicamentParId(int id) {
-        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
-                "famille_id, fournisseur_id, unite_id FROM medicament WHERE id = ?";
-
+        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, famille_id, fournisseur_id, unite_id FROM medicament WHERE id = ?";
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
-
             if (rs.next()) {
+                int medId = rs.getInt("id");  // Récupérer l'ID réel
                 String nom = rs.getString("nom");
                 String forme = rs.getString("forme");
                 double prixAchat = rs.getDouble("prixachat");
@@ -92,20 +89,19 @@ public class MedicamentDao {
                 int fournisseurId = rs.getInt("fournisseur_id");
                 int uniteId = rs.getInt("unite_id");
 
-                // Récupérer les relations via les DAO
                 Famille famille = familleDao.getFamilleById(familleId);
                 Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
                 Unite unite = uniteDao.recupererUniteeParId(uniteId);
 
-                // Retourner le médicament trouvé
-                return new Medicament(nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur, unite);
+                // Utiliser le constructeur qui inclut l'ID
+                return new Medicament(medId, nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur, unite);
             }
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération du médicament : " + e.getMessage());
         }
-
         return null;
     }
+
 
     public Medicament recupererMedicamentParNom(String nom) {
         String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, famille_id, fournisseur_id, unite_id FROM medicament WHERE nom = ?";
