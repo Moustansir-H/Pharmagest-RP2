@@ -4,6 +4,7 @@ import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.dao.VenteDao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VenteService {
@@ -69,4 +70,24 @@ public class VenteService {
             System.err.println("Erreur lors de la suppression de la vente : " + e.getMessage());
         }
     }
+
+    // Ajout de la méthode pour récupérer une vente par son ID
+    public Vente recupererVenteParId(int id) {
+        try {
+            return venteDAO.recupererVenteParId(id);
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération de la vente : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Vente> recupererVentesEnAttente() {
+        try {
+            return venteDAO.recupererVentesEnAttente();
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la récupération des ventes en attente : " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
 }

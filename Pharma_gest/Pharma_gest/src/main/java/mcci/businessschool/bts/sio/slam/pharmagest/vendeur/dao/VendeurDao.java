@@ -14,12 +14,12 @@ public class VendeurDao {
         this.baseDeDonneeConnexion = DatabaseConnection.getConnexion();
     }
 
+    // Méthode pour ajouter un vendeur en utilisant l'id de l'utilisateur associé
     public void ajouterVendeur(Integer idUtilisateur) {
         String insertSQL = "INSERT INTO vendeur (utilisateur_id) VALUES (?)";
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(insertSQL)) {
             stmt.setInt(1, idUtilisateur);
-
             stmt.executeUpdate();
             System.out.println("Vendeur ajouté avec succès !");
         } catch (SQLException e) {
@@ -32,7 +32,6 @@ public class VendeurDao {
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(deleteSQL)) {
             stmt.setInt(1, idUtilisateur);
-
             int ligneSupprimee = stmt.executeUpdate();
 
             if (ligneSupprimee > 0) {
@@ -44,5 +43,4 @@ public class VendeurDao {
             System.err.println("Erreur lors de la suppression du Vendeur : " + e.getMessage());
         }
     }
-
 }

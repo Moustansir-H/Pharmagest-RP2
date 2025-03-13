@@ -4,6 +4,7 @@ import mcci.businessschool.bts.sio.slam.pharmagest.commande.Commande;
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.LigneDeCommande;
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
+import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,7 +45,9 @@ public class LigneDeCommandeDao {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Commande commande = new Commande(rs.getInt("commande_id"));
-                    Medicament medicament = new Medicament(rs.getInt("medicament_id"));
+                    MedicamentDao medicamentDao = new MedicamentDao();
+                    Medicament medicament = medicamentDao.recupererMedicamentParId(rs.getInt("medicament_id"));
+
 
                     LigneDeCommande ligne = new LigneDeCommande(
                             rs.getInt("id"),
@@ -58,6 +61,8 @@ public class LigneDeCommandeDao {
                     );
                     lignesDeCommande.add(ligne);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
         return lignesDeCommande;

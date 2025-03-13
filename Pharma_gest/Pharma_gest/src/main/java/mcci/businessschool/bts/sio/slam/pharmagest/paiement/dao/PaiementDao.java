@@ -22,16 +22,18 @@ public class PaiementDao {
      * Ajoute un paiement en base et retourne l'ID généré
      */
     public Integer ajouterPaiement(Paiement paiement) throws SQLException {
-        String insertSQL = "INSERT INTO paiement (montant, modepaiement, statut) VALUES (?, ?, ?::statutpaiement) RETURNING id";
+        String insertSQL = "INSERT INTO paiement (montant, modepaiement, statut, vendeur_id, vente_id) VALUES (?, ?, ?::statutpaiement, ?, ?) RETURNING id";
 
         try (PreparedStatement stmt = connexion.prepareStatement(insertSQL)) {
             stmt.setDouble(1, paiement.getMontant());
             stmt.setString(2, paiement.getModePaiement());
-            stmt.setString(3, paiement.getStatut().name()); // Conversion Enum -> String
+            stmt.setString(3, paiement.getStatut().name());
+            stmt.setInt(4, paiement.getVendeurId());
+            stmt.setInt(5, paiement.getVenteId());
 
-            try (ResultSet resultSet = stmt.executeQuery()) {
-                if (resultSet.next()) {
-                    int id = resultSet.getInt("id");
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
                     System.out.println("Paiement ajouté avec succès !");
                     return id;
                 } else {
