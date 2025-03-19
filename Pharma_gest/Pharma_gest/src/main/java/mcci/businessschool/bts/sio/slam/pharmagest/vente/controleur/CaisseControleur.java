@@ -9,11 +9,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
-import mcci.businessschool.bts.sio.slam.pharmagest.paiement.StatutPaiement;
-import mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.SessionUtilisateur;
-import mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.Utilisateur;
-import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.Vendeur;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteIntegrationService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteService;
@@ -80,7 +75,7 @@ public class CaisseControleur {
         }
     }
 
-
+/*
     @FXML
     private void handleValiderPaiement() {
         Vente selectedVente = tableVentes.getSelectionModel().getSelectedItem();
@@ -130,7 +125,7 @@ public class CaisseControleur {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur lors de la finalisation", e.getMessage());
         }
-    }
+    }*/
 
 
     @FXML

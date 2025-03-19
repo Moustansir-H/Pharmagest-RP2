@@ -1,4 +1,3 @@
-
 package mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.controleur;
 
 import javafx.collections.FXCollections;
@@ -30,6 +29,7 @@ public class FournisseurControleur {
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
     }
+
     @FXML
     private TextField nomField, adresseField, contactField, emailField, rechercheField;
 
@@ -163,21 +163,24 @@ public class FournisseurControleur {
             return;
         }
 
-        try {
-            int id = fournisseurDao.getFournisseurIdByName(nomRecherche);
-            Fournisseur fournisseur = fournisseurDao.getFournisseurById(id);
+        // 🔍 Vérifier si l'ID existe
+        Integer id = fournisseurDao.getFournisseurIdByName(nomRecherche);
+        if (id == null) {
+            afficherAlerte(Alert.AlertType.INFORMATION, "Aucun résultat", "Aucun fournisseur trouvé.");
+            return;
+        }
 
-            if (fournisseur != null) {
-                fournisseurListe.clear();
-                fournisseurListe.add(fournisseur);
-                tableFournisseurs.setItems(fournisseurListe);
-            } else {
-                afficherAlerte(Alert.AlertType.INFORMATION, "Aucun résultat", "Aucun fournisseur trouvé.");
-            }
-        } catch (SQLException e) {
-            afficherAlerte(Alert.AlertType.ERROR, "Erreur SQL", "Impossible de récupérer le fournisseur.");
+        // ✅ Récupérer l'objet fournisseur
+        Fournisseur fournisseur = fournisseurDao.getFournisseurById(id);
+        if (fournisseur != null) {
+            fournisseurListe.clear();
+            fournisseurListe.add(fournisseur);
+            tableFournisseurs.setItems(fournisseurListe);
+        } else {
+            afficherAlerte(Alert.AlertType.INFORMATION, "Aucun résultat", "Aucun fournisseur trouvé.");
         }
     }
+
 
     private void effacerChamps() {
         nomField.clear();

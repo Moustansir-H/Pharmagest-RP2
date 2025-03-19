@@ -7,8 +7,6 @@ import mcci.businessschool.bts.sio.slam.pharmagest.famille.dao.FamilleDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
-import mcci.businessschool.bts.sio.slam.pharmagest.unite.Unite;
-import mcci.businessschool.bts.sio.slam.pharmagest.unite.dao.UniteDao;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,60 +16,48 @@ import java.util.List;
 public class MedicamentDao {
     private final FamilleDao familleDao;
     private final FournisseurDao fournisseurDao;
-    private final UniteDao uniteDao;
     private Connection baseDeDonneeConnexion;
 
     public MedicamentDao() throws Exception {
         this.baseDeDonneeConnexion = DatabaseConnection.getConnexion();
         this.familleDao = new FamilleDao();
         this.fournisseurDao = new FournisseurDao();
-        this.uniteDao = new UniteDao();
     }
 
     // Récupère tous les médicaments depuis la base
     public List<Medicament> recupererMedicaments() {
-        String selectMedicamentSql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
-                "famille_id, fournisseur_id, unite_id FROM medicament";
-
+        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
+                "famille_id, fournisseur_id FROM medicament";
         List<Medicament> medicaments = new ArrayList<>();
 
         try (Statement stmt = baseDeDonneeConnexion.createStatement();
-             ResultSet rs = stmt.executeQuery(selectMedicamentSql)) {
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                int medId = rs.getInt("id");
-                String nom = rs.getString("nom");
-                String forme = rs.getString("forme");
-                double prixAchat = rs.getDouble("prixachat");
-                double prixVente = rs.getDouble("prixvente");
-                int stock = rs.getInt("stock");
-                int seuilCommande = rs.getInt("seuilcommande");
-                int qteMax = rs.getInt("qtemax");
-
-                int familleId = rs.getInt("famille_id");
-                int fournisseurId = rs.getInt("fournisseur_id");
-                int uniteId = rs.getInt("unite_id");
-
-                Famille famille = familleDao.getFamilleById(familleId);
-                Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
-                Unite unite = uniteDao.recupererUniteeParId(uniteId);
-
-                // Utiliser le constructeur qui prend l'ID en paramètre
-                Medicament medicament = new Medicament(medId, nom, forme, prixAchat, prixVente, stock,
-                        seuilCommande, qteMax, famille, fournisseur, unite);
-
+                Medicament medicament = new Medicament(
+                        rs.getInt("id"),
+                        rs.getString("nom"),
+                        rs.getString("forme"),
+                        rs.getDouble("prixachat"),
+                        rs.getDouble("prixvente"),
+                        rs.getInt("stock"),
+                        rs.getInt("seuilcommande"),
+                        rs.getInt("qtemax"),
+                        familleDao.getFamilleById(rs.getInt("famille_id")),
+                        fournisseurDao.getFournisseurById(rs.getInt("fournisseur_id"))
+                );
                 medicaments.add(medicament);
             }
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération des médicaments : " + e.getMessage());
         }
-
         return medicaments;
     }
 
     // Récupère un médicament par son ID
     public Medicament recupererMedicamentParId(int id) {
-        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, famille_id, fournisseur_id, unite_id FROM medicament WHERE id = ?";
+        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, famille_id, " +
+                "fournisseur_id FROM medicament WHERE id = ?";
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -91,10 +77,9 @@ public class MedicamentDao {
 
                 Famille famille = familleDao.getFamilleById(familleId);
                 Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
-                Unite unite = uniteDao.recupererUniteeParId(uniteId);
 
                 // Utiliser le constructeur qui inclut l'ID
-                return new Medicament(medId, nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur, unite);
+                return new Medicament(medId, nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur);
             }
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération du médicament : " + e.getMessage());
@@ -104,7 +89,8 @@ public class MedicamentDao {
 
 
     public Medicament recupererMedicamentParNom(String nom) {
-        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, famille_id, fournisseur_id, unite_id FROM medicament WHERE nom = ?";
+        String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
+                "famille_id, fournisseur_id FROM medicament WHERE nom = ?";
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
             stmt.setString(1, nom);
@@ -121,13 +107,11 @@ public class MedicamentDao {
 
                 int familleId = rs.getInt("famille_id");
                 int fournisseurId = rs.getInt("fournisseur_id");
-                int uniteId = rs.getInt("unite_id");
 
                 Famille famille = familleDao.getFamilleById(familleId);
                 Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
-                Unite unite = uniteDao.recupererUniteeParId(uniteId);
 
-                return new Medicament(id, nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur, unite);
+                return new Medicament(id, nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur);
             }
         } catch (SQLException e) {
             System.err.println("❌ Erreur lors de la récupération du médicament par nom : " + e.getMessage());
@@ -152,11 +136,16 @@ public class MedicamentDao {
                 Medicament medicament = new Medicament(
                         rs.getInt("id"),
                         rs.getString("nom"),
-                        rs.getInt("stock"),
-                        rs.getInt("qtemax"),
+                        "Inconnu", // Forme
                         rs.getDouble("prixachat"),
+                        0.0, // Prix de vente (par défaut)
+                        rs.getInt("stock"),
+                        0, // Seuil commande (par défaut)
+                        rs.getInt("qtemax"),
+                        null, // Famille (on ne la récupère pas ici)
                         fournisseur
                 );
+
                 medicaments.add(medicament);
             }
         }
@@ -181,12 +170,16 @@ public class MedicamentDao {
                     Medicament medicament = new Medicament(
                             rs.getInt("id"),
                             rs.getString("nom"),
-                            rs.getInt("stock"),
-                            rs.getInt("qtemax"),
+                            "Inconnu", // Forme
                             rs.getDouble("prixachat"),
+                            0.0, // Prix de vente par défaut
+                            rs.getInt("stock"),
                             rs.getInt("seuilcommande"),
+                            rs.getInt("qtemax"),
+                            null, // Famille (on ne la récupère pas ici)
                             fournisseur
                     );
+
 
                     // ✅ Calcul de la quantité à commander
                     int quantiteACommander = Math.max(0, medicament.getQteMax() - medicament.getStock());
@@ -202,15 +195,17 @@ public class MedicamentDao {
 
 
     public Integer ajouterMedicament(Medicament medicament) throws SQLException {
+        System.out.println("📌 Avant insertion - ID Famille : " + medicament.getFamille().getId());
+        System.out.println("📌 Avant insertion - ID Fournisseur : " + medicament.getFournisseur().getId());
+
         String insertSQL = """
                     INSERT INTO medicament 
-                    (nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, famille_id, fournisseur_id, unite_id) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                    (nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, famille_id, fournisseur_id) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
                     RETURNING id
                 """;
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(insertSQL)) {
-            // Définir les paramètres de la requête
             stmt.setString(1, medicament.getNom());
             stmt.setString(2, medicament.getForme());
             stmt.setDouble(3, medicament.getPrixAchat());
@@ -218,23 +213,28 @@ public class MedicamentDao {
             stmt.setInt(5, medicament.getStock());
             stmt.setInt(6, medicament.getSeuilCommande());
             stmt.setInt(7, medicament.getQteMax());
-            stmt.setInt(8, medicament.getFamille().getId()); // Id de la famille
-            stmt.setInt(9, medicament.getFournisseur().getId()); // Id du fournisseur
-            stmt.setInt(10, medicament.getUnite().getId()); // Id de l'unité
+            stmt.setInt(8, medicament.getFamille().getId());
+            stmt.setInt(9, medicament.getFournisseur().getId());
 
-            // Exécuter la requête
+            System.out.println("🔎 Exécution requête SQL : " + stmt.toString());
+
+            // Exécuter la requête et récupérer l'ID généré
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    // Récupérer l'ID généré
                     int id = resultSet.getInt("id");
-                    System.out.println("Médicament ajouté avec succès !");
+                    System.out.println("✅ Médicament ajouté avec succès, ID généré : " + id);
                     return id;
                 } else {
-                    throw new SQLException("Erreur lors de l'ajout du médicament, aucun ID retourné.");
+                    System.err.println("❌ Échec de l'ajout, aucun ID retourné !");
+                    return null;
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur SQL lors de l'insertion : " + e.getMessage());
+            throw e;
         }
     }
+
 
     public void modifierMedicament(Medicament medicament) throws SQLException {
         String updateSQL = """
@@ -247,15 +247,13 @@ public class MedicamentDao {
                         seuilcommande = ?, 
                         qtemax = ?, 
                         famille_id = ?, 
-                        fournisseur_id = ?, 
-                        unite_id = ? 
+                        fournisseur_id = ? 
                     WHERE id = ?
                 """;
 
         // Obtenir les IDs à partir des noms
         int familleId = familleDao.getFamilleIdByName(medicament.getFamille().getNom());
         int fournisseurId = fournisseurDao.getFournisseurIdByName(medicament.getFournisseur().getNom());
-        int uniteId = uniteDao.getUniteIdByName(medicament.getUnite().getNomUnite());
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(updateSQL)) {
             // Remplir les paramètres
@@ -268,21 +266,35 @@ public class MedicamentDao {
             stmt.setInt(7, medicament.getQteMax());
             stmt.setInt(8, familleId);
             stmt.setInt(9, fournisseurId);
-            stmt.setInt(10, uniteId);
-            stmt.setInt(11, medicament.getId()); // ID du médicament à modifier
+            stmt.setInt(10, medicament.getId()); // ID du médicament à modifier
+
+            // 📌 Affichage des valeurs avant exécution
+            System.out.println("\n🔎 Exécution requête UPDATE :");
+            System.out.println("UPDATE medicament SET nom = '" + medicament.getNom() + "',");
+            System.out.println("                        forme = '" + medicament.getForme() + "',");
+            System.out.println("                        prixachat = " + medicament.getPrixAchat() + ",");
+            System.out.println("                        prixvente = " + medicament.getPrixVente() + ",");
+            System.out.println("                        stock = " + medicament.getStock() + ",");
+            System.out.println("                        seuilcommande = " + medicament.getSeuilCommande() + ",");
+            System.out.println("                        qtemax = " + medicament.getQteMax() + ",");
+            System.out.println("                        famille_id = " + familleId + ",");
+            System.out.println("                        fournisseur_id = " + fournisseurId + " WHERE id = " + medicament.getId());
 
             // Exécuter la requête
             int lignesModifiees = stmt.executeUpdate();
 
+            // 📌 Vérification du nombre de lignes affectées
             if (lignesModifiees > 0) {
-                System.out.println("Médicament modifié avec succès !");
+                System.out.println("✅ Modification appliquée, lignes affectées : " + lignesModifiees);
             } else {
-                System.out.println("Aucun médicament trouvé avec id = " + medicament.getId());
+                System.err.println("❌ Échec de la modification : Aucune ligne affectée !");
             }
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la modification du médicament : " + e.getMessage());
+            System.err.println("❌ Erreur lors de la modification du médicament : " + e.getMessage());
+            throw e;
         }
     }
+
 
     public void supprimerMedicamentParId(Integer id) {
         String deleteSQL = "DELETE FROM medicament WHERE id = ?";

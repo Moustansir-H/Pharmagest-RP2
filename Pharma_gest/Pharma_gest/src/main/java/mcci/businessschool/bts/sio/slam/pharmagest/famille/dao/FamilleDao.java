@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FamilleDao {
 
@@ -27,7 +29,8 @@ public class FamilleDao {
 
             if (rs.next()) {
                 String nom = rs.getString("nom");
-                famille = new Famille(nom); // Crée une instance de Famille avec le nom récupéré
+                famille = new Famille(id, nom); // ✅ Maintenant l'ID est bien récupéré !
+
             }
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération de la famille : " + e.getMessage());
@@ -36,17 +39,39 @@ public class FamilleDao {
         return famille;
     }
 
-    public int getFamilleIdByName(String nom) throws SQLException {
-        String query = "SELECT id FROM famille WHERE nom = ?";
-        try (PreparedStatement pstmt = baseDeDonneeConnexion.prepareStatement(query)) {
-            pstmt.setString(1, nom);
-            try (ResultSet rs = pstmt.executeQuery()) {
+    public Integer getFamilleIdByName(String nom) {
+        String sql = "SELECT id FROM famille WHERE nom = ?";
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setString(1, nom);
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur SQL lors de la récupération de l'ID de la famille : " + e.getMessage());
         }
-        throw new SQLException("Aucune famille trouvée avec le nom : " + nom);
+        return null; // ✅ Retourne `null` si non trouvé
     }
+
+
+    public List<Famille> recupererToutesLesFamilles() {
+        List<Famille> familles = new ArrayList<>();
+        String sql = "SELECT id, nom FROM famille";
+
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Famille famille = new Famille(rs.getInt("id"), rs.getString("nom"));
+                familles.add(famille);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la récupération des familles : " + e.getMessage());
+        }
+
+        return familles;
+    }
+
 
 }

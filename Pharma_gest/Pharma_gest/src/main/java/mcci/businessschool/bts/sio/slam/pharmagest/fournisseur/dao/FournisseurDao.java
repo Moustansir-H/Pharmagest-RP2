@@ -75,7 +75,7 @@ public class FournisseurDao {
     /**
      * ✅ Récupérer l'ID d'un fournisseur par son nom
      */
-    public int getFournisseurIdByName(String nom) throws SQLException {
+    public Integer getFournisseurIdByName(String nom) {
         String query = "SELECT id FROM fournisseur WHERE nom = ?";
         try (PreparedStatement pstmt = baseDeDonneeConnexion.prepareStatement(query)) {
             pstmt.setString(1, nom);
@@ -84,9 +84,12 @@ public class FournisseurDao {
                     return rs.getInt("id");
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur SQL lors de la récupération de l'ID du fournisseur : " + e.getMessage());
         }
-        throw new SQLException("Aucun fournisseur trouvé avec le nom : " + nom);
+        return null; // ✅ Retourne `null` si non trouvé au lieu d'une exception
     }
+
 
     /**
      * ✅ Ajouter un fournisseur avec email

@@ -2,11 +2,8 @@ package mcci.businessschool.bts.sio.slam.pharmagest.vente.service;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.facture.Facture;
 import mcci.businessschool.bts.sio.slam.pharmagest.facture.service.FactureService;
-import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.service.MedicamentService;
-import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.service.PaiementService;
-import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.Vendeur;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.TypeVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
@@ -82,7 +79,7 @@ public class VenteIntegrationService {
      * @param paiement  L'objet Paiement renseigné par le vendeur.
      * @param vendeurId L'ID du vendeur (caissier) finalisant la transaction.
      */
-    public void finaliserPaiementVendeur(int venteId, Paiement paiement, int vendeurId) {
+  /*  public void finaliserPaiementVendeur(int venteId, Paiement paiement, int vendeurId) {
         // Enregistrer le paiement
         paiement.setVenteId(venteId);
         paiementService.ajouterPaiement(paiement);
@@ -113,5 +110,5 @@ public class VenteIntegrationService {
         }
 
         System.out.println("Paiement validé et vente finalisée pour la vente ID : " + venteId);
-    }
+    }*/
 }
