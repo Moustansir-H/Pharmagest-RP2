@@ -39,7 +39,7 @@
         </AnchorPane>
     </left>
     <center>
-        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: blanc;" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
             <children>
                 <Button fx:id="approvisionnementButton" layoutX="266.0" layoutY="200.0" mnemonicParsing="false" onAction="#ouvrirApprovisionnement" prefHeight="66.0" prefWidth="135.0" style="-fx-background-color: grey;" text="Approvisionnement" textFill="WHITE" />
                 <Button fx:id="caisseButton" layoutX="278.0" layoutY="95.0" mnemonicParsing="false" onAction="#caisseButtonOnAction" prefHeight="66.0" prefWidth="110.0" style="-fx-background-color: grey;" text="Caissse" textFill="WHITE" />
