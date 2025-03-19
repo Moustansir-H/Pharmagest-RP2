@@ -33,6 +33,9 @@ public class DashboardControleur {
     private Button ouvrirGenerationCommande;
 
     @FXML
+    private Button FournisseurButton;
+
+    @FXML
     public void caisseButtonOnAction(ActionEvent e) throws IOException {
         // Nouvelle scène
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/caisse/Caisse.fxml"));
@@ -112,6 +115,16 @@ public class DashboardControleur {
         } catch (IOException e) {
             System.err.println("❌ Erreur lors de l'ouverture de la génération de commande : " + e.getMessage());
         }
+    }
+    @FXML
+    public void fournisseurButtonOnAction(ActionEvent e) throws IOException {
+        // Nouvelle scène
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fournisseur/Fournisseur.fxml"));
+        Scene nouvelleScene = new Scene(loader.load());
+        // La référence de la scène actuelle
+        Stage stage = (Stage) FournisseurButton.getScene().getWindow();
+        // Afficher la nouvelle scène
+        stage.setScene(nouvelleScene);
     }
 
 

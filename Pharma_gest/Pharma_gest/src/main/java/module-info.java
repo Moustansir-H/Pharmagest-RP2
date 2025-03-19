@@ -50,6 +50,9 @@ module mcci.businessschool.bts.sio.slam.pharmagest {
     exports mcci.businessschool.bts.sio.slam.pharmagest.medicament;
     exports mcci.businessschool.bts.sio.slam.pharmagest.vendeur;
     exports mcci.businessschool.bts.sio.slam.pharmagest.patient;
+    exports mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.controleur;
+    opens mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.controleur to javafx.fxml;
+
 
 
 }
