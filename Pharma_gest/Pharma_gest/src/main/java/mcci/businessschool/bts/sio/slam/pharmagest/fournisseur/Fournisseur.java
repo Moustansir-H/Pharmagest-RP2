@@ -1,94 +1,111 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.fournisseur;
 
-import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
+import javafx.beans.property.*;
 
 public class Fournisseur {
-    private int id; // Identifiant unique
-    private String nom;
-    private String adresse;
-    private String contact;
-    private String email; // ✅ Ajout de l'email
+    private final IntegerProperty id;
+    private final StringProperty nom;
+    private final StringProperty adresse;
+    private final StringProperty contact;
+    private final StringProperty email;
 
-    // ✅ Constructeur complet avec email
+    // ✅ Constructeur principal
     public Fournisseur(int id, String nom, String adresse, String contact, String email) {
-        this.id = id;
-        this.nom = nom;
-        this.adresse = adresse;
-        this.contact = contact;
-        this.email = email;
+        this.id = new SimpleIntegerProperty(id);
+        this.nom = new SimpleStringProperty(nom);
+        this.adresse = new SimpleStringProperty(adresse);
+        this.contact = new SimpleStringProperty(contact);
+        this.email = new SimpleStringProperty(email);
     }
 
-    public Fournisseur(int id, String nom) {
-        this.id = id;
-        this.nom = nom;
-        this.adresse = "Adresse inconnue";
-        this.contact = "Contact inconnu";
-        this.email = "Email inconnu";
-    }
-
-    // ✅ Constructeur sans id (utile pour les nouvelles insertions)
+    // ✅ Constructeur sans ID (utile pour les nouvelles insertions)
     public Fournisseur(String nom, String adresse, String contact, String email) {
-        this.nom = nom;
-        this.adresse = adresse;
-        this.contact = contact;
-        this.email = email;
+        this.id = new SimpleIntegerProperty(0); // Valeur temporaire
+        this.nom = new SimpleStringProperty(nom);
+        this.adresse = new SimpleStringProperty(adresse);
+        this.contact = new SimpleStringProperty(contact);
+        this.email = new SimpleStringProperty(email);
     }
 
+    // ✅ Constructeur simplifié avec ID et nom
+    public Fournisseur(int id, String nom) {
+        this.id = new SimpleIntegerProperty(id);
+        this.nom = new SimpleStringProperty(nom);
+        this.adresse = new SimpleStringProperty("Adresse inconnue");
+        this.contact = new SimpleStringProperty("Contact inconnu");
+        this.email = new SimpleStringProperty("Email inconnu");
+    }
 
-    // ✅ Getters et Setters
+    // ✅ Getters et Setters avec JavaFX Properties
     public int getId() {
-        return id;
+        return id.get();
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id.set(id);
+    }
+
+    public IntegerProperty idProperty() {
+        return id;
     }
 
     public String getNom() {
-        return nom;
+        return nom.get();
     }
 
     public void setNom(String nom) {
-        this.nom = nom;
+        this.nom.set(nom);
+    }
+
+    public StringProperty nomProperty() {
+        return nom;
     }
 
     public String getAdresse() {
-        return adresse;
+        return adresse.get();
     }
 
     public void setAdresse(String adresse) {
-        this.adresse = adresse;
+        this.adresse.set(adresse);
+    }
+
+    public StringProperty adresseProperty() {
+        return adresse;
     }
 
     public String getContact() {
-        return contact;
+        return contact.get();
     }
 
     public void setContact(String contact) {
-        this.contact = contact;
+        this.contact.set(contact);
+    }
+
+    public StringProperty contactProperty() {
+        return contact;
     }
 
     public String getEmail() {
-        return email;
+        return email.get();
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email.set(email);
     }
 
-    // ✅ Méthode pour récupérer le prix d'un médicament (optionnel)
-    public double getPrix(Medicament medicament) {
-        throw new UnsupportedOperationException("Cette méthode n'est pas encore implémentée.");
+    public StringProperty emailProperty() {
+        return email;
     }
 
+    // ✅ Affichage pour debugging
     @Override
     public String toString() {
         return "Fournisseur{" +
-                "id=" + id +
-                ", nom='" + nom + '\'' +
-                ", adresse='" + adresse + '\'' +
-                ", contact='" + contact + '\'' +
-                ", email='" + email + '\'' + // ✅ Ajout de l'email dans l'affichage
+                "id=" + getId() +
+                ", nom='" + getNom() + '\'' +
+                ", adresse='" + getAdresse() + '\'' +
+                ", contact='" + getContact() + '\'' +
+                ", email='" + getEmail() + '\'' +
                 '}';
     }
 }
