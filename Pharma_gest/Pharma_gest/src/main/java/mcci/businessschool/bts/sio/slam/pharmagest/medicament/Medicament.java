@@ -1,9 +1,10 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.medicament;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.Famille;
-import mcci.businessschool.bts.sio.slam.pharmagest.unite.Unite;
+import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
 
 public class Medicament {
+    private int id;
     private String nom;
     private String forme;
     private double prixAchat;
@@ -12,12 +13,12 @@ public class Medicament {
     private int seuilCommande;
     private int qteMax;
     private Famille famille;
-    private Unite unite;
+    private Fournisseur fournisseur;
 
-    // Constructeur et getters/setters
-
-    public Medicament(String nom, String forme, double prixAchat, double prixVente, int stock,
-                      int seuilCommande, int qteMax, Famille famille, Unite unite) {
+    // Constructeur sans Unite
+    public Medicament(int id, String nom, String forme, double prixAchat, double prixVente, int stock,
+                      int seuilCommande, int qteMax, Famille famille, Fournisseur fournisseur) {
+        this.id = id;
         this.nom = nom;
         this.forme = forme;
         this.prixAchat = prixAchat;
@@ -26,80 +27,128 @@ public class Medicament {
         this.seuilCommande = seuilCommande;
         this.qteMax = qteMax;
         this.famille = famille;
-        this.unite = unite;
+        this.fournisseur = fournisseur;
     }
 
-    // Getters et setters pour chaque attribut
+    public Medicament(String nom, String forme, double prixAchat, double prixVente, int stock,
+                      int seuilCommande, int qteMax, Famille famille, Fournisseur fournisseur) {
+        this.id = -1;
+        this.nom = nom;
+        this.forme = forme;
+        this.prixAchat = prixAchat;
+        this.prixVente = prixVente;
+        this.stock = stock;
+        this.seuilCommande = seuilCommande;
+        this.qteMax = qteMax;
+        this.famille = famille;
+        this.fournisseur = fournisseur;
+    }
+
+    // Suppression des références à Unite
+
+    // Getters et setters
+    public int getId() {
+        return id;
+    }
 
     public String getNom() {
         return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
     }
 
     public String getForme() {
         return forme;
     }
 
-    public void setForme(String forme) {
-        this.forme = forme;
-    }
-
     public double getPrixAchat() {
         return prixAchat;
-    }
-
-    public void setPrixAchat(double prixAchat) {
-        this.prixAchat = prixAchat;
     }
 
     public double getPrixVente() {
         return prixVente;
     }
 
-    public void setPrixVente(double prixVente) {
-        this.prixVente = prixVente;
-    }
-
     public int getStock() {
         return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
     }
 
     public int getSeuilCommande() {
         return seuilCommande;
     }
 
-    public void setSeuilCommande(int seuilCommande) {
-        this.seuilCommande = seuilCommande;
-    }
-
     public int getQteMax() {
         return qteMax;
-    }
-
-    public void setQteMax(int qteMax) {
-        this.qteMax = qteMax;
     }
 
     public Famille getFamille() {
         return famille;
     }
 
+    public Fournisseur getFournisseur() {
+        return fournisseur;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public void setForme(String forme) {
+        this.forme = forme;
+    }
+
+    public void setPrixAchat(double prixAchat) {
+        this.prixAchat = prixAchat;
+    }
+
+    public void setPrixVente(double prixVente) {
+        this.prixVente = prixVente;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public void setSeuilCommande(int seuilCommande) {
+        this.seuilCommande = seuilCommande;
+    }
+
+    public void setQteMax(int qteMax) {
+        this.qteMax = qteMax;
+    }
+
     public void setFamille(Famille famille) {
         this.famille = famille;
     }
 
-    public Unite getUnite() {
-        return unite;
+    public void setFournisseur(Fournisseur fournisseur) {
+        this.fournisseur = fournisseur;
     }
 
-    public void setUnite(Unite unite) {
-        this.unite = unite;
+    public String getFamilleNom() {
+        return (famille != null) ? famille.getNom() : "Aucune";
+    }
+
+    public String getFournisseurNom() {
+        return (fournisseur != null) ? fournisseur.getNom() : "Aucun";
+    }
+
+
+    @Override
+    public String toString() {
+        return "Medicament{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", forme='" + forme + '\'' +
+                ", prixAchat=" + prixAchat +
+                ", prixVente=" + prixVente +
+                ", stock=" + stock +
+                ", seuilCommande=" + seuilCommande +
+                ", qteMax=" + qteMax +
+                ", famille=" + (famille != null ? famille.getNom() : "Aucune") +
+                ", fournisseur=" + (fournisseur != null ? fournisseur.getNom() : "Aucun") +
+                '}';
     }
 }
