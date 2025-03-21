@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur.VenteControleur">
@@ -23,7 +26,68 @@
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
 
-            <!-- Barre de recherche (sans bouton) -->
+            <!-- Sélection du type de vente -->
+            <HBox spacing="10">
+                <Label text="Type de vente :" style="-fx-font-weight:bold;"/>
+                <ChoiceBox fx:id="choiceTypeVente">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="LIBRE"/>
+                            <String fx:value="PRESCRITE"/>
+                        </FXCollections>
+                    </items>
+                </ChoiceBox>
+            </HBox>
+
+            <!-- Section pour les informations du patient et de la prescription (cachée par défaut) -->
+            <VBox fx:id="sectionPrescription" spacing="10" visible="false">
+                <Label text="Informations du Patient" style="-fx-font-weight:bold;"/>
+
+                <!-- 🔍 Ajout de la barre de recherche patient -->
+                <HBox spacing="10">
+                    <Label text="Rechercher patient :" style="-fx-font-weight:bold;"/>
+                    <TextField fx:id="txtRecherchePatient" promptText="Entrez un nom..."/>
+                    <Button text="Rechercher" onAction="#handleRechercherPatient"/>
+                </HBox>
+
+                <GridPane hgap="10" vgap="5">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Nom :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtPatientNom" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Prénom :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtPatientPrenom" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Date de naissance :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="datePatientNaissance" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <Label text="Adresse :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtPatientAdresse" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                    <Label text="Contact :" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtPatientContact" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Label text="Informations de la Prescription" style="-fx-font-weight:bold;"/>
+                <GridPane hgap="10" vgap="5">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Nom du médecin :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtNomMedecin" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Date de prescription :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="datePrescription" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <!-- Barre de recherche des médicaments -->
             <HBox spacing="10">
                 <Label text="Rechercher :" style="-fx-font-weight:bold;"/>
                 <TextField fx:id="txtRecherche" promptText="Tapez un nom de médicament..."/>

@@ -15,6 +15,28 @@ public class PatientDao {
         this.connection = DatabaseConnection.getConnexion();
     }
 
+    public Patient getPatientByNom(String nom) {
+        String query = "SELECT * FROM patient WHERE LOWER(nom) = LOWER(?) LIMIT 1";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, nom);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Patient(
+                        rs.getString("nom"),
+                        rs.getString("prenom"),
+                        rs.getDate("datenaissance"),
+                        rs.getString("adresse"),
+                        rs.getString("contact")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la recherche du patient : " + e.getMessage());
+        }
+        return null;
+    }
+
     public Integer ajouterPatient(Patient patient) throws SQLException {
         String insertSQL = "INSERT INTO patient (nom, prenom, datenaissance, adresse, contact) VALUES (?, ?, ?, ?, ?) RETURNING id";
         try (PreparedStatement stmt = connection.prepareStatement(insertSQL)) {

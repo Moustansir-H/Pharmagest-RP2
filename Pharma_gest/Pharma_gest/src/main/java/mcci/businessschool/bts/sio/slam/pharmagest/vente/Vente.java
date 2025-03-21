@@ -14,6 +14,7 @@ public class Vente {
     private Vendeur vendeur;
     private Facture facture;
     private Paiement paiement;
+    private Integer prescriptionId;
 
     public Vente(Date dateVente, double montantTotal, TypeVente typeVente, Vendeur vendeur) {
         this.dateVente = dateVente;
@@ -22,12 +23,27 @@ public class Vente {
         this.vendeur = vendeur;
     }
 
-    public void effectuerVente() {
-        // TODO Implémentation de l'effectuation de la vente
+    // ✅ Méthode pour récupérer le statut du paiement via l'objet Paiement
+    public String getStatutPaiement() {
+        return (paiement != null) ? paiement.getStatut().name() : "EN_ATTENTE";
     }
 
-    // Getters et setters
+    // ✅ Mise à jour du paiement lors de la validation
+    public void validerPaiement(Paiement paiement) {
+        this.paiement = paiement;
+        System.out.println("✅ Paiement validé pour la vente ID : " + this.id);
+    }
 
+    // ✅ Getter et Setter pour prescriptionId
+    public Integer getPrescriptionId() {
+        return prescriptionId;
+    }
+
+    public void setPrescriptionId(Integer prescriptionId) {
+        this.prescriptionId = prescriptionId;
+    }
+
+    // ✅ Getters et Setters existants
     public int getId() {
         return id;
     }
@@ -83,6 +99,4 @@ public class Vente {
     public void setPaiement(Paiement paiement) {
         this.paiement = paiement;
     }
-
-
 }

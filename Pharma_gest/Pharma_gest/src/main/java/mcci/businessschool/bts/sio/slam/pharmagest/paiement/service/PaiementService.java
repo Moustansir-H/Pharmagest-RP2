@@ -46,4 +46,13 @@ public class PaiementService {
     public boolean mettreAJourStatutPaiement(int id, StatutPaiement statut) {
         return paiementDAO.mettreAJourStatutPaiement(id, statut);
     }
+
+    /**
+     * Récupérer un paiement par l'ID de la vente
+     */
+    public Paiement getPaiementByVenteId(int venteId) {
+        return paiementDAO.getPaiementByVenteId(venteId);
+    }
+
+
 }

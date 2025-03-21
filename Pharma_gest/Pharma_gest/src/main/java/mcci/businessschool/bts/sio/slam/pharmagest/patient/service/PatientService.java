@@ -18,4 +18,9 @@ public class PatientService {
             return null;
         }
     }
+
+    public Patient rechercherPatientParNom(String nom) {
+        return patientDao.getPatientByNom(nom);
+    }
+
 }

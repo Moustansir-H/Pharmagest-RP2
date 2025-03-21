@@ -9,9 +9,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.service.MedicamentService;
+import mcci.businessschool.bts.sio.slam.pharmagest.patient.Patient;
+import mcci.businessschool.bts.sio.slam.pharmagest.patient.service.PatientService;
+import mcci.businessschool.bts.sio.slam.pharmagest.prescription.Prescription;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.TypeVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
@@ -25,20 +29,13 @@ public class VenteControleur {
     @FXML
     private TableView<Medicament> tableMedicaments;
     @FXML
-    private TableColumn<Medicament, String> colMedNom;
-    @FXML
-    private TableColumn<Medicament, String> colMedForme;
+    private TableColumn<Medicament, String> colMedNom, colMedForme;
     @FXML
     private TableColumn<Medicament, Integer> colMedStock;
     @FXML
     private TableColumn<Medicament, Double> colMedPrixVente;
     @FXML
-    private Button retourDashboard;
-    @FXML
-    private TextField txtRecherche; // Recherche en temps réel
-
-    @FXML
-    private TextField txtQuantite;
+    private TextField txtRecherche, txtQuantite;
     @FXML
     private TableView<LigneVente> tableLignesVente;
     @FXML
@@ -46,22 +43,36 @@ public class VenteControleur {
     @FXML
     private TableColumn<LigneVente, Integer> colVenteQuantite;
     @FXML
-    private TableColumn<LigneVente, Double> colVentePrixUnitaire;
-    @FXML
-    private TableColumn<LigneVente, Double> colVenteSousTotal;
+    private TableColumn<LigneVente, Double> colVentePrixUnitaire, colVenteSousTotal;
     @FXML
     private Label lblMontantTotal;
+    @FXML
+    private ChoiceBox<String> choiceTypeVente;
+    @FXML
+    private VBox sectionPrescription;
+    @FXML
+    private TextField txtPatientNom, txtPatientPrenom, txtPatientAdresse, txtPatientContact, txtNomMedecin;
+    @FXML
+    private DatePicker datePatientNaissance, datePrescription;
+    @FXML
+    private Button retourDashboard;
+    @FXML
+    private TextField txtRecherchePatient;
+
 
     private ObservableList<Medicament> listMedicaments = FXCollections.observableArrayList();
     private ObservableList<LigneVente> listLignesVente = FXCollections.observableArrayList();
 
     private MedicamentService medicamentService;
     private VenteIntegrationService venteIntegrationService;
+    private PatientService patientService;
+
 
     public VenteControleur() {
         try {
             medicamentService = new MedicamentService();
             venteIntegrationService = new VenteIntegrationService();
+            patientService = new PatientService();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,30 +80,31 @@ public class VenteControleur {
 
     @FXML
     private void initialize() {
-        // Configuration de la table des médicaments
+        // Gérer la visibilité du formulaire de prescription selon le type de vente
+        choiceTypeVente.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            sectionPrescription.setVisible("PRESCRITE".equals(newVal));
+        });
+
+        // Configuration de la TableView des médicaments
         colMedNom.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getNom()));
         colMedForme.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getForme()));
         colMedStock.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getStock()));
         colMedPrixVente.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getPrixVente()));
         tableMedicaments.setItems(listMedicaments);
 
-        // Charger la liste initiale
         chargerMedicaments();
 
-        // Ecouter les changements de texte pour filtrer en temps réel
         txtRecherche.textProperty().addListener((obs, oldVal, newVal) -> filtrerMedicaments(newVal));
 
-        // Configuration de la table des lignes de vente
-        colVenteMedicament.setCellValueFactory(cellData -> {
-            Medicament med = cellData.getValue().getMedicament();
-            return new ReadOnlyStringWrapper(med != null ? med.getNom() : "Inconnu");
-        });
+        // Configuration de la TableView des lignes de vente
+        colVenteMedicament.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getMedicament().getNom()));
         colVenteQuantite.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getQuantiteVendu()));
         colVentePrixUnitaire.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getPrixUnitaire()));
         colVenteSousTotal.setCellValueFactory(cellData -> {
             LigneVente ligne = cellData.getValue();
             return new ReadOnlyObjectWrapper<>(ligne.getQuantiteVendu() * ligne.getPrixUnitaire());
         });
+
         tableLignesVente.setItems(listLignesVente);
 
         lblMontantTotal.setText("0.00");
@@ -106,21 +118,17 @@ public class VenteControleur {
         }
     }
 
-    // Filtrer en fonction du texte saisi
     private void filtrerMedicaments(String recherche) {
         if (recherche == null || recherche.isBlank()) {
-            // Revenir à la liste complète si le champ est vide
             chargerMedicaments();
             return;
         }
         String lowerRecherche = recherche.toLowerCase();
-
         List<Medicament> allMeds = medicamentService.recupererMedicaments();
         if (allMeds != null) {
-            List<Medicament> filtered = allMeds.stream()
+            listMedicaments.setAll(allMeds.stream()
                     .filter(med -> med.getNom().toLowerCase().contains(lowerRecherche))
-                    .toList();
-            listMedicaments.setAll(filtered);
+                    .toList());
         }
     }
 
@@ -131,6 +139,7 @@ public class VenteControleur {
             showAlert(Alert.AlertType.WARNING, "Aucun médicament sélectionné", "Veuillez sélectionner un médicament.");
             return;
         }
+
         int quantite;
         try {
             quantite = Integer.parseInt(txtQuantite.getText());
@@ -138,26 +147,53 @@ public class VenteControleur {
             showAlert(Alert.AlertType.WARNING, "Quantité invalide", "Veuillez saisir une quantité numérique.");
             return;
         }
-        if (quantite <= 0) {
-            showAlert(Alert.AlertType.WARNING, "Quantité invalide", "La quantité doit être supérieure à 0.");
+
+        if (quantite <= 0 || quantite > selectedMed.getStock()) {
+            showAlert(Alert.AlertType.WARNING, "Stock insuffisant", "Quantité invalide.");
             return;
         }
-        if (quantite > selectedMed.getStock()) {
-            showAlert(Alert.AlertType.WARNING, "Stock insuffisant", "La quantité demandée dépasse le stock disponible.");
-            return;
+
+        // Vérifier si le médicament est déjà dans la liste
+        for (LigneVente ligne : listLignesVente) {
+            if (ligne.getMedicament().getId() == selectedMed.getId()) {
+                ligne.setQuantiteVendu(ligne.getQuantiteVendu() + quantite);
+                calculerMontantTotal();
+                txtQuantite.clear();
+                tableLignesVente.refresh();
+                return;
+            }
         }
-        LigneVente ligne = new LigneVente(quantite, selectedMed.getPrixVente(), selectedMed);
-        listLignesVente.add(ligne);
+
+        // Ajouter une nouvelle ligne si le médicament n'est pas encore présent
+        listLignesVente.add(new LigneVente(quantite, selectedMed.getPrixVente(), selectedMed));
         calculerMontantTotal();
         txtQuantite.clear();
     }
 
-    private void calculerMontantTotal() {
-        double total = 0.0;
-        for (LigneVente ligne : listLignesVente) {
-            total += ligne.getQuantiteVendu() * ligne.getPrixUnitaire();
+    @FXML
+    private void handleSupprimerLigneVente() {
+        LigneVente selectedLigne = tableLignesVente.getSelectionModel().getSelectedItem();
+        if (selectedLigne != null) {
+            listLignesVente.remove(selectedLigne);
+            calculerMontantTotal();
         }
-        lblMontantTotal.setText(String.format("%.2f", total));
+    }
+
+    private void calculerMontantTotal() {
+        lblMontantTotal.setText(String.format("%.2f", listLignesVente.stream()
+                .mapToDouble(ligne -> ligne.getQuantiteVendu() * ligne.getPrixUnitaire()).sum()));
+    }
+
+    @FXML
+    public void retourDashboardOnAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
+            Scene nouvelleScene = new Scene(loader.load());
+            Stage stage = (Stage) retourDashboard.getScene().getWindow();
+            stage.setScene(nouvelleScene);
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger le Dashboard !");
+        }
     }
 
     @FXML
@@ -166,31 +202,100 @@ public class VenteControleur {
             showAlert(Alert.AlertType.WARNING, "Aucune ligne", "Ajoutez au moins un médicament à la vente.");
             return;
         }
-        try {
-            Vente venteCree = venteIntegrationService.creerVentePharmacien(listLignesVente, TypeVente.LIBRE);
-            showAlert(Alert.AlertType.INFORMATION, "Vente créée",
-                    "Vente ID : " + venteCree.getId() +
-                            "\nFacture : " + (venteCree.getFacture() != null ? venteCree.getFacture().getNumeroFacture() : "Inconnue") +
-                            "\nMontant Total : " + lblMontantTotal.getText());
-            listLignesVente.clear();
-            lblMontantTotal.setText("0.00");
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur lors de la validation de la vente", e.getMessage());
+
+        TypeVente type = TypeVente.valueOf(choiceTypeVente.getValue());
+        Patient patient = null;
+        Prescription prescription = null;
+
+        if (type == TypeVente.PRESCRITE) {
+            if (txtPatientNom.getText().isBlank() || txtPatientPrenom.getText().isBlank() ||
+                    datePatientNaissance.getValue() == null || txtPatientAdresse.getText().isBlank() ||
+                    txtPatientContact.getText().isBlank() || txtNomMedecin.getText().isBlank() ||
+                    datePrescription.getValue() == null) {
+
+                showAlert(Alert.AlertType.WARNING, "Champs manquants", "Veuillez remplir toutes les informations du patient et de la prescription.");
+                return;
+            }
+
+            // Création du patient
+            patient = new Patient(
+                    txtPatientNom.getText(),
+                    txtPatientPrenom.getText(),
+                    java.sql.Date.valueOf(datePatientNaissance.getValue()),
+                    txtPatientAdresse.getText(),
+                    txtPatientContact.getText()
+            );
+
+            // Création de la prescription
+            prescription = new Prescription(
+                    txtNomMedecin.getText(),
+                    java.sql.Date.valueOf(datePrescription.getValue())
+            );
+        }
+
+        // Création et validation de la vente
+        Vente vente = venteIntegrationService.creerVentePharmacien(listLignesVente, type, patient, prescription);
+        showAlert(Alert.AlertType.INFORMATION, "Vente créée", "Vente ID : " + vente.getId());
+
+        // Réinitialiser l'interface utilisateur
+        resetInterface();
+    }
+
+
+    @FXML
+    private void handleRechercherPatient() {
+        String nomRecherche = txtRecherchePatient.getText().trim();
+
+        if (nomRecherche.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Recherche vide", "Veuillez entrer un nom de patient.");
+            return;
+        }
+
+        // Recherche du patient en base
+        Patient patientTrouve = patientService.rechercherPatientParNom(nomRecherche);
+
+        if (patientTrouve != null) {
+            // Remplir automatiquement les champs avec les infos du patient trouvé
+            txtPatientNom.setText(patientTrouve.getNom());
+            txtPatientPrenom.setText(patientTrouve.getPrenom());
+            datePatientNaissance.setValue(patientTrouve.getDateNaissance().toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDate());
+
+            txtPatientAdresse.setText(patientTrouve.getAdresse());
+            txtPatientContact.setText(patientTrouve.getContact());
+
+            showAlert(Alert.AlertType.INFORMATION, "Patient trouvé", "Les informations du patient ont été chargées.");
+        } else {
+            showAlert(Alert.AlertType.WARNING, "Aucun patient trouvé", "Aucun patient correspondant à ce nom.");
         }
     }
 
-    // Méthode pour gérer le bouton Retour
-    @FXML
-    public void retourDashboardOnAction(ActionEvent e) throws IOException {
-        // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
-        Scene nouvelleScene = new Scene(loader.load());
-        // La référence de la scène actuelle
-        Stage stage = (Stage) retourDashboard.getScene().getWindow();
-        // Afficher la nouvelle scène
-        stage.setScene(nouvelleScene);
+
+    private void resetInterface() {
+        // Réinitialiser les champs du patient
+        txtPatientNom.clear();
+        txtPatientPrenom.clear();
+        txtPatientAdresse.clear();
+        txtPatientContact.clear();
+        datePatientNaissance.setValue(null);
+
+        // Réinitialiser les champs de la prescription
+        txtNomMedecin.clear();
+        datePrescription.setValue(null);
+
+        // Réinitialiser le type de vente
+        choiceTypeVente.setValue("LIBRE");
+        sectionPrescription.setVisible(false);
+
+        // Vider la liste des lignes de vente
+        listLignesVente.clear();
+        tableLignesVente.refresh();
+
+        // Remettre le montant total à zéro
+        lblMontantTotal.setText("0.00");
     }
+
 
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
