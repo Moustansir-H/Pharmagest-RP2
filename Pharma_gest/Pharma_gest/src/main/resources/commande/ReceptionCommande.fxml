@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.livraison.controleur.LivraisonControleur">
+
+    <!-- En-tête : Titre de la vue -->
+    <top>
+        <HBox spacing="10" alignment="CENTER" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Liste des Livraisons"/>
+            </children>
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </HBox>
+    </top>
+
+    <!-- Centre : Tableau des livraisons -->
+    <center>
+        <VBox spacing="10" alignment="CENTER">
+            <children>
+                <TableView fx:id="tableLivraisons" prefWidth="800" prefHeight="400">
+                    <columns>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+                        <TableColumn fx:id="colDate" text="Date Livraison" prefWidth="150"/>
+                        <TableColumn fx:id="colStatus" text="Statut" prefWidth="100"/>
+                        <TableColumn fx:id="colCommandeId" text="Commande ID" prefWidth="100"/>
+                        <TableColumn fx:id="colFournisseur" text="Fournisseur" prefWidth="200"/>
+                    </columns>
+                </TableView>
+            </children>
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </VBox>
+    </center>
+
+    <!-- Bas : Boutons de navigation -->
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="btnVoirDetails" text="Voir Détails" onAction="#voirDetails"/>
+                <Button fx:id="btnRetour" text="Retour" onAction="#retourApprovisionnement"/>
+            </children>
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </HBox>
+    </bottom>
+
+</BorderPane>

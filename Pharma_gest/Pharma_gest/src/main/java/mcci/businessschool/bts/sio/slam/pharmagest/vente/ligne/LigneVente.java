@@ -6,6 +6,8 @@ public class LigneVente {
     private int quantiteVendu;
     private double prixUnitaire;
     private Medicament medicament;
+    // Ajout de l'attribut pour stocker l'ID de la vente associée
+    private int venteId;
 
     public LigneVente(int quantiteVendu, double prixUnitaire, Medicament medicament) {
         this.quantiteVendu = quantiteVendu;
@@ -13,8 +15,7 @@ public class LigneVente {
         this.medicament = medicament;
     }
 
-    // Getters et setters
-
+    // Getters et setters existants
     public int getQuantiteVendu() {
         return quantiteVendu;
     }
@@ -37,5 +38,14 @@ public class LigneVente {
 
     public void setMedicament(Medicament medicament) {
         this.medicament = medicament;
+    }
+
+    // Nouveaux accesseurs pour venteId
+    public int getVenteId() {
+        return venteId;
+    }
+
+    public void setVenteId(int venteId) {
+        this.venteId = venteId;
     }
 }

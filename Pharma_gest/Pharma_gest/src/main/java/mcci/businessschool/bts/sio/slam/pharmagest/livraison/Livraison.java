@@ -3,28 +3,41 @@ package mcci.businessschool.bts.sio.slam.pharmagest.livraison;
 import java.util.Date;
 
 public class Livraison {
+    private int id;
     private Date dateLivraison;
     private String status;
+    private int commandeId;
+    private int fournisseurId;
 
-    public Livraison(Date dateLivraison, String status) {
+    // Constructeur vide
+    public Livraison() {
+    }
+
+    // Constructeur avec tous les attributs (avec id)
+    public Livraison(int id, Date dateLivraison, String status, int commandeId, int fournisseurId) {
+        this.id = id;
         this.dateLivraison = dateLivraison;
         this.status = status;
+        this.commandeId = commandeId;
+        this.fournisseurId = fournisseurId;
     }
 
-    public void suivreLivraison() {
-        // TODO Implémentation du suivi de la livraison
+    // Constructeur sans id (pour les nouvelles insertions)
+    public Livraison(Date dateLivraison, String status, int commandeId, int fournisseurId) {
+        this.dateLivraison = dateLivraison;
+        this.status = status;
+        this.commandeId = commandeId;
+        this.fournisseurId = fournisseurId;
     }
 
-    public void recevoirCommande() {
-        // TODO Implémentation de la réception de la commande
+    // Getters et Setters
+    public int getId() {
+        return id;
     }
 
-    public void mettreAJourStock() {
-        // TODO Implémentation de la mise à jour du stock
+    public void setId(int id) {
+        this.id = id;
     }
-
-    // Getters et setters
-
 
     public Date getDateLivraison() {
         return dateLivraison;
@@ -40,5 +53,21 @@ public class Livraison {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getCommandeId() {
+        return commandeId;
+    }
+
+    public void setCommandeId(int commandeId) {
+        this.commandeId = commandeId;
+    }
+
+    public int getFournisseurId() {
+        return fournisseurId;
+    }
+
+    public void setFournisseurId(int fournisseurId) {
+        this.fournisseurId = fournisseurId;
     }
 }
