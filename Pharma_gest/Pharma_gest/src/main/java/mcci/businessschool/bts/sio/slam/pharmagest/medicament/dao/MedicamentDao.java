@@ -91,6 +91,7 @@ public class MedicamentDao {
         String sql = "SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, " +
                 "famille_id, fournisseur_id FROM medicament WHERE nom = ?";
 
+
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
             stmt.setString(1, nom);
             ResultSet rs = stmt.executeQuery();
@@ -118,6 +119,52 @@ public class MedicamentDao {
 
         return null;
     }
+
+    public Medicament recupererMedicamentParNomEtForme(String nom, String forme) {
+        String sql = """
+                    SELECT id, nom, forme, prixachat, prixvente, stock, seuilcommande, qtemax, 
+                           famille_id, fournisseur_id 
+                    FROM medicament 
+                    WHERE LOWER(nom) = LOWER(?) AND LOWER(forme) = LOWER(?)
+                """;
+
+        System.out.println("🔍 Recherche du médicament : nom = '" + nom + "', forme = '" + forme + "'");
+
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setString(1, nom);
+            stmt.setString(2, forme);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                String nomMedicament = rs.getString("nom");
+                String formeMedicament = rs.getString("forme");
+
+                double prixAchat = rs.getDouble("prixachat");
+                double prixVente = rs.getDouble("prixvente");
+                int stock = rs.getInt("stock");
+                int seuilCommande = rs.getInt("seuilcommande");
+                int qteMax = rs.getInt("qtemax");
+
+                int familleId = rs.getInt("famille_id");
+                int fournisseurId = rs.getInt("fournisseur_id");
+
+                Famille famille = familleDao.getFamilleById(familleId);
+                Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
+
+                Medicament medicament = new Medicament(id, nomMedicament, formeMedicament, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur);
+                System.out.println("✅ Médicament trouvé : " + nomMedicament + " (" + formeMedicament + "), ID = " + id);
+                return medicament;
+            } else {
+                System.out.println("❌ Aucun médicament trouvé avec ce nom et forme !");
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la recherche du médicament : " + e.getMessage());
+        }
+
+        return null;
+    }
+
 
     public List<Medicament> recupererMedicamentsSousSeuil() throws SQLException {
         List<Medicament> medicaments = new ArrayList<>();
