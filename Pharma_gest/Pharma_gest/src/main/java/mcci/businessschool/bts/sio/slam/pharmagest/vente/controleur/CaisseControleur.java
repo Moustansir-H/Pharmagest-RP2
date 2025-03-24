@@ -1,19 +1,26 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
+import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
+import mcci.businessschool.bts.sio.slam.pharmagest.paiement.StatutPaiement;
+import mcci.businessschool.bts.sio.slam.pharmagest.paiement.service.PaiementService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
-import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteIntegrationService;
+import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
+import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteService;
 
-import java.time.ZoneId;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -31,19 +38,33 @@ public class CaisseControleur {
     private TableColumn<Vente, String> colNumeroFacture;
 
     @FXML
+    private TableView<LigneVente> tableLignesVente;
+    @FXML
+    private TableColumn<LigneVente, String> colMedicamentNom;
+    @FXML
+    private TableColumn<LigneVente, Integer> colQuantite;
+    @FXML
+    private TableColumn<LigneVente, Double> colPrixUnitaire;
+
+    @FXML
+    private Label lblIdVente, lblDateVente, lblMontantTotal, lblTypeVente, lblMonnaie;
+    @FXML
     private TextField txtMontantRecu;
     @FXML
-    private TextField txtModePaiement;
+    private Button retourDashboard;
 
     private ObservableList<Vente> listeVentes = FXCollections.observableArrayList();
+    private ObservableList<LigneVente> lignesVenteObservable = FXCollections.observableArrayList();
 
     private VenteService venteService;
-    private VenteIntegrationService venteIntegrationService;
+    private LigneVenteService ligneVenteService;
+    private PaiementService paiementService;
 
     public CaisseControleur() {
         try {
             venteService = new VenteService();
-            venteIntegrationService = new VenteIntegrationService();
+            ligneVenteService = new LigneVenteService();
+            paiementService = new PaiementService();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,96 +72,143 @@ public class CaisseControleur {
 
     @FXML
     private void initialize() {
+        // Colonnes ventes
         colVenteId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDateVente.setCellValueFactory(cellData -> {
             Date date = cellData.getValue().getDateVente();
-            String dateStr = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString();
-            return new ReadOnlyStringWrapper(dateStr);
+            return new ReadOnlyStringWrapper(((java.sql.Date) date).toLocalDate().toString());
         });
         colMontantTotal.setCellValueFactory(new PropertyValueFactory<>("montantTotal"));
         colNumeroFacture.setCellValueFactory(cellData -> {
-            String numFacture = cellData.getValue().getFacture() != null ? cellData.getValue().getFacture().getNumeroFacture() : "Non générée";
-            return new ReadOnlyStringWrapper(numFacture);
+            String facture = (cellData.getValue().getFacture() != null) ?
+                    cellData.getValue().getFacture().getNumeroFacture() : "Non générée";
+            return new ReadOnlyStringWrapper(facture);
         });
         tableVentes.setItems(listeVentes);
+
+        // Colonnes lignes de vente
+        colMedicamentNom.setCellValueFactory(cellData -> {
+            Medicament med = cellData.getValue().getMedicament();
+            return new ReadOnlyStringWrapper(med.getNom());
+        });
+        colQuantite.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getQuantiteVendu()));
+        colPrixUnitaire.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getPrixUnitaire()));
+        tableLignesVente.setItems(lignesVenteObservable);
+
+        // Gestion de la sélection de vente
+        tableVentes.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) afficherDetailsVente(newVal);
+        });
+
+        // Mise à jour de la monnaie automatiquement
+        txtMontantRecu.textProperty().addListener((obs, oldVal, newVal) -> {
+            Vente selected = tableVentes.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                try {
+                    double montantRecu = Double.parseDouble(newVal);
+                    double monnaie = montantRecu - selected.getMontantTotal();
+                    lblMonnaie.setText(String.format("Monnaie à rendre : %.2f €", monnaie));
+                } catch (NumberFormatException e) {
+                    lblMonnaie.setText("Monnaie à rendre : 0.00 €");
+                }
+            }
+        });
 
         chargerVentesEnAttente();
     }
 
+    private void afficherDetailsVente(Vente vente) {
+        lblIdVente.setText(String.valueOf(vente.getId()));
+        lblDateVente.setText(((java.sql.Date) vente.getDateVente()).toLocalDate().toString());
+        lblMontantTotal.setText(String.format("%.2f €", vente.getMontantTotal()));
+        lblTypeVente.setText(vente.getTypeVente().name());
+
+        try {
+            lignesVenteObservable.setAll(ligneVenteService.recupererLignesParVente(vente.getId()));
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les médicaments.");
+        }
+
+        // 🔁 Nettoyage du champ montant et monnaie
+        txtMontantRecu.clear();
+        lblMonnaie.setText("Monnaie à rendre : 0.00 €");
+    }
+
+
     private void chargerVentesEnAttente() {
         listeVentes.clear();
-        List<Vente> ventesEnAttente = venteService.recupererVentesEnAttente();
-        if (ventesEnAttente != null) {
-            listeVentes.setAll(ventesEnAttente);
+        List<Vente> enAttente = venteService.recupererVentesEnAttente();
+        if (enAttente != null) {
+            listeVentes.setAll(enAttente);
         }
     }
 
-/*
     @FXML
     private void handleValiderPaiement() {
         Vente selectedVente = tableVentes.getSelectionModel().getSelectedItem();
         if (selectedVente == null) {
-            showAlert(Alert.AlertType.WARNING, "Aucune vente sélectionnée", "Veuillez sélectionner une vente à finaliser.");
+            showAlert(Alert.AlertType.WARNING, "Aucune vente sélectionnée", "Veuillez sélectionner une vente.");
             return;
         }
+
         double montantRecu;
         try {
             montantRecu = Double.parseDouble(txtMontantRecu.getText());
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Montant invalide", "Veuillez saisir un montant valide.");
+            showAlert(Alert.AlertType.WARNING, "Montant invalide", "Veuillez entrer un montant valide.");
             return;
         }
+
         if (montantRecu < selectedVente.getMontantTotal()) {
-            showAlert(Alert.AlertType.WARNING, "Montant insuffisant", "Le montant reçu est inférieur au montant total de la vente.");
-            return;
-        }
-        String modePaiement = txtModePaiement.getText();
-        if (modePaiement == null || modePaiement.isBlank()) {
-            showAlert(Alert.AlertType.WARNING, "Mode de paiement manquant", "Veuillez saisir un mode de paiement.");
+            showAlert(Alert.AlertType.WARNING, "Montant insuffisant", "Le montant est insuffisant.");
             return;
         }
 
-        // Récupérer l'utilisateur connecté
-        Utilisateur user = SessionUtilisateur.getInstance().getUtilisateurConnecte();
-        if (user == null) {
-            showAlert(Alert.AlertType.ERROR, "Erreur de session", "Aucun utilisateur connecté. Veuillez vous reconnecter.");
-            return;
-        }
-        if (!(user instanceof Vendeur)) {
-            showAlert(Alert.AlertType.ERROR, "Erreur de rôle", "L'utilisateur connecté n'est pas un vendeur.");
-            return;
-        }
-        int vendeurId = user.getId();
-
-        // Créer et configurer l'objet Paiement
-        Paiement paiement = new Paiement(selectedVente.getMontantTotal(), modePaiement, StatutPaiement.VALIDE);
-        paiement.setVenteId(selectedVente.getId());
-        paiement.setVendeurId(vendeurId);
+        int vendeurId = 1; // à dynamiser plus tard
+        Paiement paiement = new Paiement(
+                selectedVente.getMontantTotal(),
+                "ESPECES",
+                StatutPaiement.EN_ATTENTE,
+                selectedVente.getId(),
+                vendeurId
+        );
 
         try {
-            venteIntegrationService.finaliserPaiementVendeur(selectedVente.getId(), paiement, vendeurId);
-            showAlert(Alert.AlertType.INFORMATION, "Paiement validé", "La vente a été finalisée.");
+            Integer paiementId = paiementService.ajouterPaiement(paiement);
+            venteService.validerPaiementEtMettreAJourStock(selectedVente.getId());
+
+            showAlert(Alert.AlertType.INFORMATION, "Paiement validé",
+                    String.format("💰 Monnaie à rendre : %.2f €", montantRecu - selectedVente.getMontantTotal()));
+
             chargerVentesEnAttente();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur lors de la finalisation", e.getMessage());
-        }
-    }*/
+            lignesVenteObservable.clear();
+            txtMontantRecu.clear();
+            lblIdVente.setText("");
+            lblDateVente.setText("");
+            lblMontantTotal.setText("");
+            lblTypeVente.setText("");
+            lblMonnaie.setText("Monnaie à rendre : 0.00 €");
 
-
-    @FXML
-    private void handleRetour() {
-        try {
-            // Par exemple, revenir au Dashboard via FXMLLoader (à adapter)
-            System.out.println("Retour au Dashboard.");
         } catch (Exception e) {
-            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
+    @FXML
+    public void retourDashboardOnAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
+            Scene nouvelleScene = new Scene(loader.load());
+            Stage stage = (Stage) retourDashboard.getScene().getWindow();
+            stage.setScene(nouvelleScene);
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger le Dashboard.");
+        }
+    }
+
+    private void showAlert(Alert.AlertType type, String titre, String message) {
         Alert alert = new Alert(type);
-        alert.setTitle(title);
+        alert.setTitle(titre);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

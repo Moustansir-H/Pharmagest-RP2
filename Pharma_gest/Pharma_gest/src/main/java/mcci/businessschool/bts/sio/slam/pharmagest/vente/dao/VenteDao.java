@@ -1,6 +1,8 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.vente.dao;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
+import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
+import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.StatutPaiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.dao.PaiementDao;
@@ -8,6 +10,7 @@ import mcci.businessschool.bts.sio.slam.pharmagest.paiement.service.PaiementServ
 import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.Vendeur;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.TypeVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
+import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteService;
 
 import java.sql.*;
@@ -182,6 +185,7 @@ public class VenteDao {
         return vente;
     }
 
+    /*
     public static void main(String[] args) {
         try {
             VenteService venteService = new VenteService();
@@ -226,6 +230,66 @@ public class VenteDao {
         } catch (Exception e) {
             System.err.println("❌ Erreur lors de la récupération de la vente et du paiement : " + e.getMessage());
         }
+    }*/
+
+    public static void main(String[] args) {
+        try {
+            VenteService venteService = new VenteService();
+            mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService ligneVenteService = new mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService();
+            MedicamentDao medicamentDao = new MedicamentDao();
+            PaiementService paiementService = new PaiementService();
+
+            Vendeur vendeur = new Vendeur(1, "caissier", "1234");
+            Vente vente = new Vente(new java.util.Date(), 0.0, TypeVente.LIBRE, vendeur);
+            Integer idVente = venteService.ajouterVente(vente);
+
+            if (idVente == null) return;
+            vente.setId(idVente);
+
+            Medicament med1 = medicamentDao.recupererMedicamentParNomEtForme("Doliprane 500mg", "Effervescent");
+            Medicament med2 = medicamentDao.recupererMedicamentParNomEtForme("Spasfon 160mg", "Comprimé");
+
+
+            if (med1 == null || med2 == null) {
+                System.err.println("❌ Médicaments non trouvés !");
+                return;
+            }
+
+            System.out.println("📦 Stock AVANT validation :");
+            System.out.println("🔹 " + med1.getNom() + " → Stock : " + med1.getStock());
+            System.out.println("🔹 " + med2.getNom() + " → Stock : " + med2.getStock());
+
+            LigneVente ligne1 = new LigneVente(2, med1.getPrixVente(), med1);
+            ligne1.setVenteId(idVente);
+            ligneVenteService.ajouterLigneVente(ligne1);
+
+            LigneVente ligne2 = new LigneVente(1, med2.getPrixVente(), med2);
+            ligne2.setVenteId(idVente);
+            ligneVenteService.ajouterLigneVente(ligne2);
+
+            double total = 2 * med1.getPrixVente() + 1 * med2.getPrixVente();
+            vente.setMontantTotal(total);
+            venteService.modifierVente(vente);
+            System.out.println("✅ Vente enregistrée avec total : " + total + "€");
+
+            Paiement paiement = new Paiement(total, "ESPECES", StatutPaiement.EN_ATTENTE, idVente, 1);
+            Integer paiementId = paiementService.ajouterPaiement(paiement);
+            if (paiementId == null) return;
+
+            venteService.validerPaiementEtMettreAJourStock(idVente);
+
+            Medicament med1Maj = medicamentDao.recupererMedicamentParId(med1.getId());
+            Medicament med2Maj = medicamentDao.recupererMedicamentParId(med2.getId());
+
+            System.out.println("📦 Stock APRÈS validation :");
+            System.out.println("🔹 " + med1Maj.getNom() + " → Stock : " + med1Maj.getStock());
+            System.out.println("🔹 " + med2Maj.getNom() + " → Stock : " + med2Maj.getStock());
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur pendant le test de vente : " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
 
 }
