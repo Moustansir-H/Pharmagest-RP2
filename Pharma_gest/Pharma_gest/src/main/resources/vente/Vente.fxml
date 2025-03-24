@@ -11,7 +11,7 @@
             fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur.VenteControleur"
             style="-fx-background-color: #f5f5f5;">
 
-    <!-- En-tête moderne avec effet d'ombre -->
+    <!-- En-tête moderne avec effet d'ombre. -->
     <top>
         <VBox style="-fx-background-color: #2196F3; -fx-padding: 15;">
             <HBox spacing="15" alignment="CENTER_LEFT">
