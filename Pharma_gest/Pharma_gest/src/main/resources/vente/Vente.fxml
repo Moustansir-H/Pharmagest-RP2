@@ -8,126 +8,145 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur.VenteControleur">
+            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur.VenteControleur"
+            style="-fx-background-color: #f5f5f5;">
 
-    <!-- Entête : Titre et bouton Retour -->
+    <!-- En-tête moderne avec effet d'ombre. -->
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Création de Vente (Pharmacien)"
-                   style="-fx-font-size:16; -fx-font-weight:bold; -fx-padding:10;"/>
-            <Button fx:id="retourDashboard" text="Retour" style="-fx-padding:8;"
-                    onAction="#retourDashboardOnAction"/>
-        </HBox>
+        <VBox style="-fx-background-color: #2196F3; -fx-padding: 15;">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="Création de Vente (Pharmacien)"
+                       style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="retourDashboard" text="Retour" 
+                        style="-fx-background-color: white; -fx-text-fill: #2196F3; -fx-font-weight: bold; -fx-padding: 8 15;"
+                        onAction="#retourDashboardOnAction"/>
+            </HBox>
+        </VBox>
     </top>
 
     <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+            <HBox spacing="20" style="-fx-padding: 20;">
+                <!-- Colonne de gauche -->
+                <VBox spacing="20" style="-fx-min-width: 400;">
+                    <!-- Section Type de Vente -->
+                    <VBox style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5;">
+                        <Label text="Type de Vente" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-padding: 0 0 10 0;"/>
+                        <HBox spacing="10">
+                            <ChoiceBox fx:id="choiceTypeVente" prefWidth="200">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="LIBRE"/>
+                                        <String fx:value="PRESCRITE"/>
+                                    </FXCollections>
+                                </items>
+                            </ChoiceBox>
+                        </HBox>
+                    </VBox>
 
-            <!-- Sélection du type de vente -->
-            <HBox spacing="10">
-                <Label text="Type de vente :" style="-fx-font-weight:bold;"/>
-                <ChoiceBox fx:id="choiceTypeVente">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="LIBRE"/>
-                            <String fx:value="PRESCRITE"/>
-                        </FXCollections>
-                    </items>
-                </ChoiceBox>
+                    <!-- Section Patient et Prescription -->
+                    <VBox fx:id="sectionPrescription" spacing="15" visible="false" 
+                          style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5;">
+                        <Label text="Informations du Patient" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <TextField fx:id="txtRecherchePatient" promptText="Rechercher un patient..." 
+                                      HBox.hgrow="ALWAYS" style="-fx-padding: 8;"/>
+                            <Button text="🔍 Rechercher" style="-fx-background-color: #2196F3; -fx-text-fill: white;"
+                                    onAction="#handleRechercherPatient"/>
+                        </HBox>
+
+                        <GridPane hgap="15" vgap="10" style="-fx-padding: 10;">
+                            <columnConstraints>
+                                <ColumnConstraints halignment="RIGHT" minWidth="120"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Nom :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtPatientNom" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Prénom :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtPatientPrenom" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Date de naissance :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="datePatientNaissance" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Adresse :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtPatientAdresse" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <Label text="Contact :" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtPatientContact" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        </GridPane>
+
+                        <Label text="Informations de la Prescription" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <GridPane hgap="15" vgap="10" style="-fx-padding: 10;">
+                            <columnConstraints>
+                                <ColumnConstraints halignment="RIGHT" minWidth="120"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Nom du médecin :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtNomMedecin" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Date de prescription :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="datePrescription" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+
+                <!-- Colonne de droite -->
+                <VBox spacing="20" HBox.hgrow="ALWAYS">
+                    <!-- Section Recherche et Liste des Médicaments -->
+                    <VBox style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5;">
+                        <Label text="Médicaments Disponibles" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        
+                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+                            <TextField fx:id="txtRecherche" promptText="Rechercher un médicament..." 
+                                      HBox.hgrow="ALWAYS" style="-fx-padding: 8;"/>
+                        </HBox>
+
+                        <TableView fx:id="tableMedicaments" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                            <columns>
+                                <TableColumn fx:id="colMedNom" text="Nom" prefWidth="150"/>
+                                <TableColumn fx:id="colMedForme" text="Forme" prefWidth="100"/>
+                                <TableColumn fx:id="colMedStock" text="Stock Actuel" prefWidth="100"/>
+                                <TableColumn fx:id="colMedPrixVente" text="Prix Vente" prefWidth="80"/>
+                            </columns>
+                        </TableView>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+                            <Label text="Quantité :"/>
+                            <TextField fx:id="txtQuantite" prefWidth="80" style="-fx-padding: 8;"/>
+                            <Button text="Ajouter à la vente" 
+                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white;"
+                                    onAction="#handleAjouterMedicament"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Section Lignes de Vente -->
+                    <VBox style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5;">
+                        <Label text="Lignes de Vente en Cours" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        
+                        <TableView fx:id="tableLignesVente" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                            <columns>
+                                <TableColumn fx:id="colVenteMedicament" text="Médicament" prefWidth="150"/>
+                                <TableColumn fx:id="colVenteQuantite" text="Quantité" prefWidth="80"/>
+                                <TableColumn fx:id="colVentePrixUnitaire" text="Prix Unitaire" prefWidth="80"/>
+                                <TableColumn fx:id="colVenteSousTotal" text="Sous-total" prefWidth="80"/>
+                            </columns>
+                        </TableView>
+
+                        <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
+                            <Label text="Montant Total :" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                            <Label fx:id="lblMontantTotal" text="0.00" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                            <Button text="Valider la Vente" 
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"
+                                    onAction="#handleValiderVente"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
             </HBox>
-
-            <!-- Section pour les informations du patient et de la prescription (cachée par défaut) -->
-            <VBox fx:id="sectionPrescription" spacing="10" visible="false">
-                <Label text="Informations du Patient" style="-fx-font-weight:bold;"/>
-
-                <!-- 🔍 Ajout de la barre de recherche patient -->
-                <HBox spacing="10">
-                    <Label text="Rechercher patient :" style="-fx-font-weight:bold;"/>
-                    <TextField fx:id="txtRecherchePatient" promptText="Entrez un nom..."/>
-                    <Button text="Rechercher" onAction="#handleRechercherPatient"/>
-                </HBox>
-
-                <GridPane hgap="10" vgap="5">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT"/>
-                        <ColumnConstraints hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Nom :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtPatientNom" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Prénom :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtPatientPrenom" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                    <Label text="Date de naissance :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <DatePicker fx:id="datePatientNaissance" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                    <Label text="Adresse :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtPatientAdresse" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-                    <Label text="Contact :" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtPatientContact" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-                </GridPane>
-
-                <Label text="Informations de la Prescription" style="-fx-font-weight:bold;"/>
-                <GridPane hgap="10" vgap="5">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT"/>
-                        <ColumnConstraints hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Nom du médecin :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtNomMedecin" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Date de prescription :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <DatePicker fx:id="datePrescription" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                </GridPane>
-            </VBox>
-
-            <!-- Barre de recherche des médicaments -->
-            <HBox spacing="10">
-                <Label text="Rechercher :" style="-fx-font-weight:bold;"/>
-                <TextField fx:id="txtRecherche" promptText="Tapez un nom de médicament..."/>
-            </HBox>
-
-            <!-- Table des médicaments disponibles -->
-            <Label text="Liste des Médicaments Disponibles" style="-fx-font-weight:bold;"/>
-            <TableView fx:id="tableMedicaments" prefHeight="150">
-                <columns>
-                    <TableColumn fx:id="colMedNom" text="Nom" prefWidth="150"/>
-                    <TableColumn fx:id="colMedForme" text="Forme" prefWidth="100"/>
-                    <TableColumn fx:id="colMedStock" text="Stock Actuel" prefWidth="100"/>
-                    <TableColumn fx:id="colMedPrixVente" text="Prix Vente" prefWidth="80"/>
-                </columns>
-            </TableView>
-
-            <!-- Zone de saisie pour la quantité et bouton Ajouter -->
-            <HBox spacing="10">
-                <Label text="Quantité :"/>
-                <TextField fx:id="txtQuantite" prefWidth="80"/>
-                <Button text="Ajouter à la vente" onAction="#handleAjouterMedicament"/>
-            </HBox>
-
-            <!-- Table des lignes de vente -->
-            <Label text="Lignes de Vente en Cours" style="-fx-font-weight:bold;"/>
-            <TableView fx:id="tableLignesVente" prefHeight="200">
-                <columns>
-                    <TableColumn fx:id="colVenteMedicament" text="Médicament" prefWidth="150"/>
-                    <TableColumn fx:id="colVenteQuantite" text="Quantité" prefWidth="80"/>
-                    <TableColumn fx:id="colVentePrixUnitaire" text="Prix Unitaire" prefWidth="80"/>
-                    <TableColumn fx:id="colVenteSousTotal" text="Sous-total" prefWidth="80"/>
-                </columns>
-            </TableView>
-
-            <!-- Montant total et bouton Valider -->
-            <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Label text="Montant Total :" style="-fx-font-weight:bold;"/>
-                <Label fx:id="lblMontantTotal" text="0.00" style="-fx-font-size:14;"/>
-                <Button text="Valider la Vente" onAction="#handleValiderVente"/>
-            </HBox>
-        </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>
