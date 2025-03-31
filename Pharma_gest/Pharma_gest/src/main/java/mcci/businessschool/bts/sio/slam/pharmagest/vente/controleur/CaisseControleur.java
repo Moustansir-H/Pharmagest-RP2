@@ -3,6 +3,7 @@ package mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
@@ -144,5 +145,8 @@ public class CaisseControleur {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public void handleValiderPaiement(ActionEvent actionEvent) {
     }
 }
