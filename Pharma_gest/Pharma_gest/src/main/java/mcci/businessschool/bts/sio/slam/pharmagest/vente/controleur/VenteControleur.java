@@ -8,6 +8,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -20,9 +23,13 @@ import mcci.businessschool.bts.sio.slam.pharmagest.vente.TypeVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteIntegrationService;
+import mcci.businessschool.bts.sio.slam.pharmagest.vente.ticket.GenerateurPDF;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class VenteControleur {
 
@@ -84,6 +91,8 @@ public class VenteControleur {
         choiceTypeVente.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             sectionPrescription.setVisible("PRESCRITE".equals(newVal));
         });
+        // ✅ Sélectionner LIBRE par défaut
+        choiceTypeVente.setValue("LIBRE");
 
         // Configuration de la TableView des médicaments
         colMedNom.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getNom()));
@@ -104,11 +113,21 @@ public class VenteControleur {
             LigneVente ligne = cellData.getValue();
             return new ReadOnlyObjectWrapper<>(ligne.getQuantiteVendu() * ligne.getPrixUnitaire());
         });
-
         tableLignesVente.setItems(listLignesVente);
 
-        lblMontantTotal.setText("0.00");
+        // ✅ Autoriser la sélection multiple dans la table des lignes de vente
+        tableLignesVente.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // ✅ Suppression via la touche Suppr
+        tableLignesVente.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DELETE -> handleSupprimerLigneVente();
+            }
+        });
+
+        lblMontantTotal.setText("0.00 €");
     }
+
 
     private void chargerMedicaments() {
         listMedicaments.clear();
@@ -172,15 +191,30 @@ public class VenteControleur {
 
     @FXML
     private void handleSupprimerLigneVente() {
-        LigneVente selectedLigne = tableLignesVente.getSelectionModel().getSelectedItem();
-        if (selectedLigne != null) {
-            listLignesVente.remove(selectedLigne);
-            calculerMontantTotal();
+        ObservableList<LigneVente> lignesSelectionnees = tableLignesVente.getSelectionModel().getSelectedItems();
+
+        if (lignesSelectionnees == null || lignesSelectionnees.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Aucune sélection", "Veuillez sélectionner une ou plusieurs lignes à supprimer.");
+            return;
         }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Confirmation de suppression");
+        confirmation.setHeaderText("Supprimer les lignes sélectionnées ?");
+        confirmation.setContentText("Cette action va retirer les médicaments de la vente en cours.");
+
+        confirmation.showAndWait().ifPresent(reponse -> {
+            if (reponse == ButtonType.OK) {
+                listLignesVente.removeAll(lignesSelectionnees);
+                calculerMontantTotal();
+                tableLignesVente.getSelectionModel().clearSelection();
+            }
+        });
     }
 
+
     private void calculerMontantTotal() {
-        lblMontantTotal.setText(String.format("%.2f", listLignesVente.stream()
+        lblMontantTotal.setText(String.format("%.2f €", listLignesVente.stream()
                 .mapToDouble(ligne -> ligne.getQuantiteVendu() * ligne.getPrixUnitaire()).sum()));
     }
 
@@ -233,11 +267,42 @@ public class VenteControleur {
             );
         }
 
-        // Création et validation de la vente
+        // ✅ Création et validation de la vente
         Vente vente = venteIntegrationService.creerVentePharmacien(listLignesVente, type, patient, prescription);
-        showAlert(Alert.AlertType.INFORMATION, "Vente créée", "Vente ID : " + vente.getId());
 
-        // Réinitialiser l'interface utilisateur
+        // ✅ Génération du ticket PDF
+        try {
+            File fichierPDF = GenerateurPDF.genererTicketPDF(vente, listLignesVente, patient, prescription);
+
+            if (fichierPDF != null) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ticket généré");
+                alert.setHeaderText("Vente validé, et le ticket a été sauvegardé!");
+                alert.setContentText("Ticket : " + fichierPDF.getName());
+
+                ButtonType btnOuvrir = new ButtonType("Ouvrir");
+                ButtonType btnFermer = new ButtonType("Fermer", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(btnOuvrir, btnFermer);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == btnOuvrir) {
+                    try {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().open(fichierPDF);
+                        }
+                    } catch (Exception ex) {
+                        showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir le ticket PDF.");
+                    }
+                }
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Erreur PDF", "Le ticket n’a pas pu être généré.");
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur PDF", "La vente a été créée mais le ticket n'a pas pu être généré.");
+            e.printStackTrace();
+        }
+
+        // ✅ Réinitialisation de l'interface
         resetInterface();
     }
 
