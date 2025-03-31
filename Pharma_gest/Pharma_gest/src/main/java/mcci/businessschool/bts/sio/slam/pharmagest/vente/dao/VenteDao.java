@@ -1,17 +1,11 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.vente.dao;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
-import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
-import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
-import mcci.businessschool.bts.sio.slam.pharmagest.paiement.StatutPaiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.dao.PaiementDao;
-import mcci.businessschool.bts.sio.slam.pharmagest.paiement.service.PaiementService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.Vendeur;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.TypeVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
-import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
-import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -50,7 +44,7 @@ public class VenteDao {
      * ✅ Récupère une vente par son ID avec son paiement associé.
      */
     public Vente recupererVenteParId(int id) throws SQLException {
-        String selectSQL = "SELECT id, datevente, montanttotal, typevente, vendeur_id FROM vente WHERE id = ?";
+        String selectSQL = "SELECT id, datevente, montanttotal, typevente, vendeur_id, prescription_id FROM vente WHERE id = ?";
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(selectSQL)) {
             stmt.setInt(1, id);
@@ -67,18 +61,30 @@ public class VenteDao {
      * ✅ Ajoute une nouvelle vente dans la base de données et retourne son ID.
      */
     public Integer ajouterVente(Vente vente) throws SQLException {
-        String insertSQL = "INSERT INTO vente (datevente, montanttotal, typevente, vendeur_id) VALUES (?, ?, ?::typevente, ?) RETURNING id";
+        System.out.println("🔄 Tentative d'ajout d'une vente dans la base de données...");
+        String insertSQL = """
+                INSERT INTO vente (datevente, montanttotal, typevente, vendeur_id, prescription_id)
+                VALUES (?, ?, ?::typevente, ?, ?)
+                RETURNING id
+                """;
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(insertSQL)) {
             stmt.setDate(1, new java.sql.Date(vente.getDateVente().getTime()));
             stmt.setDouble(2, vente.getMontantTotal());
             stmt.setString(3, vente.getTypeVente().name());
 
-            // ✅ Vérifier si le vendeur est présent avant d'insérer son ID
+            // Vendeur
             if (vente.getVendeur() != null) {
                 stmt.setInt(4, vente.getVendeur().getId());
             } else {
                 stmt.setNull(4, Types.INTEGER);
+            }
+
+            // Prescription
+            if (vente.getPrescriptionId() != null) {
+                stmt.setInt(5, vente.getPrescriptionId());
+            } else {
+                stmt.setNull(5, Types.INTEGER);
             }
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -105,8 +111,18 @@ public class VenteDao {
             stmt.setDate(1, new java.sql.Date(vente.getDateVente().getTime()));
             stmt.setDouble(2, vente.getMontantTotal());
             stmt.setString(3, vente.getTypeVente().name());
-            stmt.setObject(4, (vente.getVendeur() != null) ? vente.getVendeur().getId() : null, Types.INTEGER);
+
+            // Vérifie si un vendeur est associé à la vente
+            if (vente.getVendeur() != null) {
+                stmt.setInt(4, vente.getVendeur().getId());  // L'ID du vendeur est transmis ici
+            } else {
+                stmt.setNull(4, Types.INTEGER);  // Assure-toi de bien gérer l'absence de vendeur
+            }
+
             stmt.setInt(5, vente.getId());
+
+            // Log avant l'exécution
+            System.out.println("🔄 Mise à jour de la vente ID : " + vente.getId() + " avec vendeur ID : " + vente.getVendeur().getId());
 
             int lignesModifiees = stmt.executeUpdate();
             if (lignesModifiees > 0) {
@@ -146,7 +162,7 @@ public class VenteDao {
     public List<Vente> recupererVentesEnAttente() {
         List<Vente> ventesEnAttente = new ArrayList<>();
         String sql = """
-                SELECT v.id, v.datevente, v.montanttotal, v.typevente, v.vendeur_id
+                SELECT v.id, v.datevente, v.montanttotal, v.typevente, v.vendeur_id, v.prescription_id
                 FROM vente v
                 LEFT JOIN paiement p ON v.id = p.vente_id
                 WHERE p.statut IS NULL OR p.statut = 'EN_ATTENTE'
@@ -165,6 +181,7 @@ public class VenteDao {
         return ventesEnAttente;
     }
 
+
     /**
      * ✅ Fonction utilitaire pour extraire une vente d'un ResultSet.
      */
@@ -178,12 +195,19 @@ public class VenteDao {
         Vente vente = new Vente(dateVente, montantTotal, typeVente, vendeur);
         vente.setId(id);
 
-        // ✅ Associer le paiement via PaiementDao
+        // ✅ Récupération de prescription_id
+        int prescriptionId = rs.getInt("prescription_id");
+        if (!rs.wasNull()) {
+            vente.setPrescriptionId(prescriptionId);
+        }
+
+        // ✅ Paiement
         Paiement paiement = paiementDao.getPaiementByVenteId(id);
         vente.setPaiement(paiement);
 
         return vente;
     }
+
 
     /*
     public static void main(String[] args) {
@@ -231,11 +255,11 @@ public class VenteDao {
             System.err.println("❌ Erreur lors de la récupération de la vente et du paiement : " + e.getMessage());
         }
     }*/
-
+/*
     public static void main(String[] args) {
         try {
             VenteService venteService = new VenteService();
-            mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService ligneVenteService = new mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService();
+            mcci.businessschool.bts.sio.slam.pharmagest.vente.service.LigneVenteService ligneVenteService = new mcci.businessschool.bts.sio.slam.pharmagest.vente.service.LigneVenteService();
             MedicamentDao medicamentDao = new MedicamentDao();
             PaiementService paiementService = new PaiementService();
 
@@ -289,7 +313,7 @@ public class VenteDao {
             System.err.println("❌ Erreur pendant le test de vente : " + e.getMessage());
             e.printStackTrace();
         }
-    }
+    }*/
 
 
 }

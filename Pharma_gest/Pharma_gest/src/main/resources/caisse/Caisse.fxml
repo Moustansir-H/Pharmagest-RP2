@@ -33,6 +33,7 @@
                         <TableColumn fx:id="colDateVente" text="Date" prefWidth="120"/>
                         <TableColumn fx:id="colMontantTotal" text="Montant" prefWidth="100"/>
                         <TableColumn fx:id="colNumeroFacture" text="Facture" prefWidth="100"/>
+                        <TableColumn fx:id="colTypeVente" text="Type Vente" prefWidth="100"/> <!-- Nouvelle colonne -->
                     </columns>
                 </TableView>
             </VBox>
@@ -70,6 +71,12 @@
                     <Label text="Montant reçu:"/>
                     <TextField fx:id="txtMontantRecu" prefWidth="100"/>
                 </HBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Identifiant du Caissier:"/>
+                    <TextField fx:id="txtVendeurId" prefWidth="100"/>
+                </HBox>
+
 
                 <Label fx:id="lblMonnaie" text="Monnaie à rendre : 0.00 €" style="-fx-font-weight: bold;"/>
 

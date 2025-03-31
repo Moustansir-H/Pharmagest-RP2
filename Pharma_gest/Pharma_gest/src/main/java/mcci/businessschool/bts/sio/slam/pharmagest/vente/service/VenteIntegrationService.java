@@ -12,7 +12,6 @@ import mcci.businessschool.bts.sio.slam.pharmagest.prescription.service.Prescrip
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.TypeVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
-import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -133,11 +132,11 @@ public class VenteIntegrationService {
             Date utilDate = Date.from(dateNaissance.atStartOfDay(ZoneId.systemDefault()).toInstant()); // Conversion vers java.util.Date
 
 // 🔹 Création d'un patient avec la bonne date
-            Patient patient = new Patient("Dupont", "Jean", utilDate, "15 rue de Paris", "0601234567");
+            Patient patient = new Patient("Vava", "Be", utilDate, "15 rue de Gange", "0601234567");
 
 
             // 🔹 Création d'une prescription
-            Prescription prescription = new Prescription("Dr. Martin", new Date());
+            Prescription prescription = new Prescription("Dr. Papao", new Date());
 
             // 🔹 Création de lignes de vente
             MedicamentService medicamentService = new MedicamentService();
@@ -164,8 +163,19 @@ public class VenteIntegrationService {
             System.out.println("\n✅ Vente PRESCRITE créée avec succès !");
             System.out.println("🆔 ID Vente : " + venteCree.getId());
             System.out.println("📜 ID Prescription : " + venteCree.getPrescriptionId());
+            Vente venteVerifiee = new VenteService().recupererVenteParId(venteCree.getId());
+            System.out.println("🔍 Prescription ID en base : " + venteVerifiee.getPrescriptionId());
             System.out.println("💰 Montant Total : " + venteCree.getMontantTotal());
             System.out.println("📄 Facture : " + (venteCree.getFacture() != null ? venteCree.getFacture().getNumeroFacture() : "Non générée"));
+
+            // ✅ GÉNÉRATION DU TICKET EN TEXTE
+            String ticket = mcci.businessschool.bts.sio.slam.pharmagest.vente.ticket.GenerateurTicket
+                    .genererContenu(venteCree, lignes, patient, prescription);
+
+// ✅ AFFICHAGE DU TICKET DANS LA CONSOLE
+            System.out.println("\n🧾 TICKET À IMPRIMER\n");
+            System.out.println(ticket);
+
 
         } catch (Exception e) {
             e.printStackTrace();
