@@ -7,11 +7,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
@@ -66,6 +68,8 @@ public class VenteControleur {
     @FXML
     private TextField txtRecherchePatient;
 
+    // Nouveau composant pour l'autocomplétion
+    private ContextMenu suggestionMenu;
 
     private ObservableList<Medicament> listMedicaments = FXCollections.observableArrayList();
     private ObservableList<LigneVente> listLignesVente = FXCollections.observableArrayList();
@@ -73,7 +77,6 @@ public class VenteControleur {
     private MedicamentService medicamentService;
     private VenteIntegrationService venteIntegrationService;
     private PatientService patientService;
-
 
     public VenteControleur() {
         try {
@@ -126,8 +129,120 @@ public class VenteControleur {
         });
 
         lblMontantTotal.setText("0.00 €");
+
+        // Configuration de l'autocomplétion pour la recherche de patients
+        configurerAutocompletionPatient();
     }
 
+    private void configurerAutocompletionPatient() {
+        // Initialiser le menu contextuel pour les suggestions
+        suggestionMenu = new ContextMenu();
+
+        // Ajouter un écouteur pour mettre à jour les suggestions pendant la saisie
+        txtRecherchePatient.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) {
+                suggestionMenu.hide();
+                return;
+            }
+
+            if (newVal.length() >= 2) {
+                // Récupérer les suggestions filtrées
+                List<String> suggestions = patientService.recupererNomsPatientsFiltres(newVal);
+
+                // Mettre à jour le menu contextuel avec les suggestions
+                suggestionMenu.getItems().clear();
+
+                if (suggestions.isEmpty()) {
+                    suggestionMenu.hide();
+                    return;
+                }
+
+                for (String suggestion : suggestions) {
+                    // Utiliser explicitement javafx.scene.control.MenuItem
+                    javafx.scene.control.MenuItem item = new javafx.scene.control.MenuItem(suggestion);
+                    item.setOnAction(e -> {
+                        txtRecherchePatient.setText(suggestion);
+                        suggestionMenu.hide();
+                        chargerPatientParNom(suggestion);
+                    });
+                    suggestionMenu.getItems().add(item);
+                }
+
+                // Afficher le menu contextuel sous le champ de texte
+                if (!suggestionMenu.isShowing()) {
+                    suggestionMenu.show(txtRecherchePatient, Side.BOTTOM, 0, 0);
+                }
+            } else {
+                suggestionMenu.hide();
+            }
+        });
+
+        // Gérer la touche Entrée pour rechercher le patient
+        txtRecherchePatient.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleRechercherPatient();
+            }
+        });
+
+        // Cacher le menu contextuel lorsque le champ perd le focus
+        txtRecherchePatient.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                suggestionMenu.hide();
+            }
+        });
+    }
+
+    private void chargerPatientParNom(String nom) {
+        Patient patientTrouve = patientService.rechercherPatientParNom(nom);
+        if (patientTrouve != null) {
+            remplirChampsPatient(patientTrouve);
+        }
+    }
+
+    private void remplirChampsPatient(Patient patient) {
+        if (patient == null) {
+            System.err.println("Patient est null dans remplirChampsPatient");
+            return;
+        }
+
+        // Remplir le nom et prénom
+        txtPatientNom.setText(patient.getNom());
+        txtPatientPrenom.setText(patient.getPrenom());
+
+        // Vérifier et remplir la date de naissance
+        if (patient.getDateNaissance() != null) {
+            try {
+                datePatientNaissance.setValue(patient.getDateNaissance().toInstant()
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDate());
+            } catch (Exception e) {
+                System.err.println("Erreur lors de la conversion de la date de naissance: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            System.err.println("Date de naissance est null");
+        }
+
+        // Vérifier et remplir l'adresse
+        if (patient.getAdresse() != null) {
+            txtPatientAdresse.setText(patient.getAdresse());
+        } else {
+            System.err.println("Adresse est null");
+        }
+
+        // Vérifier et remplir le contact
+        if (patient.getContact() != null) {
+            txtPatientContact.setText(patient.getContact());
+        } else {
+            System.err.println("Contact est null");
+        }
+
+        // Afficher les informations du patient pour le débogage
+        System.out.println("Patient chargé: " + patient.getNom() + " " + patient.getPrenom());
+        System.out.println("Date naissance: " + (patient.getDateNaissance() != null ? patient.getDateNaissance() : "null"));
+        System.out.println("Adresse: " + (patient.getAdresse() != null ? patient.getAdresse() : "null"));
+        System.out.println("Contact: " + (patient.getContact() != null ? patient.getContact() : "null"));
+    }
 
     private void chargerMedicaments() {
         listMedicaments.clear();
@@ -291,11 +406,11 @@ public class VenteControleur {
                             Desktop.getDesktop().open(fichierPDF);
                         }
                     } catch (Exception ex) {
-                        showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir le ticket PDF.");
+                        showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le ticket PDF.");
                     }
                 }
             } else {
-                showAlert(Alert.AlertType.ERROR, "Erreur PDF", "Le ticket n’a pas pu être généré.");
+                showAlert(Alert.AlertType.ERROR, "Erreur PDF", "Le ticket n'a pas pu être généré.");
             }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur PDF", "La vente a été créée mais le ticket n'a pas pu être généré.");
@@ -321,15 +436,7 @@ public class VenteControleur {
 
         if (patientTrouve != null) {
             // Remplir automatiquement les champs avec les infos du patient trouvé
-            txtPatientNom.setText(patientTrouve.getNom());
-            txtPatientPrenom.setText(patientTrouve.getPrenom());
-            datePatientNaissance.setValue(patientTrouve.getDateNaissance().toInstant()
-                    .atZone(java.time.ZoneId.systemDefault())
-                    .toLocalDate());
-
-            txtPatientAdresse.setText(patientTrouve.getAdresse());
-            txtPatientContact.setText(patientTrouve.getContact());
-
+            remplirChampsPatient(patientTrouve);
             showAlert(Alert.AlertType.INFORMATION, "Patient trouvé", "Les informations du patient ont été chargées.");
         } else {
             showAlert(Alert.AlertType.WARNING, "Aucun patient trouvé", "Aucun patient correspondant à ce nom.");
@@ -359,6 +466,12 @@ public class VenteControleur {
 
         // Remettre le montant total à zéro
         lblMontantTotal.setText("0.00");
+
+        // Réinitialiser le champ de recherche patient
+        txtRecherchePatient.clear();
+        if (suggestionMenu != null) {
+            suggestionMenu.hide();
+        }
     }
 
 
@@ -370,3 +483,4 @@ public class VenteControleur {
         alert.showAndWait();
     }
 }
+
