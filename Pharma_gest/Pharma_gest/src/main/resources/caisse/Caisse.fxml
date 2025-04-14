@@ -34,6 +34,7 @@
                         <TableColumn fx:id="colDateVente" text="Date" prefWidth="120"/>
                         <TableColumn fx:id="colMontantTotal" text="Montant" prefWidth="100"/>
                         <TableColumn fx:id="colNumeroFacture" text="Facture" prefWidth="100"/>
+                        <TableColumn fx:id="colTypeVente" text="Type Vente" prefWidth="100"/> <!-- Nouvelle colonne -->
                     </columns>
                 </TableView>
             </VBox>
@@ -70,20 +71,23 @@
                     </columns>
                 </TableView>
 
-                <!-- 💰 Paiement -->
-                <VBox spacing="10">
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Montant reçu:"/>
-                        <TextField fx:id="txtMontantRecu" prefWidth="100" style="-fx-padding: 8;"/>
-                    </HBox>
-                    <Label fx:id="lblMonnaie" text="Monnaie à rendre : 0.00 €"
-                           style="-fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
-                    <HBox alignment="CENTER_RIGHT">
-                        <Button text="Valider le paiement"
-                                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"
-                                onAction="#handleValiderPaiement"/>
-                    </HBox>
-                </VBox>
+                <!-- 💰 Saisie et calcul monnaie -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Montant reçu:"/>
+                    <TextField fx:id="txtMontantRecu" prefWidth="100" style="-fx-padding: 8;"/>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Identifiant du Caissier:"/>
+                    <TextField fx:id="txtVendeurId" prefWidth="100"/>
+                </HBox>
+
+                <Label fx:id="lblMonnaie" text="Monnaie à rendre : 0.00 €"
+                       style="-fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+
+                <!-- ✅ bouton validation -->
+                <HBox alignment="CENTER_RIGHT_
+
             </VBox>
         </HBox>
     </center>

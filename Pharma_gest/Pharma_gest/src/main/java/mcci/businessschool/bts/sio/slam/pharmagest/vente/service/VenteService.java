@@ -4,6 +4,8 @@ import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.StatutPaiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.service.PaiementService;
+import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.Vendeur;
+import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.service.VendeurService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.dao.VenteDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
@@ -19,6 +21,7 @@ public class VenteService {
     public VenteService() throws Exception {
         this.venteDAO = new VenteDao();
         this.paiementService = new PaiementService();
+
     }
 
     /**
@@ -150,7 +153,7 @@ public class VenteService {
         }
     }
 
-    public void validerPaiementEtMettreAJourStock(int venteId) {
+    public void validerPaiementEtMettreAJourStock(int venteId, int vendeurId) {
         try {
             // 1. Vérifier s'il existe un paiement pour cette vente
             Paiement paiement = paiementService.getPaiementByVenteId(venteId);
@@ -169,7 +172,7 @@ public class VenteService {
             System.out.println("✅ Paiement validé pour la vente ID : " + venteId);
 
             // 3. Récupérer les lignes de vente associées
-            mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService ligneVenteService = new mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService();
+            LigneVenteService ligneVenteService = new LigneVenteService();
             List<LigneVente> lignes = ligneVenteService.recupererLignesParVente(venteId);
             if (lignes == null || lignes.isEmpty()) {
                 System.out.println("⚠️ Aucune ligne de vente trouvée pour la vente ID : " + venteId);
@@ -187,6 +190,25 @@ public class VenteService {
             }
 
             System.out.println("📦 Stock des médicaments mis à jour après validation du paiement !");
+
+            // 5. Vérifier si le vendeur existe avec l'ID saisi
+            VendeurService vendeurService = new VendeurService(); // Création de l'instance
+            if (!vendeurService.verifierExistenceVendeur(vendeurId)) {
+                throw new Exception("❌ L'ID du vendeur n'est pas valide ! ID : " + vendeurId);
+            }
+
+            // 6. Ajouter l'ID du vendeur dans la vente (mise à jour)
+            VenteDao venteDao = new VenteDao();
+            Vente vente = venteDao.recupererVenteParId(venteId);
+            if (vente != null) {
+                Vendeur vendeur = new Vendeur(vendeurId, "Vendeur", "Inconnu");  // Création du vendeur avec l'ID validé
+                vente.setVendeur(vendeur);  // Affecter le vendeur à la vente
+                venteDao.modifierVente(vente);  // Mettre à jour la vente avec l'ID du vendeur
+                System.out.println("✅ Vendeur mis à jour pour la vente ID : " + venteId);
+            } else {
+                System.err.println("❌ Vente non trouvée pour l'ID : " + venteId);
+            }
+
         } catch (Exception e) {
             System.err.println("❌ Erreur lors de la validation du paiement et mise à jour du stock : " + e.getMessage());
         }
