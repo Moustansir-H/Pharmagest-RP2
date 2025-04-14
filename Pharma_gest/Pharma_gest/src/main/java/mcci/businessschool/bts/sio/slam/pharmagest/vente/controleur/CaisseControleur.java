@@ -25,44 +25,29 @@ import java.util.List;
 
 public class CaisseControleur {
 
-    @FXML
-    private TableView<Vente> tableVentes;
-    @FXML
-    private TableColumn<Vente, Integer> colVenteId;
-    @FXML
-    private TableColumn<Vente, String> colDateVente;
-    @FXML
-    private TableColumn<Vente, Double> colMontantTotal;
-    @FXML
-    private TableColumn<Vente, String> colNumeroFacture;
+    @FXML private TableView<Vente> tableVentes;
+    @FXML private TableColumn<Vente, Integer> colVenteId;
+    @FXML private TableColumn<Vente, String> colDateVente;
+    @FXML private TableColumn<Vente, Double> colMontantTotal;
+    @FXML private TableColumn<Vente, String> colNumeroFacture;
+    @FXML private TableColumn<Vente, String> colTypeVente;
 
-    @FXML
-    private TableView<LigneVente> tableLignesVente;
-    @FXML
-    private TableColumn<LigneVente, String> colMedicamentNom;
-    @FXML
-    private TableColumn<LigneVente, Integer> colQuantite;
-    @FXML
-    private TableColumn<LigneVente, Double> colPrixUnitaire;
-    @FXML
-    private TableColumn<Vente, String> colTypeVente;
-    @FXML
-    private Label lblIdVente, lblDateVente, lblMontantTotal, lblTypeVente, lblMonnaie;
-    @FXML
-    private TextField txtMontantRecu;
-    @FXML
-    private Button retourDashboard;
-    @FXML
-    private TextField txtVendeurId;
+    @FXML private TableView<LigneVente> tableLignesVente;
+    @FXML private TableColumn<LigneVente, String> colMedicamentNom;
+    @FXML private TableColumn<LigneVente, Integer> colQuantite;
+    @FXML private TableColumn<LigneVente, Double> colPrixUnitaire;
 
-    private ObservableList<Vente> listeVentes = FXCollections.observableArrayList();
-    private ObservableList<LigneVente> lignesVenteObservable = FXCollections.observableArrayList();
+    @FXML private Label lblDateVente, lblMontantTotal, lblTypeVente, lblMonnaie;
+    @FXML private TextField txtMontantRecu;
+    @FXML private Button retourDashboard;
+
+    private final ObservableList<Vente> listeVentes = FXCollections.observableArrayList();
+    private final ObservableList<LigneVente> lignesVenteObservable = FXCollections.observableArrayList();
 
     private VenteService venteService;
     private LigneVenteService ligneVenteService;
     private PaiementService paiementService;
     private VendeurService vendeurService;
-
 
     public CaisseControleur() {
         try {
@@ -90,7 +75,6 @@ public class CaisseControleur {
             return new ReadOnlyStringWrapper(facture);
         });
 
-        // Affichage du type de vente : "Prescrite" ou "Libre" en fonction de prescriptionId
         colTypeVente.setCellValueFactory(cellData -> {
             Integer prescriptionId = cellData.getValue().getPrescriptionId();
             String typeVente = (prescriptionId != null) ? "Prescrite" : "Libre";
@@ -108,12 +92,12 @@ public class CaisseControleur {
         colPrixUnitaire.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getPrixUnitaire()));
         tableLignesVente.setItems(lignesVenteObservable);
 
-        // Gestion de la sélection de vente
+        // Gestion sélection
         tableVentes.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) afficherDetailsVente(newVal);
         });
 
-        // Mise à jour de la monnaie automatiquement
+        // Calcul automatique de la monnaie
         txtMontantRecu.textProperty().addListener((obs, oldVal, newVal) -> {
             Vente selected = tableVentes.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -130,15 +114,9 @@ public class CaisseControleur {
         chargerVentesEnAttente();
     }
 
-
     private void afficherDetailsVente(Vente vente) {
-        lblIdVente.setText(String.valueOf(vente.getId()));
         lblDateVente.setText(((java.sql.Date) vente.getDateVente()).toLocalDate().toString());
         lblMontantTotal.setText(String.format("%.2f €", vente.getMontantTotal()));
-        lblTypeVente.setText(vente.getTypeVente().name());
-
-
-        // Affichage du type de vente dans les détails (prescrite ou libre)
         String typeVente = (vente.getPrescriptionId() != null) ? "Prescrite" : "Libre";
         lblTypeVente.setText(typeVente);
 
@@ -148,11 +126,9 @@ public class CaisseControleur {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les médicaments.");
         }
 
-        // 🔁 Nettoyage du champ montant et monnaie
         txtMontantRecu.clear();
         lblMonnaie.setText("Monnaie à rendre : 0.00 €");
     }
-
 
     private void chargerVentesEnAttente() {
         listeVentes.clear();
@@ -183,12 +159,9 @@ public class CaisseControleur {
             return;
         }
 
-        // Vérification de l'ID du vendeur
-        int vendeurId = Integer.parseInt(txtVendeurId.getText()); // Récupère l'ID du vendeur
-
-        // Appel de la méthode de validation du paiement et mise à jour
         try {
-            venteService.validerPaiementEtMettreAJourStock(selectedVente.getId(), vendeurId); // Passer l'ID du vendeur
+            // Appel sans identifiant de vendeur
+            venteService.validerPaiementEtMettreAJourStock(selectedVente.getId(), 0); // 0 = valeur par défaut ou ID automatique
             showAlert(Alert.AlertType.INFORMATION, "Paiement validé",
                     String.format("💰 Monnaie à rendre : %.2f €", montantRecu - selectedVente.getMontantTotal()));
         } catch (Exception e) {
@@ -198,13 +171,11 @@ public class CaisseControleur {
         chargerVentesEnAttente();
         lignesVenteObservable.clear();
         txtMontantRecu.clear();
-        lblIdVente.setText("");
         lblDateVente.setText("");
         lblMontantTotal.setText("");
         lblTypeVente.setText("");
         lblMonnaie.setText("Monnaie à rendre : 0.00 €");
     }
-
 
     @FXML
     public void retourDashboardOnAction(ActionEvent event) {

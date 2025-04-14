@@ -34,7 +34,7 @@
                         <TableColumn fx:id="colDateVente" text="Date" prefWidth="120"/>
                         <TableColumn fx:id="colMontantTotal" text="Montant" prefWidth="100"/>
                         <TableColumn fx:id="colNumeroFacture" text="Facture" prefWidth="100"/>
-                        <TableColumn fx:id="colTypeVente" text="Type Vente" prefWidth="100"/> <!-- Nouvelle colonne -->
+                        <TableColumn fx:id="colTypeVente" text="Type Vente" prefWidth="100"/>
                     </columns>
                 </TableView>
             </VBox>
@@ -49,17 +49,16 @@
                         <ColumnConstraints hgrow="ALWAYS"/>
                     </columnConstraints>
 
-                    <Label text="ID Vente :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblIdVente" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <!-- ❌ Suppression de l'affichage de l'ID Vente -->
 
-                    <Label text="Type :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblTypeVente" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Type :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblTypeVente" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                    <Label text="Date :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblDateVente" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="Date :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblDateVente" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                    <Label text="Montant Total :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblMontantTotal" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Label text="Montant Total :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblMontantTotal" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
                 </GridPane>
 
                 <Label text="Médicaments associés :" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
@@ -77,17 +76,17 @@
                     <TextField fx:id="txtMontantRecu" prefWidth="100" style="-fx-padding: 8;"/>
                 </HBox>
 
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="Identifiant du Caissier:"/>
-                    <TextField fx:id="txtVendeurId" prefWidth="100"/>
-                </HBox>
+                <!-- ❌ Suppression du champ Identifiant du Caissier -->
 
                 <Label fx:id="lblMonnaie" text="Monnaie à rendre : 0.00 €"
                        style="-fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
 
                 <!-- ✅ bouton validation -->
-                <HBox alignment="CENTER_RIGHT_
-
+                <HBox alignment="CENTER_RIGHT">
+                    <Button text="Valider le paiement"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"
+                            onAction="#handleValiderPaiement"/>
+                </HBox>
             </VBox>
         </HBox>
     </center>
