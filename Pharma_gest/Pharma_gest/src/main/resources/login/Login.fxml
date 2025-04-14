@@ -89,9 +89,14 @@
                            promptText=" Username" style="-fx-border-color: black;"/>
                 <PasswordField fx:id="PasswordTxt" layoutX="77.0" layoutY="185.0" prefHeight="30.0" prefWidth="200.0"
                                promptText=" Password" style="-fx-border-color: black;"/>
-                <Button fx:id="loginButton" alignment="CENTER" layoutX="23.0" layoutY="255.0" mnemonicParsing="false"
-                        onAction="#loginButtonOnAction" prefHeight="40.0" prefWidth="250.0"
-                        style="-fx-background-color: #058461;" text="Login" textFill="WHITE"/>
+                <Button fx:id="loginButton" alignment="CENTER" layoutX="23.0" layoutY="255.0"
+                        mnemonicParsing="false"
+                        onAction="#loginButtonOnAction"
+                        prefHeight="40.0" prefWidth="250.0"
+                        style="-fx-background-color: #058461;"
+                        text="Login" textFill="WHITE"
+                        defaultButton="true"/>
+
                 <Button fx:id="cancelButton" alignment="CENTER" layoutX="23.0" layoutY="306.0" mnemonicParsing="false"
                         onAction="#cancelButtonOnAction" prefHeight="40.0" prefWidth="250.0"
                         style="-fx-background-color: #058461;" text="Cancel" textFill="WHITE"/>
