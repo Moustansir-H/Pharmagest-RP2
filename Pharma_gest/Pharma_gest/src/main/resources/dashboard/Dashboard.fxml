@@ -1,61 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.dashboard.controleur.DashboardControleur">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.dashboard.controleur.DashboardControleur">
     <left>
-        <AnchorPane prefHeight="400.0" prefWidth="187.0" style="-fx-background-color: grey;" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="400.0" prefWidth="187.0" style="-fx-background-color: #2196F3;" BorderPane.alignment="CENTER">
             <children>
-                <Circle fill="#9ed9a1" layoutX="94.0" layoutY="67.0" radius="56.0" stroke="BLACK" strokeType="INSIDE" />
-                <Arc fill="#00ff1e" layoutX="94.0" layoutY="88.0" length="270.0" radiusX="32.0" radiusY="29.0" startAngle="-45.0" stroke="BLACK" strokeType="INSIDE" type="CHORD" />
-                <Circle fill="#0dff29" layoutX="94.0" layoutY="43.0" radius="16.0" stroke="BLACK" strokeType="INSIDE" />
-                <Label alignment="CENTER" layoutX="44.0" layoutY="123.0" prefHeight="17.0" prefWidth="99.0" text="BIENVENUE!" textFill="WHITE" />
-                <Label layoutX="40.0" layoutY="377.0" text="© Pharmagest 2024" textFill="WHITE" />
-                <Rectangle arcHeight="5.0" arcWidth="5.0" blendMode="ADD" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="155.0" stroke="BLACK" strokeType="INSIDE" width="186.0">
-                    <effect>
-                        <DisplacementMap>
-                            <mapData>
-                                <FloatMap />
-                            </mapData>
-                        </DisplacementMap>
-                    </effect>
-                </Rectangle>
-                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="190.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
-                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="225.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
-                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="260.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
-                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="295.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
-                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9ed9a1" height="35.0" layoutX="-1.0" layoutY="330.0" stroke="BLACK" strokeType="INSIDE" width="19.0" />
-                <Label layoutX="54.0" layoutY="164.0" text="DASHBOARD">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </Label>
+                <Label layoutX="40.0" layoutY="377.0" text="© Pharmagest 2024" textFill="WHITE" AnchorPane.bottomAnchor="5.857142857142858" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="41.142857142857125" />
                 <Label fx:id="usernameLabel" layoutX="73.0" layoutY="140.0" prefHeight="17.0" prefWidth="37.0" />
+            <ImageView fitHeight="150.0" fitWidth="153.0" layoutX="19.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/user.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="67.0" layoutY="170.0" text="Bienvenue" textFill="WHITE" />
+                <Button fx:id="quitButton" layoutX="82.0" layoutY="305.0" mnemonicParsing="false" onAction="#quitButtonOnAction" prefHeight="57.0" prefWidth="78.0" style="-fx-background-color: #2196f3;" textFill="#2196f3" AnchorPane.bottomAnchor="37.857142857142854" AnchorPane.rightAnchor="26.857142857142833">
+               <graphic>
+                  <ImageView fitHeight="49.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/fermer.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+                <Button fx:id="changeUserButton" layoutX="19.0" layoutY="306.0" mnemonicParsing="false" onAction="#changeUserButtonOnAction" prefHeight="54.0" prefWidth="76.0" style="-fx-background-color: #2196f3;" textFill="#2196f3" AnchorPane.bottomAnchor="39.71428571428572" AnchorPane.leftAnchor="19.0">
+               <graphic>
+                  <ImageView fitHeight="46.0" fitWidth="79.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/logout.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             </children>
         </AnchorPane>
     </left>
     <center>
-        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+        <AnchorPane style="-fx-background-color: white;" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="approvisionnementButton" layoutX="266.0" layoutY="200.0" mnemonicParsing="false" onAction="#ouvrirApprovisionnement" prefHeight="66.0" prefWidth="135.0" style="-fx-background-color: grey;" text="Approvisionnement" textFill="WHITE" />
-                <Button fx:id="caisseButton" layoutX="278.0" layoutY="95.0" mnemonicParsing="false" onAction="#caisseButtonOnAction" prefHeight="66.0" prefWidth="110.0" style="-fx-background-color: grey;" text="Caissse" textFill="WHITE" />
-                <Button fx:id="venteButton" layoutX="151.0" layoutY="150.0" mnemonicParsing="false" onAction="#venteButtonOnAction" prefHeight="66.0" prefWidth="110.0" style="-fx-background-color: grey;" text="Vente" textFill="WHITE" />
-                <Button fx:id="FournisseurButton" layoutX="29.0" layoutY="200.0" mnemonicParsing="false" onAction="#fournisseurButtonOnAction" prefHeight="66.0" prefWidth="110.0" style="-fx-background-color: grey;" text="Fournisseur" textFill="WHITE" />
-                <Button fx:id="maintenanceButton" layoutX="29.0" layoutY="95.0" mnemonicParsing="false" onAction="#maintenanceButtonOnAction" prefHeight="66.0" prefWidth="110.0" style="-fx-background-color: grey;" text="Maintenance" textFill="WHITE" />
-                <Button fx:id="quitButton" layoutX="14.0" layoutY="302.0" mnemonicParsing="false" onAction="#quitButtonOnAction" prefHeight="34.0" prefWidth="185.0" style="-fx-background-color: red;" text="Quitter" textFill="WHITE">
-                    <font>
-                        <Font size="20.0" />
-                    </font>
-                </Button>
-                <Button fx:id="changeUserButton" layoutX="216.0" layoutY="302.0" mnemonicParsing="false" onAction="#changeUserButtonOnAction" prefHeight="44.0" prefWidth="185.0" style="-fx-background-color: green;" text="Changer d'utilisateur" textFill="WHITE">
-                    <font>
-                        <Font size="17.0" />
-                    </font>
-                </Button>
+            <VBox layoutX="15.0" layoutY="-19.0" prefHeight="93.0" prefWidth="382.0" style="-fx-background-color: #2196F3;" AnchorPane.leftAnchor="14.857142857142833" AnchorPane.rightAnchor="15.285714285714278">
+               <children>
+                      <Label text="DASHBOARD" textFill="WHITE">
+                          <font>
+                              <Font name="System Bold" size="12.0" />
+                          </font>
+                     <padding>
+                        <Insets left="5.0" top="30.0" />
+                     </padding>
+                      </Label>
+               </children>
+            </VBox>
+            <VBox layoutX="6.0" layoutY="88.0" AnchorPane.bottomAnchor="5.714285714285722" AnchorPane.leftAnchor="6.285714285714278" AnchorPane.rightAnchor="7.14285714285711" AnchorPane.topAnchor="88.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="147.0" prefWidth="399.0">
+                     <children>
+                            <Button fx:id="maintenanceButton" mnemonicParsing="false" onAction="#maintenanceButtonOnAction" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: wh;" textFill="WHITE">
+                           <graphic>
+                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/optimizing.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <HBox.margin>
+                              <Insets right="20.0" />
+                           </HBox.margin>
+                        </Button>
+                            <Button fx:id="venteButton" mnemonicParsing="false" onAction="#venteButtonOnAction" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: white;" textFill="WHITE">
+                           <graphic>
+                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/shopping-bag.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <HBox.margin>
+                              <Insets right="20.0" />
+                           </HBox.margin>
+                        </Button>
+                            <Button fx:id="caisseButton" mnemonicParsing="false" onAction="#caisseButtonOnAction" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: white;" textFill="WHITE">
+                           <graphic>
+                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/cash-register.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="126.0" prefWidth="399.0">
+                     <children>
+                        <Button fx:id="FournisseurButton" mnemonicParsing="false" onAction="#fournisseurButtonOnAction" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: white;" textFill="WHITE">
+                           <graphic>
+                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/supplier.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                            <Button fx:id="approvisionnementButton" mnemonicParsing="false" onAction="#ouvrirApprovisionnement" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: white;" textFill="WHITE">
+                           <graphic>
+                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/shipment.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
             </children>
         </AnchorPane>
     </center>

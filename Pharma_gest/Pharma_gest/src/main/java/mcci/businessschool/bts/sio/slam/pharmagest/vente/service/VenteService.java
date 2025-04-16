@@ -1,9 +1,12 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.vente.service;
 
+import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.StatutPaiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.service.PaiementService;
+import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.Vendeur;
+import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.service.VendeurService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.dao.VenteDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
@@ -19,6 +22,7 @@ public class VenteService {
     public VenteService() throws Exception {
         this.venteDAO = new VenteDao();
         this.paiementService = new PaiementService();
+
     }
 
     /**
@@ -152,43 +156,70 @@ public class VenteService {
 
     public void validerPaiementEtMettreAJourStock(int venteId) {
         try {
-            // 1. Vérifier s'il existe un paiement pour cette vente
-            Paiement paiement = paiementService.getPaiementByVenteId(venteId);
-            if (paiement == null) {
-                System.err.println("❌ Aucun paiement trouvé pour la vente ID : " + venteId);
-                return;
+            // 1. Vérifier si la vente existe
+            Vente vente = venteDAO.recupererVenteParId(venteId);
+            if (vente == null) {
+                throw new Exception("❌ Vente non trouvée pour l'ID : " + venteId);
             }
 
-            // 2. Mettre à jour le statut à VALIDE
-            boolean statutMisAJour = paiementService.mettreAJourStatutPaiement(paiement.getId(), StatutPaiement.VALIDE);
-            if (!statutMisAJour) {
-                System.err.println("❌ Impossible de valider le paiement pour la vente ID : " + venteId);
-                return;
-            }
-
-            System.out.println("✅ Paiement validé pour la vente ID : " + venteId);
-
-            // 3. Récupérer les lignes de vente associées
-            mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService ligneVenteService = new mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService();
+            // 2. Récupérer les lignes de vente
+            LigneVenteService ligneVenteService = new LigneVenteService();
             List<LigneVente> lignes = ligneVenteService.recupererLignesParVente(venteId);
             if (lignes == null || lignes.isEmpty()) {
-                System.out.println("⚠️ Aucune ligne de vente trouvée pour la vente ID : " + venteId);
-                return;
+                throw new Exception("❌ Aucune ligne de vente trouvée pour la vente ID : " + venteId);
             }
 
-            // 4. Mettre à jour le stock des médicaments
+            // 3. Vérifier ou créer un paiement si nécessaire
+            Paiement paiement = paiementService.getPaiementByVenteId(venteId);
+            if (paiement == null) {
+                // Créer un nouveau paiement si aucun n'existe
+                paiement = new Paiement(vente.getMontantTotal(), "ESPECES", StatutPaiement.EN_ATTENTE, venteId);
+                Integer paiementId = paiementService.ajouterPaiement(paiement);
+                if (paiementId == null) {
+                    throw new Exception("❌ Impossible de créer un paiement pour la vente");
+                }
+                paiement.setId(paiementId);
+            }
+
+            // 4. Mettre à jour le statut du paiement
+            boolean statutMisAJour = paiementService.mettreAJourStatutPaiement(paiement.getId(), StatutPaiement.VALIDE);
+            if (!statutMisAJour) {
+                throw new Exception("❌ Impossible de valider le paiement pour la vente ID : " + venteId);
+            }
+
+            // 5. Mettre à jour le stock des médicaments
             MedicamentDao medicamentDao = new MedicamentDao();
+            boolean toutesLesMisesAJourReussies = true;
+
             for (LigneVente ligne : lignes) {
                 int medicamentId = ligne.getMedicament().getId();
                 int quantiteVendue = ligne.getQuantiteVendu();
 
+                // Vérifier le stock disponible avant la mise à jour
+                Medicament medicament = medicamentDao.recupererMedicamentParId(medicamentId);
+                if (medicament == null || medicament.getStock() < quantiteVendue) {
+                    toutesLesMisesAJourReussies = false;
+                    System.err.println("❌ Stock insuffisant pour le médicament ID : " + medicamentId);
+                    continue;
+                }
+
                 // Décrémenter le stock (quantité vendue => stock - quantite)
-                medicamentDao.mettreAJourStock(medicamentId, -quantiteVendue);
+                boolean stockMisAJour = medicamentDao.mettreAJourStock(medicamentId, -quantiteVendue);
+                if (!stockMisAJour) {
+                    toutesLesMisesAJourReussies = false;
+                    System.err.println("❌ Échec de la mise à jour du stock pour le médicament ID : " + medicamentId);
+                }
             }
 
-            System.out.println("📦 Stock des médicaments mis à jour après validation du paiement !");
+            if (!toutesLesMisesAJourReussies) {
+                throw new Exception("❌ Certaines mises à jour de stock ont échoué. Vérifiez les logs pour plus de détails.");
+            }
+
+            System.out.println("✅ Paiement validé et stock mis à jour pour la vente ID : " + venteId);
+
         } catch (Exception e) {
             System.err.println("❌ Erreur lors de la validation du paiement et mise à jour du stock : " + e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

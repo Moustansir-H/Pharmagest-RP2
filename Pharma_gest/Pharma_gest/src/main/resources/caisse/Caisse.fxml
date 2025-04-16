@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
-            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur.CaisseControleur">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur.CaisseControleur">
 
     <!-- 🔝 En-tête : Titre + bouton retour -->
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
+        <HBox alignment="CENTER_LEFT" spacing="10">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
-            <Label text="Caisse (Vendeur)" style="-fx-font-size:16; -fx-font-weight:bold;"/>
-            <Button fx:id="retourDashboard" text="Retour" onAction="#retourDashboardOnAction"/>
+            <Label style="-fx-font-size:16; -fx-font-weight:bold;" text="Caisse (Vendeur)" />
+            <Button fx:id="retourDashboard" onAction="#retourDashboardOnAction" text="Retour" />
         </HBox>
     </top>
 
@@ -21,61 +30,73 @@
     <center>
         <HBox spacing="20">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
 
             <!-- 📋 Table des ventes en attente -->
             <VBox spacing="10">
-                <Label text="Ventes en attente de paiement" style="-fx-font-weight:bold;"/>
+                <Label style="-fx-font-weight:bold;" text="Ventes en attente de paiement" />
                 <TableView fx:id="tableVentes" prefHeight="300" prefWidth="400">
                     <columns>
-                        <TableColumn fx:id="colVenteId" text="ID Vente" prefWidth="80"/>
-                        <TableColumn fx:id="colDateVente" text="Date" prefWidth="120"/>
-                        <TableColumn fx:id="colMontantTotal" text="Montant" prefWidth="100"/>
-                        <TableColumn fx:id="colNumeroFacture" text="Facture" prefWidth="100"/>
+                        <TableColumn fx:id="colVenteId" prefWidth="80" text="ID Vente" />
+                        <TableColumn fx:id="colDateVente" prefWidth="120" text="Date" />
+                        <TableColumn fx:id="colMontantTotal" prefWidth="100" text="Montant" />
+                        <TableColumn fx:id="colNumeroFacture" prefWidth="100" text="Facture" />
+                        <TableColumn fx:id="colTypeVente" prefWidth="100" text="Type Vente" /> <!-- Nouvelle colonne -->
                     </columns>
                 </TableView>
             </VBox>
 
             <!-- 📦 Détails de la vente sélectionnée -->
-            <VBox spacing="10" alignment="TOP_LEFT" prefWidth="400">
-                <Label text="Détails de la vente" style="-fx-font-weight:bold;"/>
+            <VBox alignment="TOP_LEFT" prefWidth="400" spacing="10">
+                <Label style="-fx-font-weight:bold;" text="Détails de la vente" />
 
                 <GridPane hgap="10" vgap="5">
-                    <Label text="ID Vente :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblIdVente" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="ID Vente :" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <Label fx:id="lblIdVente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                    <Label text="Type :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblTypeVente" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Type :" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <Label fx:id="lblTypeVente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                    <Label text="Date :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblDateVente" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="Date :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <Label fx:id="lblDateVente" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                    <Label text="Montant Total :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblMontantTotal" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Label text="Montant Total :" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <Label fx:id="lblMontantTotal" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               <columnConstraints>
+                  <ColumnConstraints />
+                  <ColumnConstraints />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
                 </GridPane>
 
                 <!-- 💊 Liste des médicaments de la vente -->
-                <Label text="Médicaments associés :" style="-fx-font-weight:bold;"/>
+                <Label style="-fx-font-weight:bold;" text="Médicaments associés :" />
                 <TableView fx:id="tableLignesVente" prefHeight="150">
                     <columns>
-                        <TableColumn text="Nom" fx:id="colMedicamentNom" prefWidth="150"/>
-                        <TableColumn text="Quantité" fx:id="colQuantite" prefWidth="100"/>
-                        <TableColumn text="Prix U" fx:id="colPrixUnitaire" prefWidth="100"/>
+                        <TableColumn fx:id="colMedicamentNom" prefWidth="150" text="Nom" />
+                        <TableColumn fx:id="colQuantite" prefWidth="100" text="Quantité" />
+                        <TableColumn fx:id="colPrixUnitaire" prefWidth="100" text="Prix U" />
                     </columns>
                 </TableView>
 
                 <!-- 💰 Saisie et calcul monnaie -->
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="Montant reçu:"/>
-                    <TextField fx:id="txtMontantRecu" prefWidth="100"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Montant reçu:" />
+                    <TextField fx:id="txtMontantRecu" prefWidth="100" />
                 </HBox>
 
-                <Label fx:id="lblMonnaie" text="Monnaie à rendre : 0.00 €" style="-fx-font-weight: bold;"/>
+
+                <Label fx:id="lblMonnaie" style="-fx-font-weight: bold;" text="Monnaie à rendre : 0.00 €" />
 
                 <!-- ✅ Bouton validation -->
                 <HBox alignment="CENTER_RIGHT">
-                    <Button text="Valider le paiement" onAction="#handleValiderPaiement"/>
+                    <Button onAction="#handleValiderPaiement" text="Valider le paiement" />
                 </HBox>
             </VBox>
         </HBox>

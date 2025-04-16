@@ -12,12 +12,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
-import mcci.businessschool.bts.sio.slam.pharmagest.paiement.Paiement;
-import mcci.businessschool.bts.sio.slam.pharmagest.paiement.StatutPaiement;
 import mcci.businessschool.bts.sio.slam.pharmagest.paiement.service.PaiementService;
+import mcci.businessschool.bts.sio.slam.pharmagest.vendeur.service.VendeurService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
-import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service.LigneVenteService;
+import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.LigneVenteService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteService;
 
 import java.io.IOException;
@@ -45,7 +44,8 @@ public class CaisseControleur {
     private TableColumn<LigneVente, Integer> colQuantite;
     @FXML
     private TableColumn<LigneVente, Double> colPrixUnitaire;
-
+    @FXML
+    private TableColumn<Vente, String> colTypeVente;
     @FXML
     private Label lblIdVente, lblDateVente, lblMontantTotal, lblTypeVente, lblMonnaie;
     @FXML
@@ -53,18 +53,22 @@ public class CaisseControleur {
     @FXML
     private Button retourDashboard;
 
+
     private ObservableList<Vente> listeVentes = FXCollections.observableArrayList();
     private ObservableList<LigneVente> lignesVenteObservable = FXCollections.observableArrayList();
 
     private VenteService venteService;
     private LigneVenteService ligneVenteService;
     private PaiementService paiementService;
+    private VendeurService vendeurService;
+
 
     public CaisseControleur() {
         try {
             venteService = new VenteService();
             ligneVenteService = new LigneVenteService();
             paiementService = new PaiementService();
+            vendeurService = new VendeurService();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,6 +88,14 @@ public class CaisseControleur {
                     cellData.getValue().getFacture().getNumeroFacture() : "Non générée";
             return new ReadOnlyStringWrapper(facture);
         });
+
+        // Affichage du type de vente : "Prescrite" ou "Libre" en fonction de prescriptionId
+        colTypeVente.setCellValueFactory(cellData -> {
+            Integer prescriptionId = cellData.getValue().getPrescriptionId();
+            String typeVente = (prescriptionId != null) ? "Prescrite" : "Libre";
+            return new ReadOnlyStringWrapper(typeVente);
+        });
+
         tableVentes.setItems(listeVentes);
 
         // Colonnes lignes de vente
@@ -117,11 +129,17 @@ public class CaisseControleur {
         chargerVentesEnAttente();
     }
 
+
     private void afficherDetailsVente(Vente vente) {
         lblIdVente.setText(String.valueOf(vente.getId()));
         lblDateVente.setText(((java.sql.Date) vente.getDateVente()).toLocalDate().toString());
         lblMontantTotal.setText(String.format("%.2f €", vente.getMontantTotal()));
         lblTypeVente.setText(vente.getTypeVente().name());
+
+
+        // Affichage du type de vente dans les détails (prescrite ou libre)
+        String typeVente = (vente.getPrescriptionId() != null) ? "Prescrite" : "Libre";
+        lblTypeVente.setText(typeVente);
 
         try {
             lignesVenteObservable.setAll(ligneVenteService.recupererLignesParVente(vente.getId()));
@@ -164,36 +182,24 @@ public class CaisseControleur {
             return;
         }
 
-        int vendeurId = 1; // à dynamiser plus tard
-        Paiement paiement = new Paiement(
-                selectedVente.getMontantTotal(),
-                "ESPECES",
-                StatutPaiement.EN_ATTENTE,
-                selectedVente.getId(),
-                vendeurId
-        );
-
+        // Appel de la méthode de validation du paiement et mise à jour
         try {
-            Integer paiementId = paiementService.ajouterPaiement(paiement);
             venteService.validerPaiementEtMettreAJourStock(selectedVente.getId());
-
             showAlert(Alert.AlertType.INFORMATION, "Paiement validé",
                     String.format("💰 Monnaie à rendre : %.2f €", montantRecu - selectedVente.getMontantTotal()));
-
-            chargerVentesEnAttente();
-            lignesVenteObservable.clear();
-            txtMontantRecu.clear();
-            lblIdVente.setText("");
-            lblDateVente.setText("");
-            lblMontantTotal.setText("");
-            lblTypeVente.setText("");
-            lblMonnaie.setText("Monnaie à rendre : 0.00 €");
-
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
         }
-    }
 
+        chargerVentesEnAttente();
+        lignesVenteObservable.clear();
+        txtMontantRecu.clear();
+        lblIdVente.setText("");
+        lblDateVente.setText("");
+        lblMontantTotal.setText("");
+        lblTypeVente.setText("");
+        lblMonnaie.setText("Monnaie à rendre : 0.00 €");
+    }
     @FXML
     public void retourDashboardOnAction(ActionEvent event) {
         try {

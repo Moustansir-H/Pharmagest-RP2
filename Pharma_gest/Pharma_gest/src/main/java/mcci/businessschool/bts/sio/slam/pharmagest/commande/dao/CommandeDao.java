@@ -3,188 +3,224 @@ package mcci.businessschool.bts.sio.slam.pharmagest.commande.dao;
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.Commande;
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
+import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.pharmacien.Pharmacien;
+import mcci.businessschool.bts.sio.slam.pharmagest.pharmacien.dao.PharmacienDao;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommandeDao {
-    private Connection connection;
+    private Connection baseDeDonneeConnexion;
+    private FournisseurDao fournisseurDao;
+    private PharmacienDao pharmacienDao;
 
     public CommandeDao() throws Exception {
-        this.connection = DatabaseConnection.getConnexion();
+        this.baseDeDonneeConnexion = DatabaseConnection.getConnexion();
+        this.fournisseurDao = new FournisseurDao();
+        this.pharmacienDao = new PharmacienDao();
     }
 
-    // Ajouter une nouvelle commande
-    public int ajouterCommande(Commande commande) throws SQLException {
-        String sql = "INSERT INTO commande (montant, pharmacien_id, fournisseur_id) VALUES (?, ?, ?) RETURNING id";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setDouble(1, commande.getMontantTotal());
-            stmt.setInt(2, commande.getPharmacien().getId());
-            stmt.setInt(3, commande.getFournisseur().getId());
-            stmt.executeUpdate();
-
-            // Récupérer l'ID généré
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("Échec de l'ajout de la commande, aucun ID généré.");
-                }
-            }
-        }
-    }
-
-    // Récupérer toutes les commandes
+    /**
+     * Récupère toutes les commandes
+     * @return Liste des commandes
+     */
     public List<Commande> recupererToutesLesCommandes() throws SQLException {
         List<Commande> commandes = new ArrayList<>();
         String sql = """
-                    SELECT c.id, c.montant, c.pharmacien_id, u.identifiant AS pharmacien_nom,\s
-                           f.id AS fournisseur_id, f.nom AS fournisseur_nom,\s
-                           (CASE WHEN EXISTS (SELECT 1 FROM livraison l WHERE l.commande_id = c.id)\s
-                                 THEN 'Validée' ELSE 'En attente' END) AS statut
-                    FROM commande c
-                    JOIN pharmacien p ON c.pharmacien_id = p.id
-                    JOIN utilisateur u ON p.utilisateur_id = u.id
-                    JOIN fournisseur f ON c.fournisseur_id = f.id;
-                    
+                SELECT id, montant, pharmacien_id, fournisseur_id, 
+                       date_creation, statut
+                FROM commande
+                ORDER BY date_creation DESC
                 """;
 
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
-                Pharmacien pharmacien = new Pharmacien(rs.getInt("pharmacien_id"), rs.getString("pharmacien_nom"));
-
-                int fournisseurId = rs.getInt("fournisseur_id");
-                String fournisseurNom = rs.getString("fournisseur_nom");
-
-                if (fournisseurNom == null) {
-                    throw new SQLException("❌ Erreur : Le fournisseur avec ID " + fournisseurId + " est introuvable.");
-                }
-
-                Fournisseur fournisseur = new Fournisseur(fournisseurId, fournisseurNom);
-
-                String statut = rs.getString("statut");
-
-                Commande commande = new Commande(
-                        rs.getInt("id"),
-                        rs.getDouble("montant"),
-                        pharmacien,
-                        fournisseur,
-                        new ArrayList<>(),
-                        statut // Statut déterminé dynamiquement
-                );
+                Commande commande = extraireCommandeDeResultSet(rs);
                 commandes.add(commande);
             }
         }
+
         return commandes;
     }
 
-    public Commande recupererCommandeParId(int commandeId) throws SQLException {
+    /**
+     * Récupère les commandes en attente de confirmation
+     * @return Liste des commandes en attente
+     */
+    public List<Commande> recupererCommandesEnAttente() throws SQLException {
+        List<Commande> commandes = new ArrayList<>();
         String sql = """
-                    SELECT c.id, c.montant, c.pharmacien_id, u.identifiant AS pharmacien_nom,
-                           f.id AS fournisseur_id, f.nom AS fournisseur_nom
-                    FROM commande c
-                    JOIN pharmacien p ON c.pharmacien_id = p.id
-                    JOIN utilisateur u ON p.utilisateur_id = u.id
-                    JOIN fournisseur f ON c.fournisseur_id = f.id
-                    WHERE c.id = ?
+                SELECT id, montant, pharmacien_id, fournisseur_id, 
+                       date_creation, statut
+                FROM commande
+                WHERE statut = 'En attente de confirmation'
+                ORDER BY date_creation DESC
                 """;
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, commandeId);
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Commande commande = extraireCommandeDeResultSet(rs);
+                commandes.add(commande);
+            }
+        }
+
+        return commandes;
+    }
+
+    /**
+     * Récupère une commande par son ID
+     * @param id ID de la commande
+     * @return La commande ou null si non trouvée
+     */
+    public Commande recupererCommandeParId(int id) throws SQLException {
+        String sql = """
+                SELECT id, montant, pharmacien_id, fournisseur_id, 
+                       date_creation, statut
+                FROM commande
+                WHERE id = ?
+                """;
+
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Pharmacien pharmacien = new Pharmacien(rs.getInt("pharmacien_id"), rs.getString("pharmacien_nom"));
-                    Fournisseur fournisseur = new Fournisseur(rs.getInt("fournisseur_id"), rs.getString("fournisseur_nom"));
-
-                    return new Commande(
-                            rs.getInt("id"),
-                            rs.getDouble("montant"),
-                            pharmacien,
-                            fournisseur,
-                            new ArrayList<>(),
-                            "En attente" // Le statut sera géré dynamiquement
-                    );
+                    return extraireCommandeDeResultSet(rs);
                 }
             }
         }
+
         return null;
     }
 
-
-    // Mettre à jour le montant total d'une commande
-    public void mettreAJourMontantCommande(int commandeId, double montantTotal) throws SQLException {
-        String sql = "UPDATE commande SET montant = ? WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setDouble(1, montantTotal);
-            stmt.setInt(2, commandeId);
-            stmt.executeUpdate();
-        }
-    }
-
-    public List<Fournisseur> recupererFournisseursAvecMedicamentsSousSeuil() throws SQLException {
-        List<Fournisseur> fournisseurs = new ArrayList<>();
+    /**
+     * Ajoute une nouvelle commande
+     * @param commande La commande à ajouter
+     * @return L'ID de la commande créée
+     */
+    public int ajouterCommande(Commande commande) throws SQLException {
         String sql = """
-                    SELECT DISTINCT f.id, f.nom
-                    FROM medicament m
-                    JOIN fournisseur f ON m.fournisseur_id = f.id
-                    WHERE m.stock <= m.seuilcommande
+                INSERT INTO commande (montant, pharmacien_id, fournisseur_id, date_creation, statut)
+                VALUES (?, ?, ?, ?, ?)
+                RETURNING id
                 """;
 
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                fournisseurs.add(new Fournisseur(rs.getInt("id"), rs.getString("nom")));
-            }
-        }
-        return fournisseurs;
-    }
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setDouble(1, commande.getMontantTotal());
+            stmt.setInt(2, commande.getPharmacien().getId());
+            stmt.setInt(3, commande.getFournisseur().getId());
 
-/*
-    public static void main(String[] args) {
-        try {
-            CommandeDao commandeDao = new CommandeDao();
+            // Utiliser la date de création de la commande ou la date actuelle
+            Timestamp dateCreation = commande.getDateCreation() != null
+                    ? Timestamp.valueOf(commande.getDateCreation())
+                    : Timestamp.valueOf(LocalDateTime.now());
+            stmt.setTimestamp(4, dateCreation);
 
-            System.out.println("\n📢 📋 Test de l'affichage des commandes avec statut 📋 📢");
+            stmt.setString(5, commande.getStatut() != null ? commande.getStatut() : "En attente de confirmation");
 
-            // ✅ Récupérer toutes les commandes et afficher leur statut
-            List<Commande> commandes = commandeDao.recupererToutesLesCommandes();
-            if (commandes.isEmpty()) {
-                System.out.println("⚠️ Aucune commande en base.");
-            } else {
-                for (Commande commande : commandes) {
-                    System.out.println("📌 Commande ID : " + commande.getId() +
-                            " | Pharmacien : " + commande.getPharmacien().getIdentifiant() +
-                            " | Fournisseur : " + commande.getFournisseur().getNom() +
-                            " | Montant : " + commande.getMontantTotal() +
-                            " € | Statut : " + commande.getStatut());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
                 }
             }
-
-        } catch (SQLException e) {
-            System.err.println("❌ Erreur SQL lors de la récupération des commandes : " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("❌ Erreur inattendue : " + e.getMessage());
         }
-    }*/
 
-    /*
+        throw new SQLException("Échec de l'ajout de la commande");
+    }
 
-    public static void main(String[] args) {
-        try {
-            CommandeDao commandeDao = new CommandeDao();
-            List<Fournisseur> fournisseurs = commandeDao.recupererFournisseursAvecMedicamentsSousSeuil();
+    /**
+     * Met à jour une commande existante
+     * @param commande La commande à mettre à jour
+     */
+    public void mettreAJourCommande(Commande commande) throws SQLException {
+        String sql = """
+                UPDATE commande
+                SET montant = ?, pharmacien_id = ?, fournisseur_id = ?, statut = ?
+                WHERE id = ?
+                """;
 
-            System.out.println("\n📢 Vérification des fournisseurs avec médicaments sous seuil :");
-            for (Fournisseur fournisseur : fournisseurs) {
-                System.out.println("🔹 " + fournisseur.getNom() + " (ID: " + fournisseur.getId() + ")");
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setDouble(1, commande.getMontantTotal());
+            stmt.setInt(2, commande.getPharmacien().getId());
+            stmt.setInt(3, commande.getFournisseur().getId());
+            stmt.setString(4, commande.getStatut());
+            stmt.setInt(5, commande.getId());
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("La mise à jour de la commande a échoué, aucune ligne affectée");
             }
-
-        } catch (SQLException e) {
-            System.err.println("❌ Erreur SQL : " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("❌ Erreur : " + e.getMessage());
         }
-    }*/
+    }
 
+    /**
+     * Confirme une commande en appelant la fonction PostgreSQL
+     * @param commandeId ID de la commande à confirmer
+     */
+    public void confirmerCommande(int commandeId) throws SQLException {
+        String sql = "SELECT valider_commande(?)";
+
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
+            stmt.setInt(1, commandeId);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new SQLException("Erreur lors de la confirmation de la commande: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Supprime une commande
+     * @param commandeId ID de la commande à supprimer
+     */
+    public void supprimerCommande(int commandeId) throws SQLException {
+        // D'abord supprimer les lignes de commande associées
+        String sqlLignes = "DELETE FROM lignedecommande WHERE commande_id = ?";
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sqlLignes)) {
+            stmt.setInt(1, commandeId);
+            stmt.executeUpdate();
+        }
+
+        // Ensuite supprimer la commande
+        String sqlCommande = "DELETE FROM commande WHERE id = ?";
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sqlCommande)) {
+            stmt.setInt(1, commandeId);
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("La suppression de la commande a échoué, aucune ligne affectée");
+            }
+        }
+    }
+
+    /**
+     * Extrait une commande d'un ResultSet
+     */
+    private Commande extraireCommandeDeResultSet(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
+        double montant = rs.getDouble("montant");
+        int pharmacienId = rs.getInt("pharmacien_id");
+        int fournisseurId = rs.getInt("fournisseur_id");
+
+        Timestamp dateCreationTimestamp = rs.getTimestamp("date_creation");
+        LocalDateTime dateCreation = dateCreationTimestamp != null
+                ? dateCreationTimestamp.toLocalDateTime()
+                : null;
+
+        String statut = rs.getString("statut");
+
+        // Récupérer le pharmacien et le fournisseur
+        Pharmacien pharmacien = pharmacienDao.recupererPharmacienParId(pharmacienId);
+        Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
+
+        // Créer la commande avec tous les détails
+        Commande commande = new Commande(id, montant, pharmacien, fournisseur, new ArrayList<>(), statut, dateCreation);
+
+        return commande;
+    }
 }

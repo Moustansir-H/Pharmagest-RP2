@@ -3,12 +3,14 @@ package mcci.businessschool.bts.sio.slam.pharmagest.patient;
 import java.util.Date;
 
 public class Patient {
+    private Integer id;
     private String nom;
     private String prenom;
     private Date dateNaissance;
     private String adresse;
     private String contact;
 
+    // Constructeur complet
     public Patient(String nom, String prenom, Date dateNaissance, String adresse, String contact) {
         this.nom = nom;
         this.prenom = prenom;
@@ -17,8 +19,14 @@ public class Patient {
         this.contact = contact;
     }
 
-    // Getters et setters
+    // Getters et Setters
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getNom() {
         return nom;
@@ -59,4 +67,10 @@ public class Patient {
     public void setContact(String contact) {
         this.contact = contact;
     }
+
+    @Override
+    public String toString() {
+        return nom + " " + prenom;
+    }
 }
+

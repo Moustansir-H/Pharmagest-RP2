@@ -1,7 +1,7 @@
-package mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.service;
+package mcci.businessschool.bts.sio.slam.pharmagest.vente.service;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
-import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.dao.LigneVenteDao;
+import mcci.businessschool.bts.sio.slam.pharmagest.vente.dao.LigneVenteDao;
 
 import java.sql.SQLException;
 import java.util.List;

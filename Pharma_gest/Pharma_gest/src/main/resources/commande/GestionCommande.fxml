@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.commande.controleur.ConfirmationCommandeControleur">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label fx:id="lblTitre" text="Confirmation des commandes automatiques" style="-fx-font-size: 18; -fx-font-weight: bold;" />
+
+    <Separator />
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="btnConfirmerTout" text="Confirmer toutes les commandes" onAction="#confirmerToutesLesCommandes" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnRetour" text="Retour à la gestion des commandes" onAction="#retourGestionCommandes" />
+    </HBox>
+
+    <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+        <VBox spacing="5">
+            <Label text="Commandes en attente de confirmation" style="-fx-font-weight: bold;" />
+            <TableView fx:id="tableCommandes" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colonneId" text="ID" prefWidth="50" />
+                    <TableColumn fx:id="colonneDateCreation" text="Date création" prefWidth="150" />
+                    <TableColumn fx:id="colonneFournisseur" text="Fournisseur" prefWidth="150" />
+                    <TableColumn fx:id="colonneMontant" text="Montant (€)" prefWidth="100" />
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="btnConfirmerSelection" text="Confirmer la commande sélectionnée"
+                        onAction="#confirmerCommandeSelectionnee" disable="true" />
+            </HBox>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Détails et impact sur les stocks" style="-fx-font-weight: bold;" />
+            <TableView fx:id="tableLignesCommande" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colonneMedicament" text="Médicament" prefWidth="150" />
+                    <TableColumn fx:id="colonneQuantite" text="Quantité" prefWidth="70" />
+                    <TableColumn fx:id="colonnePrixUnitaire" text="Prix unitaire (€)" prefWidth="100" />
+                    <TableColumn fx:id="colonnePrixTotal" text="Prix total (€)" prefWidth="100" />
+                    <TableColumn fx:id="colonneStockActuel" text="Stock actuel" prefWidth="100" />
+                    <TableColumn fx:id="colonneStockApres" text="Stock après" prefWidth="100" />
+                </columns>
+            </TableView>
+        </VBox>
+    </SplitPane>
+
+    <Label fx:id="lblStatut" text="Prêt" style="-fx-font-style: italic;" />
+</VBox>

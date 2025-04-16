@@ -25,7 +25,7 @@ public class ApprovisionnementControleur {
     public void ouvrirReceptionCommande(ActionEvent event) {
         try {
             // Charger le fichier FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/ReceptionCommande.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/ConfirmationCommande.fxml"));
             Scene nouvelleScene = new Scene(loader.load());
 
             // Obtenir la fenêtre actuelle
@@ -46,7 +46,7 @@ public class ApprovisionnementControleur {
     public void ouvrirGenerationCommande(ActionEvent event) {
         try {
             // Nouvelle scène
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/CreationCommande.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/GestionCommande.fxml"));
             Scene nouvelleScene = new Scene(loader.load());
             // La référence de la scène actuelle
             Stage stage = (Stage) generationCommandeButton.getScene().getWindow();
@@ -58,19 +58,7 @@ public class ApprovisionnementControleur {
         }
     }
 
-    @FXML
-    private void retourDashboard(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Dashboard");
-            stage.show();
-        } catch (IOException e) {
-            System.err.println("❌ Erreur lors du retour au Dashboard : " + e.getMessage());
-        }
-    }
+
 
     @FXML
     public void retourDashboardOnAction(ActionEvent e) throws IOException {

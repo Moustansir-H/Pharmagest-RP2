@@ -364,7 +364,7 @@ public class MedicamentDao {
         return Math.max(0, medicament.getQteMax() - medicament.getStock()); // ✅ Toujours >= 0
     }
 
-    public void mettreAJourStock(int medicamentId, int quantiteAjoutee) throws SQLException {
+    public boolean mettreAJourStock(int medicamentId, int quantiteAjoutee) throws SQLException {
         String sql = "UPDATE medicament SET stock = stock + ? WHERE id = ?";
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
             stmt.setInt(1, quantiteAjoutee);
@@ -380,6 +380,7 @@ public class MedicamentDao {
             System.err.println("❌ Erreur SQL lors de la mise à jour du stock : " + e.getMessage());
             throw e;
         }
+        return false;
     }
 
     public static void main(String[] args) {
