@@ -88,7 +88,7 @@
                     </VBox>
                 </VBox>
 
-                <!-- Colonne de droite - Calculatrice -->
+                <!-- h -->
                 <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
                     <Label text="Calculatrice" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333; -fx-padding: 0 0 15 0;"/>
                     
