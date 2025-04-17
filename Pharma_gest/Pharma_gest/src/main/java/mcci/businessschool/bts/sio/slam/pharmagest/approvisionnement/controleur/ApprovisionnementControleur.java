@@ -3,7 +3,6 @@ package mcci.businessschool.bts.sio.slam.pharmagest.approvisionnement.controleur
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -12,24 +11,24 @@ import java.io.IOException;
 
 public class ApprovisionnementControleur {
     @FXML
-    private Button generationCommandeButton;
-
+    private Button gestionCommandeBtn;
     @FXML
-    private Button receptionCommandeButton;
-
+    private Button livraisonBtn;
     @FXML
     private Button retourDashboard;
+    @FXML
+    private Button commandeBtn;
 
 
     @FXML
-    public void ouvrirReceptionCommande(ActionEvent event) {
+    public void ouvrirLivraison(ActionEvent event) {
         try {
             // Charger le fichier FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/ConfirmationCommande.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/Livraison.fxml"));
             Scene nouvelleScene = new Scene(loader.load());
 
             // Obtenir la fenêtre actuelle
-            Stage stage = (Stage) receptionCommandeButton.getScene().getWindow();
+            Stage stage = (Stage) livraisonBtn.getScene().getWindow();
 
             // Mettre à jour la scène avec la nouvelle vue
             stage.setScene(nouvelleScene);
@@ -43,13 +42,29 @@ public class ApprovisionnementControleur {
 
 
     @FXML
-    public void ouvrirGenerationCommande(ActionEvent event) {
+    public void ouvrirGestionCommande(ActionEvent event) {
         try {
             // Nouvelle scène
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/GestionCommande.fxml"));
             Scene nouvelleScene = new Scene(loader.load());
             // La référence de la scène actuelle
-            Stage stage = (Stage) generationCommandeButton.getScene().getWindow();
+            Stage stage = (Stage) gestionCommandeBtn.getScene().getWindow();
+            // Afficher la nouvelle scène
+            stage.setScene(nouvelleScene);
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors de l'ouverture de la génération de commande : " + e.getMessage());
+            e.printStackTrace();  // 🔴 Affiche l'erreur complète avec les détails
+        }
+    }
+
+    @FXML
+    public void ouvrirCommande(ActionEvent event) {
+        try {
+            // Nouvelle scène
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/ListeCommande.fxml"));
+            Scene nouvelleScene = new Scene(loader.load());
+            // La référence de la scène actuelle
+            Stage stage = (Stage) commandeBtn.getScene().getWindow();
             // Afficher la nouvelle scène
             stage.setScene(nouvelleScene);
         } catch (IOException e) {

@@ -177,10 +177,10 @@ public class ListeCommandeControleur {
 
     @FXML
     private void retourListeLivraisons() {
-        // Revenir à l'interface "ConfirmationCommande.fxml"
+        // Revenir à l'interface "Livraison.fxml"
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/commande/ConfirmationCommande.fxml")
+                    getClass().getResource("/commande/Livraison.fxml")
             );
             javafx.scene.Parent root = loader.load();
             javafx.stage.Stage stage = (javafx.stage.Stage) btnRetour.getScene().getWindow();

@@ -2,41 +2,36 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="538.0"
-            prefWidth="824.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.approvisionnement.controleur.ApprovisionnementControleur">
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="538.0" prefWidth="824.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.approvisionnement.controleur.ApprovisionnementControleur">
 
     <top>
-        <AnchorPane prefHeight="73.0" prefWidth="824.0" style="-fx-background-color: green;"
-                    BorderPane.alignment="CENTER">
-            <children>
-                <Label layoutX="256.0" layoutY="20.0" prefHeight="33.0" prefWidth="313.0"
-                       text="GESTION APPROVISIONNEMENT">
+        <VBox style="-fx-background-color: #2196F3; -fx-padding: 15;">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;" text="APPROVISIONNEMENT" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="retourDashboard" onAction="#retourDashboardOnAction" style="-fx-background-color: white; -fx-text-fill: #2196F3; -fx-font-weight: bold; -fx-padding: 8 15;" text="Retour">
                     <font>
-                        <Font name="Berlin Sans FB" size="19.0"/>
-                    </font>
-                </Label>
-            </children>
-        </AnchorPane>
+                        <Font name="System Bold" size="12.0" />
+                    </font></Button>
+            </HBox>
+        </VBox>
     </top>
 
     <center>
-        <AnchorPane prefHeight="423.0" prefWidth="787.0" style="-fx-background-color: #9ed9a1;"
-                    BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="423.0" prefWidth="787.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="receptionCommandeButton" layoutX="160.0" layoutY="180.0" mnemonicParsing="false"
-                        prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: green; -fx-text-fill: white;"
-                        text="Réception Commande" onAction="#ouvrirReceptionCommande"/>
+                <Button fx:id="livraisonBtn" layoutX="160.0" layoutY="180.0" mnemonicParsing="false" onAction="#ouvrirLivraison" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Livraison" />
 
-                <Button fx:id="generationCommandeButton" layoutX="460.0" layoutY="180.0" mnemonicParsing="false"
-                        prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: green; -fx-text-fill: white;"
-                        text="Génération Commande" onAction="#ouvrirGenerationCommande"/>
+                <Button fx:id="gestionCommandeBtn" layoutX="460.0" layoutY="180.0" mnemonicParsing="false" onAction="#ouvrirGestionCommande" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Gestion Commande" />
 
-                <Button fx:id="retourDashboard" layoutX="320.0" layoutY="300.0" mnemonicParsing="false"
-                        prefHeight="50.0" prefWidth="180.0" style="-fx-background-color: red; -fx-text-fill: white;"
-                        text="Retour" onAction="#retourDashboardOnAction"/>
+            <Button fx:id="commandeBtn" layoutX="312.0" layoutY="72.0" mnemonicParsing="false" onAction="#ouvrirCommande" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Commande Liste" />
             </children>
         </AnchorPane>
     </center>

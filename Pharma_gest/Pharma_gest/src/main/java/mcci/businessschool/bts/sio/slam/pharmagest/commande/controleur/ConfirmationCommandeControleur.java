@@ -25,6 +25,7 @@ import java.util.Optional;
 
 public class ConfirmationCommandeControleur{
 
+    public Button approvisionnementButton;
     @FXML
     private TableView<Commande> tableCommandes;
 
@@ -319,5 +320,17 @@ public class ConfirmationCommandeControleur{
 
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    @FXML
+    public void ouvrirApprovisionnement(ActionEvent e) throws IOException {
+        // Charger la vue de l'approvisionnement
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/approvisionnement/Approvisionnement.fxml"));
+        Scene nouvelleScene = new Scene(loader.load());
+
+        // Récupérer la fenêtre actuelle et y placer la nouvelle scène
+        Stage stage = (Stage) approvisionnementButton.getScene().getWindow();
+        stage.setScene(nouvelleScene);
+        stage.setTitle("Approvisionnement");
     }
 }

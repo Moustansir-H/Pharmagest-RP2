@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.Commande;
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.LigneDeCommande;
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.service.GestionCommandeService;
-import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -263,7 +262,7 @@ public class GestionCommandeControleur {
     @FXML
     private void ouvrirEcranConfirmation(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/ConfirmationCommande.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/Livraison.fxml"));
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) btnOuvrirConfirmation.getScene().getWindow();
             stage.setScene(scene);
@@ -313,4 +312,5 @@ public class GestionCommandeControleur {
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
     }
+
 }

@@ -22,7 +22,7 @@
                   <Image url="@../images/user.png" />
                </image>
             </ImageView>
-            <Label layoutX="67.0" layoutY="170.0" text="Bienvenue" textFill="WHITE" />
+            <Label fx:id="bienvenueLabel" layoutX="2.857142857142857" layoutY="175.0" prefHeight="17.0" prefWidth="178.0" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="6.0" />
                 <Button fx:id="quitButton" layoutX="82.0" layoutY="305.0" mnemonicParsing="false" onAction="#quitButtonOnAction" prefHeight="57.0" prefWidth="78.0" style="-fx-background-color: #2196f3;" textFill="#2196f3" AnchorPane.bottomAnchor="37.857142857142854" AnchorPane.rightAnchor="26.857142857142833">
                <graphic>
                   <ImageView fitHeight="49.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
