@@ -9,6 +9,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
@@ -18,7 +21,10 @@ import mcci.businessschool.bts.sio.slam.pharmagest.vente.Vente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.LigneVente;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.LigneVenteService;
 import mcci.businessschool.bts.sio.slam.pharmagest.vente.service.VenteService;
+import mcci.businessschool.bts.sio.slam.pharmagest.vente.ticket.GenerateurPDF;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -182,15 +188,45 @@ public class CaisseControleur {
             return;
         }
 
-        // Appel de la méthode de validation du paiement et mise à jour
         try {
+            // ✅ Appel simplifié : l'ID du vendeur est géré automatiquement dans le service
             venteService.validerPaiementEtMettreAJourStock(selectedVente.getId());
+
             showAlert(Alert.AlertType.INFORMATION, "Paiement validé",
                     String.format("💰 Monnaie à rendre : %.2f €", montantRecu - selectedVente.getMontantTotal()));
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
+            return;
         }
 
+        // ✅ Génération de la facture
+        File fichierFacture = GenerateurPDF.genererFacturePDF(selectedVente, lignesVenteObservable, montantRecu);
+        if (fichierFacture != null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Facture générée");
+            alert.setHeaderText("✅ Paiement validé et facture générée !");
+            alert.setContentText("📄 Fichier : " + fichierFacture.getName());
+
+            ButtonType btnOuvrir = new ButtonType("Ouvrir");
+            ButtonType btnFermer = new ButtonType("Fermer", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(btnOuvrir, btnFermer);
+
+            alert.showAndWait().ifPresent(reponse -> {
+                if (reponse == btnOuvrir) {
+                    try {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().open(fichierFacture);
+                        }
+                    } catch (Exception ex) {
+                        showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le fichier PDF.");
+                    }
+                }
+            });
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Erreur PDF", "La facture n'a pas pu être générée !");
+        }
+
+        // 🔄 Nettoyage
         chargerVentesEnAttente();
         lignesVenteObservable.clear();
         txtMontantRecu.clear();
@@ -200,6 +236,9 @@ public class CaisseControleur {
         lblTypeVente.setText("");
         lblMonnaie.setText("Monnaie à rendre : 0.00 €");
     }
+
+
+
     @FXML
     public void retourDashboardOnAction(ActionEvent event) {
         try {
