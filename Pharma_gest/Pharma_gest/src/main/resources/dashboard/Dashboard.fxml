@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.dashboard.controleur.DashboardControleur">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.dashboard.controleur.DashboardControleur">
     <left>
         <AnchorPane prefHeight="400.0" prefWidth="187.0" style="-fx-background-color: #2196F3;" BorderPane.alignment="CENTER">
             <children>
@@ -57,9 +57,9 @@
                       </Label>
                </children>
             </VBox>
-            <VBox layoutX="6.285714285714286" layoutY="88.0" prefHeight="237.0" prefWidth="419.0" AnchorPane.bottomAnchor="5.714285714285722" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="88.0">
+            <VBox layoutX="53.0" layoutY="149.0" prefHeight="321.0" prefWidth="507.0" AnchorPane.bottomAnchor="149.28571428571428" AnchorPane.leftAnchor="53.0" AnchorPane.rightAnchor="52.714285714285666" AnchorPane.topAnchor="149.0">
                <children>
-                  <HBox alignment="CENTER" prefHeight="147.0" prefWidth="399.0">
+                  <HBox alignment="CENTER" prefHeight="121.0" prefWidth="507.0">
                      <children>
                             <Button fx:id="maintenanceButton" mnemonicParsing="false" onAction="#maintenanceButtonOnAction" prefHeight="95.0" prefWidth="121.0" style="-fx-background-color: wh;" textFill="WHITE">
                            <graphic>
@@ -96,8 +96,22 @@
                         </Button>
                      </children>
                      <VBox.margin>
-                        <Insets bottom="20.0" />
+                        <Insets />
                      </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane prefHeight="36.0" prefWidth="508.0">
+                           <children>
+                              <Label layoutX="75.0" layoutY="5.0" text="Maintenance" textFill="#2196f3" />
+                              <Label layoutX="238.0" layoutY="5.0" text="Vente" textFill="#2196f3" />
+                              <Label layoutX="387.0" layoutY="5.0" text="Caisse" textFill="#2196f3" />
+                           </children>
+                           <HBox.margin>
+                              <Insets bottom="40.0" />
+                           </HBox.margin>
+                        </AnchorPane>
+                     </children>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="126.0" prefWidth="399.0">
                      <children>
@@ -122,6 +136,16 @@
                               </ImageView>
                            </graphic>
                         </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane prefHeight="43.0" prefWidth="506.0">
+                           <children>
+                              <Label layoutX="87.0" layoutY="5.0" text="Fournisseur" textFill="#2196f3" />
+                              <Label layoutX="343.0" layoutY="5.0" text="Approvisionnement" textFill="#2196f3" />
+                           </children>
+                        </AnchorPane>
                      </children>
                   </HBox>
                </children>
