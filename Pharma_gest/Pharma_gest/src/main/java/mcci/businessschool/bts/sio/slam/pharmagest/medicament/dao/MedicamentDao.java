@@ -1,5 +1,13 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.LigneDeCommande;
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.Famille;
@@ -7,10 +15,6 @@ import mcci.businessschool.bts.sio.slam.pharmagest.famille.dao.FamilleDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.Fournisseur;
 import mcci.businessschool.bts.sio.slam.pharmagest.fournisseur.dao.FournisseurDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MedicamentDao {

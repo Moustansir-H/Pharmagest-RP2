@@ -1,104 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.paint.Color?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur.CaisseControleur">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.vente.controleur.CaisseControleur"
+            style="-fx-background-color: #f8f9fa;">
 
-    <!-- 🔝 En-tête : Titre + bouton retour -->
+    <!-- En-tête moderne avec effet d'ombre et dégradé -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <padding>
-                <Insets bottom="10" left="10" right="10" top="10" />
-            </padding>
-            <Label style="-fx-font-size:16; -fx-font-weight:bold;" text="Caisse (Vendeur)" />
-            <Button fx:id="retourDashboard" onAction="#retourDashboardOnAction" text="Retour" />
-        </HBox>
+        <VBox style="-fx-background-color: linear-gradient(to right, #2196F3, #1976D2); -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 3);">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="Caisse (Vendeur)" 
+                       style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Retour" 
+                        style="-fx-background-color: white; -fx-text-fill: #2196F3; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);"
+                        onAction="#handleRetour"/>
+            </HBox>
+        </VBox>
     </top>
 
-    <!-- 🧾 Centre avec 2 colonnes : Ventes à gauche, détails à droite -->
     <center>
-        <HBox spacing="20">
-            <padding>
-                <Insets bottom="10" left="10" right="10" top="10" />
-            </padding>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent; -fx-padding: 20;">
+            <HBox spacing="25" style="-fx-padding: 20;">
+                <!-- Colonne de gauche -->
+                <VBox spacing="25" style="-fx-min-width: 500;">
+                    <!-- Section Ventes en attente -->
+                    <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                        <Label text="Ventes en attente de paiement" 
+                               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333; -fx-padding: 0 0 15 0;"/>
+                        
+                        <TableView fx:id="tableVentes" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                            <columns>
+                                <TableColumn fx:id="colVenteId" text="ID Vente" prefWidth="100" style="-fx-alignment: CENTER;"/>
+                                <TableColumn fx:id="colDateVente" text="Date" prefWidth="180" style="-fx-alignment: CENTER;"/>
+                                <TableColumn fx:id="colMontantTotal" text="Montant Total" prefWidth="150" style="-fx-alignment: CENTER-RIGHT;"/>
+                                <TableColumn fx:id="colNumeroFacture" text="Facture" prefWidth="180" style="-fx-alignment: CENTER;"/>
+                            </columns>
+                            <style>
+                                -fx-table-cell-border-color: transparent;
+                                -fx-selection-bar: #e3f2fd;
+                                -fx-selection-bar-non-focused: #e3f2fd;
+                            </style>
+                        </TableView>
+                    </VBox>
 
-            <!-- 📋 Table des ventes en attente -->
-            <VBox spacing="10">
-                <Label style="-fx-font-weight:bold;" text="Ventes en attente de paiement" />
-                <TableView fx:id="tableVentes" prefHeight="300" prefWidth="400">
-                    <columns>
-                        <TableColumn fx:id="colVenteId" prefWidth="80" text="ID Vente" />
-                        <TableColumn fx:id="colDateVente" prefWidth="120" text="Date" />
-                        <TableColumn fx:id="colMontantTotal" prefWidth="100" text="Montant" />
-                        <TableColumn fx:id="colNumeroFacture" prefWidth="100" text="Facture" />
-                        <TableColumn fx:id="colTypeVente" prefWidth="100" text="Type Vente" /> <!-- Nouvelle colonne -->
-                    </columns>
-                </TableView>
-            </VBox>
+                    <!-- Section Paiement -->
+                    <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                        <Label text="Informations de Paiement" 
+                               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333; -fx-padding: 0 0 15 0;"/>
+                        
+                        <GridPane hgap="20" vgap="15" style="-fx-padding: 15;">
+                            <columnConstraints>
+                                <ColumnConstraints halignment="RIGHT" minWidth="150"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
 
-            <!-- 📦 Détails de la vente sélectionnée -->
-            <VBox alignment="TOP_LEFT" prefWidth="400" spacing="10">
-                <Label style="-fx-font-weight:bold;" text="Détails de la vente" />
+                            <Label text="Montant reçu :" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-text-fill: #555;"/>
+                            <TextField fx:id="txtMontantRecu" GridPane.rowIndex="0" GridPane.columnIndex="1" 
+                                      style="-fx-padding: 10; -fx-background-radius: 5;"/>
 
-                <GridPane hgap="10" vgap="5">
-                    <Label text="ID Vente :" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <Label fx:id="lblIdVente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                            <Label text="Mode de paiement :" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill: #555;"/>
+                            <TextField fx:id="txtModePaiement" GridPane.rowIndex="1" GridPane.columnIndex="1" 
+                                      promptText="Espèces, Carte..." style="-fx-padding: 10; -fx-background-radius: 5;"/>
+                        </GridPane>
 
-                    <Label text="Type :" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <Label fx:id="lblTypeVente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <HBox spacing="20" alignment="CENTER_RIGHT" style="-fx-padding: 15;">
+                            <Button text="Valider le paiement" 
+                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 25; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);"
+                                    onAction="#handleValiderPaiement"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
 
-                    <Label text="Date :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                    <Label fx:id="lblDateVente" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                    <Label text="Montant Total :" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                    <Label fx:id="lblMontantTotal" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-               <columnConstraints>
-                  <ColumnConstraints />
-                  <ColumnConstraints />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-               </rowConstraints>
-                </GridPane>
-
-                <!-- 💊 Liste des médicaments de la vente -->
-                <Label style="-fx-font-weight:bold;" text="Médicaments associés :" />
-                <TableView fx:id="tableLignesVente" prefHeight="150">
-                    <columns>
-                        <TableColumn fx:id="colMedicamentNom" prefWidth="150" text="Nom" />
-                        <TableColumn fx:id="colQuantite" prefWidth="100" text="Quantité" />
-                        <TableColumn fx:id="colPrixUnitaire" prefWidth="100" text="Prix U" />
-                    </columns>
-                </TableView>
-
-                <!-- 💰 Saisie et calcul monnaie -->
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label text="Montant reçu:" />
-                    <TextField fx:id="txtMontantRecu" prefWidth="100" />
-                </HBox>
-
-
-                <Label fx:id="lblMonnaie" style="-fx-font-weight: bold;" text="Monnaie à rendre : 0.00 €" />
-
-                <!-- ✅ Bouton validation -->
-                <HBox alignment="CENTER_RIGHT">
-                    <Button onAction="#handleValiderPaiement" text="Valider le paiement" />
-                </HBox>
-            </VBox>
-        </HBox>
+                <!-- h -->
+                <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                    <Label text="Calculatrice" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333; -fx-padding: 0 0 15 0;"/>
+                    
+                    <TextField fx:id="txtCalculatrice" style="-fx-background-color: #f5f5f5; -fx-padding: 10; -fx-background-radius: 5; -fx-font-size: 16; -fx-alignment: CENTER-RIGHT;"/>
+                    
+                    <GridPane hgap="5" vgap="5" style="-fx-padding: 10;">
+                        <Button fx:id="btn7" text="7" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice"/>
+                        <Button fx:id="btn8" text="8" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.columnIndex="1"/>
+                        <Button fx:id="btn9" text="9" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.columnIndex="2"/>
+                        <Button fx:id="btnDiv" text="÷" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.columnIndex="3"/>
+                        
+                        <Button fx:id="btn4" text="4" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="1"/>
+                        <Button fx:id="btn5" text="5" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <Button fx:id="btn6" text="6" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                        <Button fx:id="btnMult" text="×" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+                        
+                        <Button fx:id="btn1" text="1" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="2"/>
+                        <Button fx:id="btn2" text="2" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        <Button fx:id="btn3" text="3" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                        <Button fx:id="btnMinus" text="-" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+                        
+                        <Button fx:id="btn0" text="0" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="3"/>
+                        <Button fx:id="btnDot" text="." style="-fx-background-color: #e0e0e0; -fx-text-fill: #333; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        <Button fx:id="btnClear" text="C" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+                        <Button fx:id="btnPlus" text="+" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+                        
+                        <Button fx:id="btnEqual" text="=" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 16; -fx-padding: 15; -fx-background-radius: 5;" onAction="#handleCalculatrice" GridPane.rowIndex="4" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS"/>
+                    </GridPane>
+                </VBox>
+            </HBox>
+        </ScrollPane>
     </center>
 </BorderPane>
