@@ -45,24 +45,48 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox alignment="CENTER" layoutX="8.0" layoutY="104.0" prefHeight="289.0" prefWidth="583.0" style="-fx-background-color: white;" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="9.0">
+            <VBox alignment="CENTER" layoutX="8.0" layoutY="131.0" prefHeight="198.0" prefWidth="583.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="70.85714285714283" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="131.0">
                <children>
-                  <HBox alignment="CENTER" prefHeight="194.0" prefWidth="585.0">
+                  <HBox alignment="CENTER">
                      <children>
-                            <Button fx:id="medicamentButton" mnemonicParsing="false" onAction="#MedicamentOnAction" prefHeight="80.0" prefWidth="130.0" style="-fx-background-color: #2196F3;" text="Medicaments" textFill="WHITE" HBox.hgrow="ALWAYS">
+                            <Button fx:id="medicamentButton" mnemonicParsing="false" onAction="#MedicamentOnAction" prefHeight="80.0" prefWidth="130.0" style="-fx-background-color: white;" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets left="40.0" right="40.0" />
                            </HBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/capsule.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </Button>
-                            <Button fx:id="userButton" mnemonicParsing="false" onAction="#userButtonOnAction" prefHeight="80.0" prefWidth="130.0" style="-fx-background-color: #2196F3;" text="Utilisateur" textFill="WHITE">
+                            <Button fx:id="userButton" mnemonicParsing="false" onAction="#userButtonOnAction" prefHeight="80.0" prefWidth="130.0" style="-fx-background-color: white;" textFill="WHITE">
                            <HBox.margin>
                               <Insets right="40.0" />
                            </HBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/utilisateur%20(1).png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </Button>
                      </children>
                      <VBox.margin>
-                        <Insets bottom="30.0" />
+                        <Insets />
                      </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane prefHeight="40.0" prefWidth="583.0">
+                           <children>
+                              <Label layoutX="165.0" layoutY="5.0" text="Medicament" textFill="#2196f3" />
+                              <Label layoutX="370.0" layoutY="5.0" text="Utilisateur" textFill="#2196f3" />
+                           </children>
+                        </AnchorPane>
+                     </children>
                   </HBox>
                </children>
             </VBox>

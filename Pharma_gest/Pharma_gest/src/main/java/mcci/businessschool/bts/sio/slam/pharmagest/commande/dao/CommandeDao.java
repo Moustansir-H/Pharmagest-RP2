@@ -30,7 +30,7 @@ public class CommandeDao {
     public List<Commande> recupererToutesLesCommandes() throws SQLException {
         List<Commande> commandes = new ArrayList<>();
         String sql = """
-                SELECT id, montant, pharmacien_id, fournisseur_id, 
+                SELECT id, montant, fournisseur_id, 
                        date_creation, statut
                 FROM commande
                 ORDER BY date_creation DESC
@@ -55,7 +55,7 @@ public class CommandeDao {
     public List<Commande> recupererCommandesEnAttente() throws SQLException {
         List<Commande> commandes = new ArrayList<>();
         String sql = """
-                SELECT id, montant, pharmacien_id, fournisseur_id, 
+                SELECT id, montant, fournisseur_id, 
                        date_creation, statut
                 FROM commande
                 WHERE statut = 'En attente de confirmation'
@@ -81,7 +81,7 @@ public class CommandeDao {
      */
     public Commande recupererCommandeParId(int id) throws SQLException {
         String sql = """
-                SELECT id, montant, pharmacien_id, fournisseur_id, 
+                SELECT id, montant, fournisseur_id, 
                        date_creation, statut
                 FROM commande
                 WHERE id = ?
@@ -107,23 +107,22 @@ public class CommandeDao {
      */
     public int ajouterCommande(Commande commande) throws SQLException {
         String sql = """
-                INSERT INTO commande (montant, pharmacien_id, fournisseur_id, date_creation, statut)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO commande (montant, fournisseur_id, date_creation, statut)
+                VALUES (?, ?, ?, ?)
                 RETURNING id
                 """;
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
             stmt.setDouble(1, commande.getMontantTotal());
-            stmt.setInt(2, commande.getPharmacien().getId());
-            stmt.setInt(3, commande.getFournisseur().getId());
+            stmt.setInt(2, commande.getFournisseur().getId());
 
             // Utiliser la date de création de la commande ou la date actuelle
             Timestamp dateCreation = commande.getDateCreation() != null
                     ? Timestamp.valueOf(commande.getDateCreation())
                     : Timestamp.valueOf(LocalDateTime.now());
-            stmt.setTimestamp(4, dateCreation);
+            stmt.setTimestamp(3, dateCreation);
 
-            stmt.setString(5, commande.getStatut() != null ? commande.getStatut() : "En attente de confirmation");
+            stmt.setString(4, commande.getStatut() != null ? commande.getStatut() : "En attente de confirmation");
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -142,16 +141,15 @@ public class CommandeDao {
     public void mettreAJourCommande(Commande commande) throws SQLException {
         String sql = """
                 UPDATE commande
-                SET montant = ?, pharmacien_id = ?, fournisseur_id = ?, statut = ?
+                SET montant = ?, fournisseur_id = ?, statut = ?
                 WHERE id = ?
                 """;
 
         try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(sql)) {
             stmt.setDouble(1, commande.getMontantTotal());
-            stmt.setInt(2, commande.getPharmacien().getId());
-            stmt.setInt(3, commande.getFournisseur().getId());
-            stmt.setString(4, commande.getStatut());
-            stmt.setInt(5, commande.getId());
+            stmt.setInt(2, commande.getFournisseur().getId());
+            stmt.setString(3, commande.getStatut());
+            stmt.setInt(4, commande.getId());
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
@@ -204,7 +202,6 @@ public class CommandeDao {
     private Commande extraireCommandeDeResultSet(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         double montant = rs.getDouble("montant");
-        int pharmacienId = rs.getInt("pharmacien_id");
         int fournisseurId = rs.getInt("fournisseur_id");
 
         Timestamp dateCreationTimestamp = rs.getTimestamp("date_creation");
@@ -214,12 +211,11 @@ public class CommandeDao {
 
         String statut = rs.getString("statut");
 
-        // Récupérer le pharmacien et le fournisseur
-        Pharmacien pharmacien = pharmacienDao.recupererPharmacienParId(pharmacienId);
+        // Récupérer le fournisseur
         Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
 
         // Créer la commande avec tous les détails
-        Commande commande = new Commande(id, montant, pharmacien, fournisseur, new ArrayList<>(), statut, dateCreation);
+        Commande commande = new Commande(id, montant, fournisseur, new ArrayList<>(), statut, dateCreation);
 
         return commande;
     }

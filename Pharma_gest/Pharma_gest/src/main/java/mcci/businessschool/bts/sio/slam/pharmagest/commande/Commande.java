@@ -11,17 +11,15 @@ import java.util.List;
 public class Commande {
     private int id;
     private double montantTotal;
-    private Pharmacien pharmacien;
     private Fournisseur fournisseur;
     private List<LigneDeCommande> lignesDeCommande;
     private String statut;
     private LocalDateTime dateCreation; // Nouveau champ pour la date de création
 
     // Constructeur avec ID
-    public Commande(int id, double montantTotal, Pharmacien pharmacien, Fournisseur fournisseur, List<LigneDeCommande> lignesDeCommande, String statut) {
+    public Commande(int id, double montantTotal, Fournisseur fournisseur, List<LigneDeCommande> lignesDeCommande, String statut) {
         this.id = id;
         this.montantTotal = montantTotal;
-        this.pharmacien = pharmacien;
         this.fournisseur = fournisseur;
         this.lignesDeCommande = lignesDeCommande;
         this.statut = statut;
@@ -29,10 +27,9 @@ public class Commande {
     }
 
     // Constructeur avec ID et date de création
-    public Commande(int id, double montantTotal, Pharmacien pharmacien, Fournisseur fournisseur, List<LigneDeCommande> lignesDeCommande, String statut, LocalDateTime dateCreation) {
+    public Commande(int id, double montantTotal, Fournisseur fournisseur, List<LigneDeCommande> lignesDeCommande, String statut, LocalDateTime dateCreation) {
         this.id = id;
         this.montantTotal = montantTotal;
-        this.pharmacien = pharmacien;
         this.fournisseur = fournisseur;
         this.lignesDeCommande = lignesDeCommande;
         this.statut = statut;
@@ -40,10 +37,9 @@ public class Commande {
     }
 
     // Constructeur sans ID (pour les nouvelles commandes)
-    public Commande(double montantTotal, Pharmacien pharmacien, Fournisseur fournisseur, List<LigneDeCommande> lignesDeCommande) {
+    public Commande(double montantTotal, Fournisseur fournisseur, List<LigneDeCommande> lignesDeCommande) {
         this.id = -1; // Valeur par défaut pour une nouvelle commande
         this.montantTotal = montantTotal;
-        this.pharmacien = pharmacien;
         this.fournisseur = fournisseur;
         this.lignesDeCommande = lignesDeCommande;
         this.statut = "En attente"; // Statut par défaut
@@ -53,7 +49,6 @@ public class Commande {
     public Commande(Integer id) {
         this.id = id;
         this.montantTotal = 0.0;
-        this.pharmacien = null;
         this.fournisseur = null;
         this.lignesDeCommande = new ArrayList<>();
         this.statut = "En attente";
@@ -75,14 +70,6 @@ public class Commande {
 
     public void setMontantTotal(double montantTotal) {
         this.montantTotal = montantTotal;
-    }
-
-    public Pharmacien getPharmacien() {
-        return pharmacien;
-    }
-
-    public void setPharmacien(Pharmacien pharmacien) {
-        this.pharmacien = pharmacien;
     }
 
     public Fournisseur getFournisseur() {
@@ -126,9 +113,6 @@ public class Commande {
         return dateCreation.format(formatter);
     }
 
-    public String getPharmacienNom() {
-        return pharmacien != null ? pharmacien.getIdentifiant() : "Inconnu";
-    }
 
     public String getFournisseurNom() {
         return fournisseur != null ? fournisseur.getNom() : "Inconnu";
@@ -139,7 +123,6 @@ public class Commande {
         return "Commande{" +
                 "id=" + id +
                 ", montantTotal=" + montantTotal +
-                ", pharmacien=" + (pharmacien != null ? pharmacien.getIdentifiant() : "Aucun") +
                 ", fournisseur=" + (fournisseur != null ? fournisseur.getNom() : "Aucun") +
                 ", lignesDeCommande=" + (lignesDeCommande != null ? lignesDeCommande.size() : "Aucune") +
                 ", statut=" + statut +

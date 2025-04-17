@@ -418,6 +418,7 @@ public class MedicamentControleur {
 
             // Afficher la nouvelle scène
             stage.setScene(nouvelleScene);
+            stage.setMaximized(true);
         } catch (IOException ex) {
             System.err.println("❌ Erreur lors du retour à Maintenance : " + ex.getMessage());
             ex.printStackTrace();

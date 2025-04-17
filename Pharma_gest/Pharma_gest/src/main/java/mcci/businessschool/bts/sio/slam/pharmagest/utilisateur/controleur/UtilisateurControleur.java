@@ -65,6 +65,7 @@ public class UtilisateurControleur {
         Stage stage = (Stage) retourMaintenance.getScene().getWindow();
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
+        stage.setMaximized(true);
     }
 
     @FXML

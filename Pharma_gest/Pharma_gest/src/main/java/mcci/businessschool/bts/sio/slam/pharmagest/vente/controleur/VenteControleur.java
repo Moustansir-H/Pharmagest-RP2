@@ -340,6 +340,7 @@ public class VenteControleur {
             Scene nouvelleScene = new Scene(loader.load());
             Stage stage = (Stage) retourDashboard.getScene().getWindow();
             stage.setScene(nouvelleScene);
+            stage.setMaximized(true);
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger le Dashboard !");
         }

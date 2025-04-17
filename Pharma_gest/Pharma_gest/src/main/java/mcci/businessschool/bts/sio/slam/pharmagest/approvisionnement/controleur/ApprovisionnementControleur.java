@@ -32,6 +32,7 @@ public class ApprovisionnementControleur {
 
             // Mettre à jour la scène avec la nouvelle vue
             stage.setScene(nouvelleScene);
+            stage.setMaximized(true);
             stage.setTitle("Réception des Commandes");
 
         } catch (IOException e) {
@@ -51,6 +52,7 @@ public class ApprovisionnementControleur {
             Stage stage = (Stage) gestionCommandeBtn.getScene().getWindow();
             // Afficher la nouvelle scène
             stage.setScene(nouvelleScene);
+            stage.setMaximized(true);
         } catch (IOException e) {
             System.err.println("❌ Erreur lors de l'ouverture de la génération de commande : " + e.getMessage());
             e.printStackTrace();  // 🔴 Affiche l'erreur complète avec les détails
@@ -67,6 +69,7 @@ public class ApprovisionnementControleur {
             Stage stage = (Stage) commandeBtn.getScene().getWindow();
             // Afficher la nouvelle scène
             stage.setScene(nouvelleScene);
+            stage.setMaximized(true);
         } catch (IOException e) {
             System.err.println("❌ Erreur lors de l'ouverture de la génération de commande : " + e.getMessage());
             e.printStackTrace();  // 🔴 Affiche l'erreur complète avec les détails
@@ -84,5 +87,6 @@ public class ApprovisionnementControleur {
         Stage stage = (Stage) retourDashboard.getScene().getWindow();
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
+        stage.setMaximized(true);
     }
 }

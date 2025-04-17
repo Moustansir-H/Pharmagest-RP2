@@ -285,10 +285,11 @@ public class ConfirmationCommandeControleur{
     @FXML
     private void retourGestionCommandes(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/GestionCommande.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/ListeCommande.fxml"));
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) btnRetour.getScene().getWindow();
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.setTitle("Gestion des commandes");
             stage.show();
         } catch (IOException e) {
@@ -332,5 +333,6 @@ public class ConfirmationCommandeControleur{
         Stage stage = (Stage) approvisionnementButton.getScene().getWindow();
         stage.setScene(nouvelleScene);
         stage.setTitle("Approvisionnement");
+        stage.setMaximized(true);
     }
 }

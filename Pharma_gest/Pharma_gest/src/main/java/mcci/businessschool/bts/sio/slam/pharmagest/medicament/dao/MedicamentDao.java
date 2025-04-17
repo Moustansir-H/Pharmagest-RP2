@@ -376,11 +376,11 @@ public class MedicamentDao {
             }
 
             System.out.println("✅ Stock mis à jour pour Médicament ID " + medicamentId + " (+ " + quantiteAjoutee + " unités)");
+            return true; // Return true when successful
         } catch (SQLException e) {
             System.err.println("❌ Erreur SQL lors de la mise à jour du stock : " + e.getMessage());
             throw e;
         }
-        return false;
     }
 
     public static void main(String[] args) {

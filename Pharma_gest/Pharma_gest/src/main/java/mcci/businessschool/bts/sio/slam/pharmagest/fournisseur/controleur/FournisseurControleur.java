@@ -62,6 +62,8 @@ public class FournisseurControleur {
         Stage stage = (Stage) retourDashboard.getScene().getWindow();
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
+        stage.setMaximized(true);
+
     }
 
     @FXML

@@ -23,7 +23,7 @@
                </image>
             </ImageView>
             <Label fx:id="bienvenueLabel" layoutX="2.857142857142857" layoutY="175.0" prefHeight="17.0" prefWidth="178.0" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="6.0" />
-                <Button fx:id="quitButton" layoutX="82.0" layoutY="305.0" mnemonicParsing="false" onAction="#quitButtonOnAction" prefHeight="57.0" prefWidth="78.0" style="-fx-background-color: #2196f3;" textFill="#2196f3" AnchorPane.bottomAnchor="37.857142857142854" AnchorPane.rightAnchor="26.857142857142833">
+                <Button fx:id="quitButton" layoutX="82.0" layoutY="306.0" mnemonicParsing="false" onAction="#quitButtonOnAction" prefHeight="57.0" prefWidth="78.0" style="-fx-background-color: #2196f3;" textFill="#2196f3" AnchorPane.bottomAnchor="37.857142857142854" AnchorPane.rightAnchor="26.857142857142833">
                <graphic>
                   <ImageView fitHeight="49.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -57,13 +57,13 @@
                       </Label>
                </children>
             </VBox>
-            <VBox layoutX="6.0" layoutY="88.0" AnchorPane.bottomAnchor="5.714285714285722" AnchorPane.leftAnchor="6.285714285714278" AnchorPane.rightAnchor="7.14285714285711" AnchorPane.topAnchor="88.0">
+            <VBox layoutX="6.285714285714286" layoutY="88.0" prefHeight="237.0" prefWidth="419.0" AnchorPane.bottomAnchor="5.714285714285722" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="88.0">
                <children>
                   <HBox alignment="CENTER" prefHeight="147.0" prefWidth="399.0">
                      <children>
-                            <Button fx:id="maintenanceButton" mnemonicParsing="false" onAction="#maintenanceButtonOnAction" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: wh;" textFill="WHITE">
+                            <Button fx:id="maintenanceButton" mnemonicParsing="false" onAction="#maintenanceButtonOnAction" prefHeight="95.0" prefWidth="121.0" style="-fx-background-color: wh;" textFill="WHITE">
                            <graphic>
-                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="121.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/optimizing.png" />
                                  </image>
@@ -75,7 +75,7 @@
                         </Button>
                             <Button fx:id="venteButton" mnemonicParsing="false" onAction="#venteButtonOnAction" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: white;" textFill="WHITE">
                            <graphic>
-                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="121.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/shopping-bag.png" />
                                  </image>
@@ -87,7 +87,7 @@
                         </Button>
                             <Button fx:id="caisseButton" mnemonicParsing="false" onAction="#caisseButtonOnAction" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: white;" textFill="WHITE">
                            <graphic>
-                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="121.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/cash-register.png" />
                                  </image>
@@ -95,21 +95,27 @@
                            </graphic>
                         </Button>
                      </children>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="126.0" prefWidth="399.0">
                      <children>
                         <Button fx:id="FournisseurButton" mnemonicParsing="false" onAction="#fournisseurButtonOnAction" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: white;" textFill="WHITE">
                            <graphic>
-                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="121.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/supplier.png" />
                                  </image>
                               </ImageView>
                            </graphic>
+                           <HBox.margin>
+                              <Insets right="140.0" />
+                           </HBox.margin>
                         </Button>
                             <Button fx:id="approvisionnementButton" mnemonicParsing="false" onAction="#ouvrirApprovisionnement" prefHeight="81.0" prefWidth="110.0" style="-fx-background-color: white;" textFill="WHITE">
                            <graphic>
-                              <ImageView fitHeight="76.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="121.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/shipment.png" />
                                  </image>

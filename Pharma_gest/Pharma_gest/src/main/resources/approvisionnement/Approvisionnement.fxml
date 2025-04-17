@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -25,13 +28,62 @@
     </top>
 
     <center>
-        <AnchorPane prefHeight="423.0" prefWidth="787.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+        <AnchorPane style="-fx-background-color: white;" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="livraisonBtn" layoutX="160.0" layoutY="180.0" mnemonicParsing="false" onAction="#ouvrirLivraison" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Livraison" />
-
-                <Button fx:id="gestionCommandeBtn" layoutX="460.0" layoutY="180.0" mnemonicParsing="false" onAction="#ouvrirGestionCommande" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Gestion Commande" />
-
-            <Button fx:id="commandeBtn" layoutX="312.0" layoutY="72.0" mnemonicParsing="false" onAction="#ouvrirCommande" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Commande Liste" />
+            <VBox alignment="CENTER_RIGHT" layoutX="7.0" layoutY="82.0" prefHeight="310.0" prefWidth="810.0" AnchorPane.bottomAnchor="82.85714285714289" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="6.857142857142776" AnchorPane.topAnchor="82.0">
+               <children>
+                  <HBox alignment="CENTER">
+                     <children>
+            
+                        <Button fx:id="commandeBtn" mnemonicParsing="false" onAction="#ouvrirCommande" prefHeight="146.0" prefWidth="200.0" style="-fx-background-color: white;">
+                           <HBox.margin>
+                              <Insets right="20.0" />
+                           </HBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/historique-des-commandes.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                            <Button fx:id="livraisonBtn" mnemonicParsing="false" onAction="#ouvrirLivraison" prefHeight="147.0" prefWidth="200.0" style="-fx-background-color: white;">
+                           <HBox.margin>
+                              <Insets right="20.0" />
+                           </HBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/camion-de-livraison.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+            
+                            <Button fx:id="gestionCommandeBtn" mnemonicParsing="false" onAction="#ouvrirGestionCommande" prefHeight="149.0" prefWidth="200.0" style="-fx-background-color: white;">
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/commercial.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="171.0" prefWidth="790.0">
+                     <children>
+                        <AnchorPane prefHeight="153.0" prefWidth="787.0">
+                           <children>
+                              <Label layoutX="114.0" layoutY="5.0" text="Liste des commandes" textFill="#2196f3" />
+                              <Label layoutX="369.0" layoutY="5.0" text="Livraisons" textFill="#2196f3" />
+                              <Label layoutX="556.0" layoutY="5.0" text="Gestion des commandes" textFill="#2196f3" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
             </children>
         </AnchorPane>
     </center>

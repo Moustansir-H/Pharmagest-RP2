@@ -5,7 +5,6 @@ import mcci.businessschool.bts.sio.slam.pharmagest.commande.LigneDeCommande;
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.dao.CommandeDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.commande.dao.LigneDeCommandeDao;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
-import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDao;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -15,12 +14,10 @@ import java.util.stream.Collectors;
 public class GestionCommandeService {
     private final CommandeDao commandeDao;
     private final LigneDeCommandeDao ligneDeCommandeDao;
-    private final MedicamentDao medicamentDao;
 
     public GestionCommandeService() throws Exception {
         this.commandeDao = new CommandeDao();
         this.ligneDeCommandeDao = new LigneDeCommandeDao();
-        this.medicamentDao = new MedicamentDao();
     }
 
     /**
@@ -69,7 +66,6 @@ public class GestionCommandeService {
         return commande;
     }
 
-
     /**
      * Confirme une commande et met à jour les stocks
      * @param commandeId ID de la commande à confirmer
@@ -77,6 +73,7 @@ public class GestionCommandeService {
     public void confirmerCommande(int commandeId) throws SQLException {
         try {
             // Appeler la fonction PostgreSQL pour valider la commande
+            // Cette fonction met également à jour le statut de la livraison associée
             commandeDao.confirmerCommande(commandeId);
             System.out.println("✅ Commande #" + commandeId + " confirmée avec succès");
         } catch (SQLException e) {
