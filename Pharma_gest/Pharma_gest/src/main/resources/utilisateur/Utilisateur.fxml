@@ -1,69 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-            prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur.UtilisateurControleur">
-    <left>
-        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: green;"
-                    BorderPane.alignment="CENTER">
-            <children>
-                <TextField fx:id="identifiantUtilisateur" layoutX="80.0" layoutY="19.0" prefHeight="25.0"
-                           prefWidth="107.0"/>
-                <TextField fx:id="motdepasseUtilisateur" layoutX="80.0" layoutY="55.0" prefHeight="25.0"
-                           prefWidth="107.0"/>
-                <ComboBox fx:id="roleUtilisateur" layoutX="80.0" layoutY="92.0" prefHeight="25.0" prefWidth="107.0"/>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-
-                <Button fx:id="ajoutUtilisateur" layoutX="75.0" layoutY="129.0" mnemonicParsing="false"
-                        text="Ajouter utilisateur" onAction="#ajouterUtilisateur"/>
-                <Label layoutX="14.0" layoutY="23.0" text="Identifiant" textFill="WHITE"/>
-                <Label layoutX="13.0" layoutY="59.0" text="MDP" textFill="WHITE"/>
-                <Label layoutX="13.0" layoutY="96.0" text="Role" textFill="WHITE"/>
-                <Button fx:id="retourMaintenance" layoutX="60.0" layoutY="348.0" mnemonicParsing="false"
-                        onAction="#retourMaintenanceOnAction" prefHeight="25.0" prefWidth="79.0"
-                        style="-fx-background-color: red;" text="Retour" textFill="WHITE"/>
-                <TextField fx:id="rechercheUtilisateur" layoutX="10.0" layoutY="200.0" prefHeight="25.0"
-                           prefWidth="180.0"
-                           promptText="Rechercher..."/>
-                <Button fx:id="boutonRechercheUtilisateur" layoutX="60.0" layoutY="240.0" mnemonicParsing="false"
-                        text="Rechercher" onAction="#rechercherUtilisateur"/>
-                <Label layoutX="18.0" layoutY="180.0" text="Filtrer utilisateurs" textFill="WHITE"/>
-            </children>
-        </AnchorPane>
-    </left>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur.UtilisateurControleur">
     <center>
         <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
-                <TableView fx:id="tableView" layoutX="10.0" layoutY="176.0" onSort="#initialize" prefHeight="200.0"
-                           prefWidth="390.0">
+                <TableView fx:id="tableView" layoutX="33.0" layoutY="115.0" onSort="#initialize" prefHeight="204.0" prefWidth="533.0" AnchorPane.bottomAnchor="18.142857142857167" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="33.71428571428578" AnchorPane.topAnchor="114.85714285714289">
                     <columns>
-                        <TableColumn fx:id="idColumn" prefWidth="75.0" text="Utilisateur"/>
-                        <TableColumn fx:id="roleColumn" prefWidth="75.0" text="Role"/>
-                        <TableColumn fx:id="motDePasseColumn" prefWidth="75.0" text="Mot de passe"/>
-                        <TableColumn fx:id="idBaseColumn" prefWidth="75.0" text="Id"/>
+                        <TableColumn fx:id="idColumn" prefWidth="75.0" text="Utilisateur" />
+                        <TableColumn fx:id="roleColumn" prefWidth="75.0" text="Role" />
+                        <TableColumn fx:id="motDePasseColumn" prefWidth="75.0" text="Mot de passe" />
+                        <TableColumn fx:id="idBaseColumn" prefWidth="75.0" text="Id" />
                     </columns>
                 </TableView>
-                <Button layoutX="5.0" layoutY="141.0" mnemonicParsing="false" text="Recherhe"/>
-                <Button fx:id="supprimerUtilisateur" layoutX="77.0" layoutY="141.0" mnemonicParsing="false"
-                        text="Supprimer" onAction="#supprimerUtilisateur"/>
-                <Button fx:id="modifierUtilisateur" layoutX="155.0" layoutY="141.0" mnemonicParsing="false"
-                        text="Modifier" onAction="#modifierUtilisateur"/>
-                <Button fx:id="boutonTousUtilisateurs" layoutX="230.0" layoutY="141.0" mnemonicParsing="false"
-                        prefHeight="25.0" prefWidth="164.0" text="Tous les utilisateurs"
-                        onAction="#afficherTousUtilisateurs"/>
-
-                <TextField fx:id="nouveauIdentifiantUtilisateur" layoutX="10.0" layoutY="80.0" prefHeight="25.0"
-                           prefWidth="134.0"/>
-                <Label layoutX="10.0" layoutY="5.0" text="Nouveau role"/>
-                <Label layoutX="14.0" layoutY="62.0" text="Nouvel Identifiant"/>
-                <TextField fx:id="nouveauMotdePasseUtilisateur" layoutX="163.0" layoutY="80.0" prefHeight="25.0"
-                           prefWidth="134.0"/>
-                <Label layoutX="168.0" layoutY="62.0" text="Nouveau mot de passe"/>
-                <ComboBox fx:id="nouveauRoleUtilisateur" layoutX="10.0" layoutY="25.0" prefHeight="25.0"
-                          prefWidth="107.0"/>
+            <VBox layoutX="33.0" layoutY="18.0" prefHeight="70.0" prefWidth="532.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="34.85714285714289">
+               <children>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                            <Button fx:id="boutonTousUtilisateurs" mnemonicParsing="false" onAction="#afficherTousUtilisateurs" prefHeight="27.0" prefWidth="148.0" style="-fx-background-color: white; -fx-border-color: #2196F3;" text="Tous les utilisateurs" textFill="#2196f3" />
+                            <TextField fx:id="rechercheUtilisateur" prefHeight="25.0" prefWidth="180.0" promptText="Rechercher...">
+                           <HBox.margin>
+                              <Insets left="10.0" right="5.0" />
+                           </HBox.margin>
+                        </TextField>
+                            <Button fx:id="boutonRechercheUtilisateur" mnemonicParsing="false" onAction="#rechercherUtilisateur" prefHeight="27.0" prefWidth="98.0" style="-fx-background-color: white; -fx-border-color: #2196F3;" text="Rechercher" textFill="#2196f3">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                            <Button fx:id="ajoutUtilisateur" mnemonicParsing="false" onAction="#ajouterUtilisateur" prefHeight="27.0" prefWidth="125.0" style="-fx-background-color: white; -fx-border-color: #2196F3;" text="Ajouter utilisateur" textFill="#2196f3">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                            <Button fx:id="supprimerUtilisateur" mnemonicParsing="false" onAction="#supprimerUtilisateur" prefWidth="125.0" style="-fx-background-color: white; -fx-border-color: #2196F3;" text="Supprimer" textFill="#2196f3">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                            <Button fx:id="modifierUtilisateur" mnemonicParsing="false" onAction="#modifierUtilisateur" prefWidth="125.0" style="-fx-background-color: white; -fx-border-color: #2196F3;" text="Modifier" textFill="#2196f3" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
             </children>
         </AnchorPane>
     </center>
+    <top>
+        <VBox style="-fx-background-color: #2196F3; -fx-padding: 15;">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;" text="UTILISATEUR" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="retourMaintenance" onAction="#retourMaintenanceOnAction" style="-fx-background-color: white; -fx-text-fill: #2196F3; -fx-font-weight: bold; -fx-padding: 8 15;" text="Retour">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font></Button>
+            </HBox>
+        </VBox>
+    </top>
 </BorderPane>

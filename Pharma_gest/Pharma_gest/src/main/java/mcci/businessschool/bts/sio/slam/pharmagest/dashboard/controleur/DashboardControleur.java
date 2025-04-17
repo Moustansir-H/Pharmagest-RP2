@@ -1,16 +1,23 @@
 package mcci.businessschool.bts.sio.slam.pharmagest.dashboard.controleur;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class DashboardControleur {
 
+    public Label bienvenueLabel;
     @FXML
     private Button caisseButton;
 
@@ -69,15 +76,24 @@ public class DashboardControleur {
     }
 
     @FXML
-    public void quitButtonOnAction(ActionEvent e) throws IOException {
-        // Nouvelle scène
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/deconnexion/Deconnexion.fxml"));
-        Scene nouvelleScene = new Scene(loader.load());
-        // La référence de la scène actuelle
-        Stage stage = (Stage) quitButton.getScene().getWindow();
-        // Afficher la nouvelle scène
-        stage.setScene(nouvelleScene);
+    public void quitButtonOnAction(ActionEvent e) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation de sortie");
+        alert.setHeaderText(null);
+        alert.setContentText("Voulez-vous vraiment quitter l'application ?");
+
+        // Obtenir la position de la fenêtre actuelle
+        Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        alert.initOwner(stage); // Pour que la boîte de dialogue soit centrée sur la fenêtre actuelle
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Quitter l'application
+            Platform.exit();
+        }
+        // Sinon, ne rien faire (la boîte se ferme automatiquement)
     }
+
 
     @FXML
     public void changeUserButtonOnAction(ActionEvent e) throws IOException {
@@ -101,6 +117,7 @@ public class DashboardControleur {
         // Récupérer la fenêtre actuelle et y placer la nouvelle scène
         Stage stage = (Stage) approvisionnementButton.getScene().getWindow();
         stage.setScene(nouvelleScene);
+        stage.setMaximized(true);
         stage.setTitle("Approvisionnement");
     }
 
@@ -125,7 +142,10 @@ public class DashboardControleur {
         Stage stage = (Stage) FournisseurButton.getScene().getWindow();
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
+        stage.setMaximized(true);
     }
 
-
+    public void setNomUtilisateur(String nomUtilisateur) {
+        bienvenueLabel.setText("Bienvenue " + nomUtilisateur);
+    }
 }

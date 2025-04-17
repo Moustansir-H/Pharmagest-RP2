@@ -58,8 +58,7 @@ public class PaiementDao {
                         rs.getDouble("montant"),
                         rs.getString("modepaiement"),
                         StatutPaiement.valueOf(rs.getString("statut")),
-                        rs.getInt("vente_id"),
-                        rs.getInt("vendeur_id")
+                        rs.getInt("vente_id")
                 );
             }
         } catch (SQLException e) {
@@ -84,8 +83,7 @@ public class PaiementDao {
                         rs.getDouble("montant"),
                         rs.getString("modepaiement"),
                         StatutPaiement.valueOf(rs.getString("statut")),
-                        rs.getInt("vente_id"),
-                        0 // ✅ Mettre 0 pour vendeur_id (car absent dans la table `paiement`)
+                        rs.getInt("vente_id")
                 );
             }
         } catch (SQLException e) {
@@ -109,8 +107,7 @@ public class PaiementDao {
                         rs.getDouble("montant"),
                         rs.getString("modepaiement"),
                         StatutPaiement.valueOf(rs.getString("statut")),
-                        rs.getInt("vente_id"),
-                        rs.getInt("vendeur_id")
+                        rs.getInt("vente_id")
                 ));
             }
         } catch (SQLException e) {

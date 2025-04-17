@@ -4,6 +4,7 @@ import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class VendeurDao {
@@ -43,4 +44,39 @@ public class VendeurDao {
             System.err.println("Erreur lors de la suppression du Vendeur : " + e.getMessage());
         }
     }
+
+    // Vérifie si un vendeur existe dans la table vendeur
+    public boolean existeVendeur(Integer idVendeur) {
+        String selectSQL = "SELECT COUNT(*) FROM vendeur WHERE id = ?";
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(selectSQL)) {
+            stmt.setInt(1, idVendeur);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la vérification du vendeur : " + e.getMessage());
+        }
+        return false;
+    }
+
+    /*
+    public Vendeur recupererVendeurParUtilisateurId(Integer idUtilisateur) {
+        String selectSQL = "SELECT utilisateur_id FROM vendeur WHERE utilisateur_id = ?";
+
+        try (PreparedStatement stmt = baseDeDonneeConnexion.prepareStatement(selectSQL)) {
+            stmt.setInt(1, idUtilisateur);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    // Créer un vendeur avec l'ID utilisateur récupéré
+                    return new Vendeur(idUtilisateur, "Inconnu", "Inconnu");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération du vendeur : " + e.getMessage());
+        }
+        return null;
+    }*/
+
 }

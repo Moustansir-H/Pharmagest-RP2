@@ -1,4 +1,4 @@
-package mcci.businessschool.bts.sio.slam.pharmagest.vente.ligne.dao;
+package mcci.businessschool.bts.sio.slam.pharmagest.vente.dao;
 
 import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;

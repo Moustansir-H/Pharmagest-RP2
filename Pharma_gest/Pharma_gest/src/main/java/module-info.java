@@ -7,6 +7,7 @@ module mcci.businessschool.bts.sio.slam.pharmagest {
     requires itextpdf;
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
+    requires com.github.librepdf.openpdf;
 
     opens mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur to javafx.fxml;
     exports mcci.businessschool.bts.sio.slam.pharmagest.utilisateur.controleur;

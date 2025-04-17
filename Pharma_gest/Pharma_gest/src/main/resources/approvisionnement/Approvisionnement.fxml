@@ -1,42 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="538.0"
-            prefWidth="824.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.approvisionnement.controleur.ApprovisionnementControleur">
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="538.0" prefWidth="824.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mcci.businessschool.bts.sio.slam.pharmagest.approvisionnement.controleur.ApprovisionnementControleur">
 
     <top>
-        <AnchorPane prefHeight="73.0" prefWidth="824.0" style="-fx-background-color: green;"
-                    BorderPane.alignment="CENTER">
-            <children>
-                <Label layoutX="256.0" layoutY="20.0" prefHeight="33.0" prefWidth="313.0"
-                       text="GESTION APPROVISIONNEMENT">
+        <VBox style="-fx-background-color: #2196F3; -fx-padding: 15;">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;" text="APPROVISIONNEMENT" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="retourDashboard" onAction="#retourDashboardOnAction" style="-fx-background-color: white; -fx-text-fill: #2196F3; -fx-font-weight: bold; -fx-padding: 8 15;" text="Retour">
                     <font>
-                        <Font name="Berlin Sans FB" size="19.0"/>
-                    </font>
-                </Label>
-            </children>
-        </AnchorPane>
+                        <Font name="System Bold" size="12.0" />
+                    </font></Button>
+            </HBox>
+        </VBox>
     </top>
 
     <center>
-        <AnchorPane prefHeight="423.0" prefWidth="787.0" style="-fx-background-color: #9ed9a1;"
-                    BorderPane.alignment="CENTER">
+        <AnchorPane style="-fx-background-color: white;" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="receptionCommandeButton" layoutX="160.0" layoutY="180.0" mnemonicParsing="false"
-                        prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: green; -fx-text-fill: white;"
-                        text="Réception Commande" onAction="#ouvrirReceptionCommande"/>
-
-                <Button fx:id="generationCommandeButton" layoutX="460.0" layoutY="180.0" mnemonicParsing="false"
-                        prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: green; -fx-text-fill: white;"
-                        text="Génération Commande" onAction="#ouvrirGenerationCommande"/>
-
-                <Button fx:id="retourDashboard" layoutX="320.0" layoutY="300.0" mnemonicParsing="false"
-                        prefHeight="50.0" prefWidth="180.0" style="-fx-background-color: red; -fx-text-fill: white;"
-                        text="Retour" onAction="#retourDashboardOnAction"/>
+            <VBox alignment="CENTER_RIGHT" layoutX="7.0" layoutY="82.0" prefHeight="310.0" prefWidth="810.0" AnchorPane.bottomAnchor="82.85714285714289" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="6.857142857142776" AnchorPane.topAnchor="82.0">
+               <children>
+                  <HBox alignment="CENTER">
+                     <children>
+            
+                        <Button fx:id="commandeBtn" mnemonicParsing="false" onAction="#ouvrirCommande" prefHeight="146.0" prefWidth="200.0" style="-fx-background-color: white;">
+                           <HBox.margin>
+                              <Insets right="20.0" />
+                           </HBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/historique-des-commandes.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                            <Button fx:id="livraisonBtn" mnemonicParsing="false" onAction="#ouvrirLivraison" prefHeight="147.0" prefWidth="200.0" style="-fx-background-color: white;">
+                           <HBox.margin>
+                              <Insets right="20.0" />
+                           </HBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/camion-de-livraison.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+            
+                            <Button fx:id="gestionCommandeBtn" mnemonicParsing="false" onAction="#ouvrirGestionCommande" prefHeight="149.0" prefWidth="200.0" style="-fx-background-color: white;">
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/commercial.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="171.0" prefWidth="790.0">
+                     <children>
+                        <AnchorPane prefHeight="153.0" prefWidth="787.0">
+                           <children>
+                              <Label layoutX="114.0" layoutY="5.0" text="Liste des commandes" textFill="#2196f3" />
+                              <Label layoutX="369.0" layoutY="5.0" text="Livraisons" textFill="#2196f3" />
+                              <Label layoutX="556.0" layoutY="5.0" text="Gestion des commandes" textFill="#2196f3" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
             </children>
         </AnchorPane>
     </center>

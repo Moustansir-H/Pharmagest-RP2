@@ -29,6 +29,7 @@ public class MaintenanceControleur {
         Stage stage = (Stage) retourDashboard.getScene().getWindow();
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
+        stage.setMaximized(true);
     }
 
     @FXML
@@ -40,6 +41,7 @@ public class MaintenanceControleur {
         Stage stage = (Stage) userButton.getScene().getWindow();
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
+        stage.setMaximized(true);
     }
 
 
@@ -55,6 +57,7 @@ public class MaintenanceControleur {
 
         // Afficher la nouvelle scène
         stage.setScene(nouvelleScene);
+        stage.setMaximized(true);
     }
 
 

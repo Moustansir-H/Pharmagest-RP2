@@ -5,9 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.Famille;
 import mcci.businessschool.bts.sio.slam.pharmagest.famille.dao.FamilleDao;
@@ -19,13 +21,10 @@ import mcci.businessschool.bts.sio.slam.pharmagest.medicament.service.Medicament
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class MedicamentControleur {
 
-    @FXML
-    private TextField nomField, prixAchatField, prixVenteField, stockField, seuilCommandeField, qteMaxField;
-    @FXML
-    private ComboBox<String> formeCombo, familleCombo, fournisseurCombo;
     @FXML
     private Button ajouterBtn, modifierBtn, supprimerBtn, retourMedicament;
     @FXML
@@ -71,13 +70,26 @@ public class MedicamentControleur {
         // Chargement initial des médicaments
         loadMedicaments();
 
-        // Charger les valeurs des ComboBox
-        formeCombo.setItems(listeFormes);
-        chargerFamilles();
-        chargerFournisseurs();
+        // Configuration des boutons
+        modifierBtn.setDisable(true);
+        supprimerBtn.setDisable(true);
 
+        // Ajouter un listener pour activer/désactiver les boutons selon la sélection
         tableMedicament.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) remplirFormulaire(newSelection);
+            boolean itemSelected = newSelection != null;
+            modifierBtn.setDisable(!itemSelected);
+            supprimerBtn.setDisable(!itemSelected);
+        });
+
+        // Double-clic pour afficher les détails
+        tableMedicament.setRowFactory(tv -> {
+            TableRow<Medicament> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    afficherDetailsMedicament(row.getItem());
+                }
+            });
+            return row;
         });
     }
 
@@ -88,9 +100,9 @@ public class MedicamentControleur {
         tableMedicament.setItems(donneesMedicament);
     }
 
-    private void chargerFamilles() {
+    private void chargerFamilles(ComboBox<String> familleCombo) {
         try {
-            List<Famille> familles = familleDao.recupererToutesLesFamilles(); // ✅ Utilisation de la nouvelle méthode
+            List<Famille> familles = familleDao.recupererToutesLesFamilles();
             ObservableList<String> nomsFamilles = FXCollections.observableArrayList();
             for (Famille f : familles) {
                 nomsFamilles.add(f.getNom());
@@ -101,10 +113,9 @@ public class MedicamentControleur {
         }
     }
 
-
-    private void chargerFournisseurs() {
+    private void chargerFournisseurs(ComboBox<String> fournisseurCombo) {
         try {
-            List<Fournisseur> fournisseurs = fournisseurDao.recupererTousLesFournisseurs(); // ✅ Adapter à ton DAO
+            List<Fournisseur> fournisseurs = fournisseurDao.recupererTousLesFournisseurs();
             ObservableList<String> nomsFournisseurs = FXCollections.observableArrayList();
             for (Fournisseur f : fournisseurs) {
                 nomsFournisseurs.add(f.getNom());
@@ -115,213 +126,269 @@ public class MedicamentControleur {
         }
     }
 
-    private void remplirFormulaire(Medicament medicament) {
-        nomField.setText(medicament.getNom());
-        formeCombo.setValue(medicament.getForme());
-        prixAchatField.setText(String.valueOf(medicament.getPrixAchat()));
-        prixVenteField.setText(String.valueOf(medicament.getPrixVente()));
-        stockField.setText(String.valueOf(medicament.getStock()));
-        seuilCommandeField.setText(String.valueOf(medicament.getSeuilCommande()));
-        qteMaxField.setText(String.valueOf(medicament.getQteMax()));
-        familleCombo.setValue(medicament.getFamille().getNom());
-        fournisseurCombo.setValue(medicament.getFournisseur().getNom());
+    @FXML
+    private void afficherFormAjout() {
+        Dialog<Medicament> dialog = creerDialogueMedicament(null);
+        Optional<Medicament> result = dialog.showAndWait();
+
+        result.ifPresent(medicament -> {
+            try {
+                Integer idGenere = medicamentService.ajouterMedicament(medicament);
+                if (idGenere == null) {
+                    afficherErreur("❌ L'ajout du médicament a échoué !");
+                } else {
+                    afficherMessage("✅ Succès", "Médicament ajouté avec succès !");
+                    loadMedicaments();
+                }
+            } catch (SQLException e) {
+                afficherErreur("❌ Erreur SQL : " + e.getMessage());
+            } catch (Exception e) {
+                afficherErreur("❌ Erreur inattendue : " + e.getMessage());
+            }
+        });
     }
 
     @FXML
-    private void ajouterMedicament() {
-        try {
-            if (nomField.getText().isEmpty() || formeCombo.getValue() == null ||
-                    prixAchatField.getText().isEmpty() || prixVenteField.getText().isEmpty() ||
-                    stockField.getText().isEmpty() || seuilCommandeField.getText().isEmpty() ||
-                    qteMaxField.getText().isEmpty() || familleCombo.getValue() == null ||
-                    fournisseurCombo.getValue() == null) {
-                afficherErreur("Tous les champs doivent être remplis !");
-                return;
-            }
-
-            String nom = nomField.getText();
-            String forme = formeCombo.getValue();
-            double prixAchat = Double.parseDouble(prixAchatField.getText());
-            double prixVente = Double.parseDouble(prixVenteField.getText());
-            int stock = Integer.parseInt(stockField.getText());
-            int seuilCommande = Integer.parseInt(seuilCommandeField.getText());
-            int qteMax = Integer.parseInt(qteMaxField.getText());
-
-            System.out.println("🔎 Famille sélectionnée : " + familleCombo.getValue());
-            System.out.println("🔎 Fournisseur sélectionné : " + fournisseurCombo.getValue());
-
-            // 🔍 Récupération des IDs
-            Integer familleId = familleDao.getFamilleIdByName(familleCombo.getValue());
-            if (familleId == null) {
-                afficherErreur("❌ Erreur : la famille sélectionnée n'existe pas en base !");
-                return;
-            }
-
-            Integer fournisseurId = fournisseurDao.getFournisseurIdByName(fournisseurCombo.getValue());
-            if (fournisseurId == null) {
-                afficherErreur("❌ Erreur : le fournisseur sélectionné n'existe pas en base !");
-                return;
-            }
-
-            System.out.println("📌 ID Famille récupéré : " + familleId);
-            System.out.println("📌 ID Fournisseur récupéré : " + fournisseurId);
-
-            // ✅ Récupération des objets
-            Famille famille = familleDao.getFamilleById(familleId);
-            Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
-
-            // Vérification après récupération
-            System.out.println("📌 Objet Famille récupéré : " + (famille != null ? famille.getNom() : "null"));
-            System.out.println("📌 Objet Fournisseur récupéré : " + (fournisseur != null ? fournisseur.getNom() : "null"));
-
-            if (famille == null) {
-                afficherErreur("❌ Erreur : Impossible de récupérer la famille sélectionnée !");
-                return;
-            }
-
-            if (fournisseur == null) {
-                afficherErreur("❌ Erreur : Impossible de récupérer le fournisseur sélectionné !");
-                return;
-            }
-
-            // 🔥 Création du médicament
-            Medicament medicament = new Medicament(nom, forme, prixAchat, prixVente, stock, seuilCommande, qteMax, famille, fournisseur);
-
-            // ✅ Vérification avant insertion en base
-            System.out.println("🆕 Ajout d'un médicament : " + medicament.getNom());
-            System.out.println("📌 Forme : " + medicament.getForme());
-            System.out.println("📌 Prix Achat : " + medicament.getPrixAchat());
-            System.out.println("📌 Prix Vente : " + medicament.getPrixVente());
-            System.out.println("📌 Stock : " + medicament.getStock());
-            System.out.println("📌 Seuil : " + medicament.getSeuilCommande());
-            System.out.println("📌 Quantité max : " + medicament.getQteMax());
-            System.out.println("📌 Famille : " + (medicament.getFamille() != null ? medicament.getFamille().getNom() : "null"));
-            System.out.println("📌 Fournisseur : " + (medicament.getFournisseur() != null ? medicament.getFournisseur().getNom() : "null"));
-
-            // Vérifie avant d’insérer en base
-            if (medicament.getFamille() == null || medicament.getFournisseur() == null) {
-                afficherErreur("❌ Erreur : Famille ou Fournisseur non récupérés correctement !");
-                return;
-            }
-
-            // ✅ Ajout en base de données
-            Integer idGenere = medicamentService.ajouterMedicament(medicament);
-            System.out.println("✅ ID généré après insertion : " + idGenere);
-
-            if (idGenere == null) {
-                afficherErreur("❌ L'ajout du médicament a échoué !");
-            } else {
-                afficherMessage("✅ Succès", "Médicament ajouté avec succès !");
-                loadMedicaments();
-            }
-
-        } catch (NumberFormatException e) {
-            afficherErreur("❌ Erreur de format : Vérifiez les champs numériques !");
-        } catch (SQLException e) {
-            afficherErreur("❌ Erreur SQL : " + e.getMessage());
-        } catch (Exception e) {
-            afficherErreur("❌ Erreur inattendue : " + e.getMessage());
-        }
-    }
-
-
-    @FXML
-    private void modifierMedicament() {
+    private void afficherFormModification() {
         Medicament medicamentSelectionne = tableMedicament.getSelectionModel().getSelectedItem();
         if (medicamentSelectionne == null) {
-            afficherErreur("Veuillez sélectionner un médicament.");
+            afficherErreur("Veuillez sélectionner un médicament à modifier.");
             return;
         }
 
-        try {
-            // 📌 Log avant modification
-            System.out.println("🔍 Médicament sélectionné pour modification : " + medicamentSelectionne.getNom() + " (ID: " + medicamentSelectionne.getId() + ")");
+        Dialog<Medicament> dialog = creerDialogueMedicament(medicamentSelectionne);
+        Optional<Medicament> result = dialog.showAndWait();
 
-            // Récupération des nouvelles valeurs du formulaire
-            String nouveauNom = nomField.getText();
-            String nouvelleForme = formeCombo.getValue();
-            double nouveauPrixAchat = Double.parseDouble(prixAchatField.getText());
-            double nouveauPrixVente = Double.parseDouble(prixVenteField.getText());
-            int nouveauStock = Integer.parseInt(stockField.getText());
-            int nouveauSeuilCommande = Integer.parseInt(seuilCommandeField.getText());
-            int nouvelleQteMax = Integer.parseInt(qteMaxField.getText());
-
-            System.out.println("🆕 Modification - Nouveau Nom : " + nouveauNom);
-            System.out.println("🆕 Modification - Nouvelle Forme : " + nouvelleForme);
-            System.out.println("🆕 Modification - Nouveau Prix Achat : " + nouveauPrixAchat);
-            System.out.println("🆕 Modification - Nouveau Prix Vente : " + nouveauPrixVente);
-            System.out.println("🆕 Modification - Nouveau Stock : " + nouveauStock);
-            System.out.println("🆕 Modification - Nouveau Seuil Commande : " + nouveauSeuilCommande);
-            System.out.println("🆕 Modification - Nouvelle Quantité Max : " + nouvelleQteMax);
-
-            // 🔍 Vérification et récupération des IDs des nouvelles valeurs
-            Integer familleId = familleDao.getFamilleIdByName(familleCombo.getValue());
-            Integer fournisseurId = fournisseurDao.getFournisseurIdByName(fournisseurCombo.getValue());
-
-            if (familleId == null || fournisseurId == null) {
-                afficherErreur("❌ Erreur : Famille ou fournisseur non trouvé !");
-                return;
+        result.ifPresent(medicament -> {
+            try {
+                medicamentService.modifierMedicament(medicament);
+                afficherMessage("Succès", "Médicament modifié !");
+                loadMedicaments();
+            } catch (Exception e) {
+                afficherErreur("Erreur lors de la modification : " + e.getMessage());
             }
-
-            System.out.println("📌 ID Famille récupéré : " + familleId);
-            System.out.println("📌 ID Fournisseur récupéré : " + fournisseurId);
-
-            // Récupération des objets Famille et Fournisseur
-            Famille nouvelleFamille = familleDao.getFamilleById(familleId);
-            Fournisseur nouveauFournisseur = fournisseurDao.getFournisseurById(fournisseurId);
-
-            if (nouvelleFamille == null || nouveauFournisseur == null) {
-                afficherErreur("❌ Erreur : Impossible de récupérer la famille ou le fournisseur sélectionné !");
-                return;
-            }
-
-            System.out.println("📌 Objet Famille récupéré : " + nouvelleFamille.getNom());
-            System.out.println("📌 Objet Fournisseur récupéré : " + nouveauFournisseur.getNom());
-
-            // Mise à jour des valeurs du médicament sélectionné
-            medicamentSelectionne.setNom(nouveauNom);
-            medicamentSelectionne.setForme(nouvelleForme);
-            medicamentSelectionne.setPrixAchat(nouveauPrixAchat);
-            medicamentSelectionne.setPrixVente(nouveauPrixVente);
-            medicamentSelectionne.setStock(nouveauStock);
-            medicamentSelectionne.setSeuilCommande(nouveauSeuilCommande);
-            medicamentSelectionne.setQteMax(nouvelleQteMax);
-            medicamentSelectionne.setFamille(nouvelleFamille);
-            medicamentSelectionne.setFournisseur(nouveauFournisseur);
-
-            // 🔥 Appel de la modification en base de données
-            medicamentService.modifierMedicament(medicamentSelectionne);
-
-            System.out.println("✅ Médicament modifié avec succès !");
-
-            afficherMessage("Succès", "Médicament modifié !");
-            loadMedicaments(); // Recharger les données pour voir le changement
-
-        } catch (NumberFormatException e) {
-            afficherErreur("❌ Erreur de format : Vérifiez les champs numériques !");
-        } catch (Exception e) {
-            afficherErreur("❌ Erreur inattendue : " + e.getMessage());
-        }
+        });
     }
 
+    private Dialog<Medicament> creerDialogueMedicament(Medicament medicament) {
+        Dialog<Medicament> dialog = new Dialog<>();
+        dialog.setTitle(medicament == null ? "Ajouter un médicament" : "Modifier un médicament");
+        dialog.setHeaderText(null);
+
+        ButtonType saveButtonType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        // Création des champs du formulaire
+        TextField nomField = new TextField();
+        ComboBox<String> formeCombo = new ComboBox<>(listeFormes);
+        TextField prixAchatField = new TextField();
+        TextField prixVenteField = new TextField();
+        TextField stockField = new TextField();
+        TextField seuilCommandeField = new TextField();
+        TextField qteMaxField = new TextField();
+        ComboBox<String> familleCombo = new ComboBox<>();
+        ComboBox<String> fournisseurCombo = new ComboBox<>();
+
+        // Chargement des données dans les ComboBox
+        chargerFamilles(familleCombo);
+        chargerFournisseurs(fournisseurCombo);
+
+        // Remplir les champs si on modifie un médicament existant
+        if (medicament != null) {
+            nomField.setText(medicament.getNom());
+            formeCombo.setValue(medicament.getForme());
+            prixAchatField.setText(String.valueOf(medicament.getPrixAchat()));
+            prixVenteField.setText(String.valueOf(medicament.getPrixVente()));
+            stockField.setText(String.valueOf(medicament.getStock()));
+            seuilCommandeField.setText(String.valueOf(medicament.getSeuilCommande()));
+            qteMaxField.setText(String.valueOf(medicament.getQteMax()));
+            familleCombo.setValue(medicament.getFamille().getNom());
+            fournisseurCombo.setValue(medicament.getFournisseur().getNom());
+        }
+
+        // Création de la grille pour le formulaire
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        int row = 0;
+        grid.add(new Label("Nom:"), 0, row);
+        grid.add(nomField, 1, row++);
+        grid.add(new Label("Forme:"), 0, row);
+        grid.add(formeCombo, 1, row++);
+        grid.add(new Label("Prix d'achat:"), 0, row);
+        grid.add(prixAchatField, 1, row++);
+        grid.add(new Label("Prix de vente:"), 0, row);
+        grid.add(prixVenteField, 1, row++);
+        grid.add(new Label("Stock:"), 0, row);
+        grid.add(stockField, 1, row++);
+        grid.add(new Label("Seuil de commande:"), 0, row);
+        grid.add(seuilCommandeField, 1, row++);
+        grid.add(new Label("Quantité maximale:"), 0, row);
+        grid.add(qteMaxField, 1, row++);
+        grid.add(new Label("Famille:"), 0, row);
+        grid.add(familleCombo, 1, row++);
+        grid.add(new Label("Fournisseur:"), 0, row);
+        grid.add(fournisseurCombo, 1, row++);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Conversion du résultat
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                try {
+                    // Validation des champs
+                    if (nomField.getText().isEmpty() || formeCombo.getValue() == null ||
+                            prixAchatField.getText().isEmpty() || prixVenteField.getText().isEmpty() ||
+                            stockField.getText().isEmpty() || seuilCommandeField.getText().isEmpty() ||
+                            qteMaxField.getText().isEmpty() || familleCombo.getValue() == null ||
+                            fournisseurCombo.getValue() == null) {
+                        afficherErreur("Tous les champs doivent être remplis !");
+                        return null;
+                    }
+
+                    // Récupération des valeurs
+                    String nom = nomField.getText();
+                    String forme = formeCombo.getValue();
+                    double prixAchat = Double.parseDouble(prixAchatField.getText());
+                    double prixVente = Double.parseDouble(prixVenteField.getText());
+                    int stock = Integer.parseInt(stockField.getText());
+                    int seuilCommande = Integer.parseInt(seuilCommandeField.getText());
+                    int qteMax = Integer.parseInt(qteMaxField.getText());
+
+                    // Récupération des IDs
+                    Integer familleId = familleDao.getFamilleIdByName(familleCombo.getValue());
+                    Integer fournisseurId = fournisseurDao.getFournisseurIdByName(fournisseurCombo.getValue());
+
+                    if (familleId == null || fournisseurId == null) {
+                        afficherErreur("❌ Erreur : Famille ou fournisseur non trouvé !");
+                        return null;
+                    }
+
+                    // Récupération des objets
+                    Famille famille = familleDao.getFamilleById(familleId);
+                    Fournisseur fournisseur = fournisseurDao.getFournisseurById(fournisseurId);
+
+                    if (famille == null || fournisseur == null) {
+                        afficherErreur("❌ Erreur : Impossible de récupérer la famille ou le fournisseur !");
+                        return null;
+                    }
+
+                    // Création ou mise à jour du médicament
+                    Medicament result;
+                    if (medicament == null) {
+                        // Utiliser le constructeur avec tous les paramètres requis
+                        result = new Medicament(
+                                nom,
+                                forme,
+                                prixAchat,
+                                prixVente,
+                                stock,
+                                seuilCommande,
+                                qteMax,
+                                famille,
+                                fournisseur
+                        );
+                    } else {
+                        // Si on modifie un médicament existant, on utilise l'objet existant
+                        result = medicament;
+                        result.setNom(nom);
+                        result.setForme(forme);
+                        result.setPrixAchat(prixAchat);
+                        result.setPrixVente(prixVente);
+                        result.setStock(stock);
+                        result.setSeuilCommande(seuilCommande);
+                        result.setQteMax(qteMax);
+                        result.setFamille(famille);
+                        result.setFournisseur(fournisseur);
+                    }
+
+                    return result;
+                } catch (NumberFormatException e) {
+                    afficherErreur("❌ Erreur de format : Vérifiez les champs numériques !");
+                    return null;
+                } catch (Exception e) {
+                    afficherErreur("❌ Erreur : " + e.getMessage());
+                    return null;
+                }
+            }
+            return null;
+        });
+
+        return dialog;
+    }
 
     @FXML
     private void supprimerMedicament() {
         Medicament medicamentSelectionne = tableMedicament.getSelectionModel().getSelectedItem();
         if (medicamentSelectionne == null) {
-            afficherErreur("Veuillez sélectionner un médicament.");
+            afficherErreur("Veuillez sélectionner un médicament à supprimer.");
             return;
         }
 
-        try {
-            medicamentService.supprimerMedicamentParId(medicamentSelectionne.getId());
-            afficherMessage("Succès", "Médicament supprimé !");
-            loadMedicaments();
-        } catch (Exception e) {
-            afficherErreur("Erreur lors de la suppression : " + e.getMessage());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation de suppression");
+        alert.setHeaderText(null);
+        alert.setContentText("Êtes-vous sûr de vouloir supprimer ce médicament ?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                medicamentService.supprimerMedicamentParId(medicamentSelectionne.getId());
+                afficherMessage("Succès", "Médicament supprimé !");
+                loadMedicaments();
+            } catch (Exception e) {
+                afficherErreur("Erreur lors de la suppression : " + e.getMessage());
+            }
         }
     }
 
+    private void afficherDetailsMedicament(Medicament medicament) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Détails du médicament");
+        dialog.setHeaderText(null);
+
+        ButtonType closeButton = new ButtonType("Fermer", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(closeButton);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 20, 10, 10));
+
+        int row = 0;
+        addDetailRow(grid, row++, "ID:", String.valueOf(medicament.getId()));
+        addDetailRow(grid, row++, "Nom:", medicament.getNom());
+        addDetailRow(grid, row++, "Forme:", medicament.getForme());
+        addDetailRow(grid, row++, "Prix d'achat:", String.valueOf(medicament.getPrixAchat()));
+        addDetailRow(grid, row++, "Prix de vente:", String.valueOf(medicament.getPrixVente()));
+        addDetailRow(grid, row++, "Stock:", String.valueOf(medicament.getStock()));
+        addDetailRow(grid, row++, "Seuil de commande:", String.valueOf(medicament.getSeuilCommande()));
+        addDetailRow(grid, row++, "Quantité maximale:", String.valueOf(medicament.getQteMax()));
+        addDetailRow(grid, row++, "Famille:", medicament.getFamille().getNom());
+        addDetailRow(grid, row++, "Fournisseur:", medicament.getFournisseur().getNom());
+
+        ScrollPane scrollPane = new ScrollPane(grid);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(300);
+        scrollPane.setPrefWidth(450);
+
+        dialog.getDialogPane().setContent(scrollPane);
+        dialog.showAndWait();
+    }
+
+    private void addDetailRow(GridPane grid, int row, String label, String value) {
+        Label labelNode = new Label(label);
+        Label valueNode = new Label(value);
+
+        labelNode.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        valueNode.setStyle("-fx-font-size: 14px;");
+        valueNode.setWrapText(true);
+
+        grid.add(labelNode, 0, row);
+        grid.add(valueNode, 1, row);
+    }
 
     private void afficherErreur(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -351,11 +418,10 @@ public class MedicamentControleur {
 
             // Afficher la nouvelle scène
             stage.setScene(nouvelleScene);
+            stage.setMaximized(true);
         } catch (IOException ex) {
             System.err.println("❌ Erreur lors du retour à Maintenance : " + ex.getMessage());
             ex.printStackTrace();
         }
     }
-
-
 }

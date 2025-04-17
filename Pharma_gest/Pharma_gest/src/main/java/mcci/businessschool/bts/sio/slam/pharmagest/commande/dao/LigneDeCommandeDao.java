@@ -6,10 +6,7 @@ import mcci.businessschool.bts.sio.slam.pharmagest.database.DatabaseConnection;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.Medicament;
 import mcci.businessschool.bts.sio.slam.pharmagest.medicament.dao.MedicamentDao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +36,17 @@ public class LigneDeCommandeDao {
     // Récupérer toutes les lignes de commande d'une commande spécifique
     public List<LigneDeCommande> recupererLignesParCommande(int commandeId) throws SQLException {
         List<LigneDeCommande> lignesDeCommande = new ArrayList<>();
-        String sql = "SELECT * FROM lignedecommande WHERE commande_id = ?";
+
+        // Vérifier si les colonnes avancées existent
+        boolean colonnesAvanceeExistent = verifierColonnesAvancees();
+
+        String sql;
+        if (colonnesAvanceeExistent) {
+            sql = "SELECT * FROM lignedecommande WHERE commande_id = ?";
+        } else {
+            sql = "SELECT id, commande_id, medicament_id, quantitevendu, prixunitaire FROM lignedecommande WHERE commande_id = ?";
+        }
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, commandeId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -48,17 +55,30 @@ public class LigneDeCommandeDao {
                     MedicamentDao medicamentDao = new MedicamentDao();
                     Medicament medicament = medicamentDao.recupererMedicamentParId(rs.getInt("medicament_id"));
 
-
-                    LigneDeCommande ligne = new LigneDeCommande(
-                            rs.getInt("id"),
-                            commande,
-                            medicament,
-                            rs.getInt("quantitevendu"),
-                            rs.getDouble("prixunitaire"),
-                            rs.getInt("quantiterecue"),
-                            rs.getDouble("prixachatreel"),
-                            rs.getDouble("prixventereel")
-                    );
+                    LigneDeCommande ligne;
+                    if (colonnesAvanceeExistent) {
+                        ligne = new LigneDeCommande(
+                                rs.getInt("id"),
+                                commande,
+                                medicament,
+                                rs.getInt("quantitevendu"),
+                                rs.getDouble("prixunitaire"),
+                                rs.getInt("quantiterecue"),
+                                rs.getDouble("prixachatreel"),
+                                rs.getDouble("prixventereel")
+                        );
+                    } else {
+                        ligne = new LigneDeCommande(
+                                rs.getInt("id"),
+                                commande,
+                                medicament,
+                                rs.getInt("quantitevendu"),
+                                rs.getDouble("prixunitaire"),
+                                0, // quantiterecue par défaut
+                                0.0, // prixachatreel par défaut
+                                0.0  // prixventereel par défaut
+                        );
+                    }
                     lignesDeCommande.add(ligne);
                 }
             } catch (Exception e) {
@@ -70,53 +90,46 @@ public class LigneDeCommandeDao {
 
     // Mettre à jour les quantités reçues et les prix après réception
     public void mettreAJourReception(int ligneDeCommandeId, int quantiteRecue, double prixAchatReel, double prixVenteReel) throws SQLException {
-        String sql = "UPDATE lignedecommande SET quantiterecue = ?, prixachatreel = ?, prixventereel = ? WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, quantiteRecue);
-            stmt.setDouble(2, prixAchatReel);
-            stmt.setDouble(3, prixVenteReel);
-            stmt.setInt(4, ligneDeCommandeId);
-            stmt.executeUpdate();
+        // Vérifier si les colonnes avancées existent
+        boolean colonnesAvanceeExistent = verifierColonnesAvancees();
+
+        if (colonnesAvanceeExistent) {
+            String sql = "UPDATE lignedecommande SET quantiterecue = ?, prixachatreel = ?, prixventereel = ? WHERE id = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setInt(1, quantiteRecue);
+                stmt.setDouble(2, prixAchatReel);
+                stmt.setDouble(3, prixVenteReel);
+                stmt.setInt(4, ligneDeCommandeId);
+                stmt.executeUpdate();
+            }
+        } else {
+            // Si les colonnes n'existent pas, on ne fait rien ou on peut lever une exception
+            System.out.println("Les colonnes avancées n'existent pas, impossible de mettre à jour la réception");
         }
     }
 
-    /*
-    public static void main(String[] args) {
+    // Vérifier si les colonnes avancées existent
+    private boolean verifierColonnesAvancees() {
         try {
-            Connection connection = DatabaseConnection.getConnexion();
-            CommandeDao commandeDao = new CommandeDao();
-            LigneDeCommandeDao ligneDeCommandeDao = new LigneDeCommandeDao();
+            String sql = """
+                SELECT EXISTS (
+                    SELECT 1 
+                    FROM information_schema.columns 
+                    WHERE table_name = 'lignedecommande' 
+                    AND column_name = 'quantiterecue'
+                ) AS colonne_existe
+            """;
 
-            // ✅ 1. Création d'une commande test (Pharmacien ID = 1, Fournisseur ID = 1)
-            Commande commandeTest = new Commande(0.0, new Pharmacien(1), new Fournisseur(1, "FournisseurTest"), new ArrayList<>());
-
-            int commandeId = commandeDao.ajouterCommande(commandeTest);
-            System.out.println("✅ Commande créée avec ID : " + commandeId);
-
-            // ✅ 2. Ajout d'une ligne de commande test (Médicament ID = 1)
-            LigneDeCommande ligneTest = new LigneDeCommande(
-                    new Commande(commandeId),
-                    new Medicament(58),  // ID d'un médicament existant
-                    5,  // Quantité commandée
-                    10.0,  // Prix unitaire
-                    0,  // Quantité reçue (car non encore livrée)
-                    0.0,  // Prix d'achat réel (sera mis à jour plus tard)
-                    0.0   // Prix de vente réel (sera mis à jour plus tard)
-            );
-            ligneDeCommandeDao.ajouterLigneDeCommande(ligneTest);
-            System.out.println("✅ Ligne de commande ajoutée avec succès.");
-
-            // ✅ 3. Vérification des lignes de commande de cette commande
-            List<LigneDeCommande> lignes = ligneDeCommandeDao.recupererLignesParCommande(commandeId);
-            System.out.println("📢 Lignes de commande récupérées pour la commande ID " + commandeId + " :");
-            for (LigneDeCommande ligne : lignes) {
-                System.out.println(ligne);
+            try (PreparedStatement stmt = connection.prepareStatement(sql);
+                 ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean("colonne_existe");
+                }
             }
-
+            return false;
         } catch (SQLException e) {
-            System.err.println("❌ Erreur SQL : " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("❌ Erreur : " + e.getMessage());
+            System.err.println("Erreur lors de la vérification des colonnes: " + e.getMessage());
+            return false;
         }
-    }*/
+    }
 }

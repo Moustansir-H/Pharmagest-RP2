@@ -18,4 +18,16 @@ public class VendeurService {
     public void supprimerVendeur(Integer idUtilisateur) {
         vendeurDao.supprimerVendeur(idUtilisateur);
     }
+
+    public boolean verifierExistenceVendeur(Integer idUtilisateur) {
+        return vendeurDao.existeVendeur(idUtilisateur);
+    }
+
+    /*
+    public Vendeur recupererVendeurParUtilisateurId(Integer idUtilisateur) {
+        return vendeurDao.recupererVendeurParUtilisateurId(idUtilisateur);
+    }*/
+
 }
+
+

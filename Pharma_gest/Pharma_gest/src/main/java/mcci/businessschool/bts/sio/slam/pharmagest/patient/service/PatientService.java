@@ -3,6 +3,8 @@ package mcci.businessschool.bts.sio.slam.pharmagest.patient.service;
 import mcci.businessschool.bts.sio.slam.pharmagest.patient.Patient;
 import mcci.businessschool.bts.sio.slam.pharmagest.patient.dao.PatientDao;
 
+import java.util.List;
+
 public class PatientService {
     private PatientDao patientDao;
 
@@ -23,4 +25,17 @@ public class PatientService {
         return patientDao.getPatientByNom(nom);
     }
 
+    // Nouvelles méthodes pour l'autocomplétion
+    public List<String> recupererTousLesNomsPatients() {
+        return patientDao.getAllPatientNames();
+    }
+
+    public List<String> recupererNomsPatientsFiltres(String filtre) {
+        return patientDao.getFilteredPatientNames(filtre);
+    }
+
+    public List<Patient> rechercherPatientsParNomOuPrenom(String recherche) {
+        return patientDao.getPatientsByNomOrPrenom(recherche);
+    }
 }
+

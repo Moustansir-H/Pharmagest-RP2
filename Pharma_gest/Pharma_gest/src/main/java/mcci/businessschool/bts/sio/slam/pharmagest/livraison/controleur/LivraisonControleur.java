@@ -92,37 +92,6 @@ public class LivraisonControleur {
         }
     }
 
-    @FXML
-    private void voirDetails() {
-        Livraison livraisonSelectionnee = tableLivraisons.getSelectionModel().getSelectedItem();
-        if (livraisonSelectionnee == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Aucune sélection");
-            alert.setHeaderText(null);
-            alert.setContentText("Veuillez sélectionner une livraison dans la liste.");
-            alert.showAndWait();
-            return;
-        }
-
-        try {
-            // Charger la vue ListeCommande.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/commande/ListeCommande.fxml"));
-            Parent root = loader.load();
-
-            // Récupérer le contrôleur et lui passer la livraison sélectionnée
-            ListeCommandeControleur listeCommandeControleur = loader.getController();
-            listeCommandeControleur.setLivraison(livraisonSelectionnee);
-
-            // Changer la scène
-            Stage stage = (Stage) btnVoirDetails.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Détails de la Livraison");
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @FXML
     private void retourApprovisionnement() {
@@ -133,6 +102,7 @@ public class LivraisonControleur {
             Stage stage = (Stage) btnRetour.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Approvisionnement");
+            stage.setMaximized(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
