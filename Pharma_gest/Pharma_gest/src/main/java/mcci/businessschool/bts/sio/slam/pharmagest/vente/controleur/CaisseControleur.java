@@ -220,4 +220,7 @@ public class CaisseControleur {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    public void handleValiderPaiement(ActionEvent actionEvent) {
+    }
 }
