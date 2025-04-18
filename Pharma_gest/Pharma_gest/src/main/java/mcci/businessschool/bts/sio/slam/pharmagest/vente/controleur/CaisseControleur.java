@@ -10,7 +10,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
@@ -31,6 +30,7 @@ import java.util.List;
 
 public class CaisseControleur {
 
+    // Tableau des ventes
     @FXML
     private TableView<Vente> tableVentes;
     @FXML
@@ -42,32 +42,31 @@ public class CaisseControleur {
     @FXML
     private TableColumn<Vente, String> colNumeroFacture;
 
-    @FXML
-    private TableView<LigneVente> tableLignesVente;
-    @FXML
-    private TableColumn<LigneVente, String> colMedicamentNom;
-    @FXML
-    private TableColumn<LigneVente, Integer> colQuantite;
-    @FXML
-    private TableColumn<LigneVente, Double> colPrixUnitaire;
-    @FXML
-    private TableColumn<Vente, String> colTypeVente;
-    @FXML
-    private Label lblIdVente, lblDateVente, lblMontantTotal, lblTypeVente, lblMonnaie;
+    // Champs de paiement
     @FXML
     private TextField txtMontantRecu;
     @FXML
+    private TextField txtModePaiement;
+    @FXML
     private Button retourDashboard;
 
+    // Calculatrice
+    @FXML
+    private TextField txtCalculatrice;
+    @FXML
+    private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9;
+    @FXML
+    private Button btnPlus, btnMinus, btnMult, btnDiv, btnEqual, btnDot, btnClear;
 
     private ObservableList<Vente> listeVentes = FXCollections.observableArrayList();
-    private ObservableList<LigneVente> lignesVenteObservable = FXCollections.observableArrayList();
 
     private VenteService venteService;
     private LigneVenteService ligneVenteService;
     private PaiementService paiementService;
     private VendeurService vendeurService;
 
+    // Variables pour la calculatrice
+    private boolean debutNouveauNombre = true;
 
     public CaisseControleur() {
         try {
@@ -82,7 +81,7 @@ public class CaisseControleur {
 
     @FXML
     private void initialize() {
-        // Colonnes ventes
+        // Initialisation des colonnes du tableau des ventes
         colVenteId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDateVente.setCellValueFactory(cellData -> {
             Date date = cellData.getValue().getDateVente();
@@ -95,69 +94,36 @@ public class CaisseControleur {
             return new ReadOnlyStringWrapper(facture);
         });
 
-        // Affichage du type de vente : "Prescrite" ou "Libre" en fonction de prescriptionId
-        colTypeVente.setCellValueFactory(cellData -> {
-            Integer prescriptionId = cellData.getValue().getPrescriptionId();
-            String typeVente = (prescriptionId != null) ? "Prescrite" : "Libre";
-            return new ReadOnlyStringWrapper(typeVente);
-        });
-
         tableVentes.setItems(listeVentes);
-
-        // Colonnes lignes de vente
-        colMedicamentNom.setCellValueFactory(cellData -> {
-            Medicament med = cellData.getValue().getMedicament();
-            return new ReadOnlyStringWrapper(med.getNom());
-        });
-        colQuantite.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getQuantiteVendu()));
-        colPrixUnitaire.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getPrixUnitaire()));
-        tableLignesVente.setItems(lignesVenteObservable);
 
         // Gestion de la sélection de vente
         tableVentes.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) afficherDetailsVente(newVal);
         });
 
-        // Mise à jour de la monnaie automatiquement
-        txtMontantRecu.textProperty().addListener((obs, oldVal, newVal) -> {
-            Vente selected = tableVentes.getSelectionModel().getSelectedItem();
-            if (selected != null) {
+        // Mise à jour automatique du montant reçu depuis la calculatrice
+        txtCalculatrice.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.isEmpty()) {
                 try {
-                    double montantRecu = Double.parseDouble(newVal);
-                    double monnaie = montantRecu - selected.getMontantTotal();
-                    lblMonnaie.setText(String.format("Monnaie à rendre : %.2f €", monnaie));
+                    double valeur = Double.parseDouble(newVal);
+                    txtMontantRecu.setText(newVal);
                 } catch (NumberFormatException e) {
-                    lblMonnaie.setText("Monnaie à rendre : 0.00 €");
+                    // Ignorer si ce n'est pas un nombre valide
                 }
             }
         });
 
+        // Initialisation de la calculatrice
+        txtCalculatrice.setText("0");
+
         chargerVentesEnAttente();
     }
 
-
     private void afficherDetailsVente(Vente vente) {
-        lblIdVente.setText(String.valueOf(vente.getId()));
-        lblDateVente.setText(((java.sql.Date) vente.getDateVente()).toLocalDate().toString());
-        lblMontantTotal.setText(String.format("%.2f €", vente.getMontantTotal()));
-        lblTypeVente.setText(vente.getTypeVente().name());
-
-
-        // Affichage du type de vente dans les détails (prescrite ou libre)
-        String typeVente = (vente.getPrescriptionId() != null) ? "Prescrite" : "Libre";
-        lblTypeVente.setText(typeVente);
-
-        try {
-            lignesVenteObservable.setAll(ligneVenteService.recupererLignesParVente(vente.getId()));
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les médicaments.");
-        }
-
-        // 🔁 Nettoyage du champ montant et monnaie
+        // Affichage des détails de la vente sélectionnée
         txtMontantRecu.clear();
-        lblMonnaie.setText("Monnaie à rendre : 0.00 €");
+        txtModePaiement.clear();
     }
-
 
     private void chargerVentesEnAttente() {
         listeVentes.clear();
@@ -168,7 +134,7 @@ public class CaisseControleur {
     }
 
     @FXML
-    private void handleValiderPaiement() {
+    private void handleValiderPaiement(ActionEvent event) {
         Vente selectedVente = tableVentes.getSelectionModel().getSelectedItem();
         if (selectedVente == null) {
             showAlert(Alert.AlertType.WARNING, "Aucune vente sélectionnée", "Veuillez sélectionner une vente.");
@@ -188,59 +154,71 @@ public class CaisseControleur {
             return;
         }
 
-        try {
-            // ✅ Appel simplifié : l'ID du vendeur est géré automatiquement dans le service
-            venteService.validerPaiementEtMettreAJourStock(selectedVente.getId());
-
-            showAlert(Alert.AlertType.INFORMATION, "Paiement validé",
-                    String.format("💰 Monnaie à rendre : %.2f €", montantRecu - selectedVente.getMontantTotal()));
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
+        String modePaiement = txtModePaiement.getText();
+        if (modePaiement == null || modePaiement.trim().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Mode de paiement manquant", "Veuillez indiquer le mode de paiement.");
             return;
         }
 
-        // ✅ Génération de la facture
-        File fichierFacture = GenerateurPDF.genererFacturePDF(selectedVente, lignesVenteObservable, montantRecu);
-        if (fichierFacture != null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Facture générée");
-            alert.setHeaderText("✅ Paiement validé et facture générée !");
-            alert.setContentText("📄 Fichier : " + fichierFacture.getName());
+        try {
+            // Valider le paiement et mettre à jour le stock
+            venteService.validerPaiementEtMettreAJourStock(selectedVente.getId());
 
-            ButtonType btnOuvrir = new ButtonType("Ouvrir");
-            ButtonType btnFermer = new ButtonType("Fermer", ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(btnOuvrir, btnFermer);
+            double monnaie = montantRecu - selectedVente.getMontantTotal();
+            showAlert(Alert.AlertType.INFORMATION, "Paiement validé",
+                    String.format("💰 Monnaie à rendre : %.2f €", monnaie));
 
-            alert.showAndWait().ifPresent(reponse -> {
-                if (reponse == btnOuvrir) {
-                    try {
-                        if (Desktop.isDesktopSupported()) {
-                            Desktop.getDesktop().open(fichierFacture);
+            // Génération de la facture
+            List<LigneVente> lignesVente = ligneVenteService.recupererLignesParVente(selectedVente.getId());
+
+            try {
+                // Utilisation de notre GenerateurPDF corrigé
+                File fichierFacture = GenerateurPDF.genererFacturePDF(selectedVente, lignesVente, montantRecu);
+
+                if (fichierFacture != null) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Facture générée");
+                    alert.setHeaderText("✅ Paiement validé et facture générée !");
+                    alert.setContentText("📄 Fichier : " + fichierFacture.getName());
+
+                    ButtonType btnOuvrir = new ButtonType("Ouvrir");
+                    ButtonType btnFermer = new ButtonType("Fermer", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    alert.getButtonTypes().setAll(btnOuvrir, btnFermer);
+
+                    alert.showAndWait().ifPresent(reponse -> {
+                        if (reponse == btnOuvrir) {
+                            try {
+                                if (Desktop.isDesktopSupported()) {
+                                    Desktop.getDesktop().open(fichierFacture);
+                                }
+                            } catch (Exception ex) {
+                                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le fichier PDF.");
+                            }
                         }
-                    } catch (Exception ex) {
-                        showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le fichier PDF.");
-                    }
+                    });
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Erreur PDF", "La facture n'a pas pu être générée !");
                 }
-            });
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Erreur PDF", "La facture n'a pas pu être générée !");
-        }
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur PDF", "Erreur lors de la génération de la facture: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-        // 🔄 Nettoyage
-        chargerVentesEnAttente();
-        lignesVenteObservable.clear();
-        txtMontantRecu.clear();
-        lblIdVente.setText("");
-        lblDateVente.setText("");
-        lblMontantTotal.setText("");
-        lblTypeVente.setText("");
-        lblMonnaie.setText("Monnaie à rendre : 0.00 €");
+            // Nettoyage et rafraîchissement
+            chargerVentesEnAttente();
+            txtMontantRecu.clear();
+            txtModePaiement.clear();
+            txtCalculatrice.setText("0");
+            debutNouveauNombre = true;
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du traitement du paiement: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-
-
     @FXML
-    public void retourDashboardOnAction(ActionEvent event) {
+    public void handleRetour(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard/Dashboard.fxml"));
             Scene nouvelleScene = new Scene(loader.load());
@@ -252,14 +230,51 @@ public class CaisseControleur {
         }
     }
 
+    @FXML
+    public void handleCalculatrice(ActionEvent event) {
+        Button source = (Button) event.getSource();
+        String buttonText = source.getText();
+
+        // Gestion des chiffres
+        if (buttonText.matches("[0-9]")) {
+            if (debutNouveauNombre || txtCalculatrice.getText().equals("0")) {
+                txtCalculatrice.setText(buttonText);
+                debutNouveauNombre = false;
+            } else {
+                txtCalculatrice.setText(txtCalculatrice.getText() + buttonText);
+            }
+            // Mettre à jour le montant reçu
+            txtMontantRecu.setText(txtCalculatrice.getText());
+            return;
+        }
+
+        // Gestion du point décimal
+        if (buttonText.equals(".")) {
+            if (debutNouveauNombre) {
+                txtCalculatrice.setText("0.");
+                debutNouveauNombre = false;
+            } else if (!txtCalculatrice.getText().contains(".")) {
+                txtCalculatrice.setText(txtCalculatrice.getText() + ".");
+            }
+            // Mettre à jour le montant reçu
+            txtMontantRecu.setText(txtCalculatrice.getText());
+            return;
+        }
+
+        // Gestion du bouton C (Clear)
+        if (buttonText.equals("C")) {
+            txtCalculatrice.setText("0");
+            txtMontantRecu.setText("");
+            debutNouveauNombre = true;
+            return;
+        }
+    }
+
     private void showAlert(Alert.AlertType type, String titre, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(titre);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    public void handleValiderPaiement(ActionEvent actionEvent) {
     }
 }

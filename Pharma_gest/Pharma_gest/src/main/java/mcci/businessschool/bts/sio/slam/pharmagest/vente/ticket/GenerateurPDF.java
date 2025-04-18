@@ -13,8 +13,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +24,9 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+/**
+ * Classe principale pour la génération de documents PDF (tickets et factures)
+ */
 public class GenerateurPDF {
 
     /**
@@ -34,12 +37,13 @@ public class GenerateurPDF {
      * @param lignes       Les lignes de vente associées
      * @param patient      Le patient (si vente prescrite)
      * @param prescription La prescription (si vente prescrite)
+     * @return Le fichier PDF généré ou null en cas d'erreur
      */
     public static File genererTicketPDF(Vente vente, List<LigneVente> lignes, Patient patient, Prescription prescription) {
         File fichierPDF = null;
 
         try {
-            // ✅ 1. Créer le dossier "tickets" s’il n’existe pas
+            // ✅ 1. Créer le dossier "tickets" s'il n'existe pas
             File dossier = new File("tickets");
             if (!dossier.exists()) {
                 dossier.mkdirs();
@@ -72,37 +76,57 @@ public class GenerateurPDF {
         return null;
     }
 
+    /**
+     * Génère une facture PDF pour une vente donnée
+     * @param vente La vente concernée
+     * @param lignes Les lignes de vente
+     * @param montantRecu Le montant reçu du client
+     * @return Le fichier PDF généré ou null en cas d'erreur
+     */
     public static File genererFacturePDF(Vente vente, List<LigneVente> lignes, double montantRecu) {
         if (vente == null || vente.getFacture() == null) {
             System.err.println("❌ Vente ou facture manquante !");
             return null;
         }
 
-        Path dossier = Path.of("factures");
-        if (!Files.exists(dossier)) {
-            try {
-                Files.createDirectories(dossier);
-            } catch (IOException e) {
-                System.err.println("Erreur création dossier facture : " + e.getMessage());
-                return null;
-            }
+        // Créer le dossier factures s'il n'existe pas
+        File dossier = new File("factures");
+        if (!dossier.exists()) {
+            dossier.mkdirs();
         }
 
-        File fichierPDF = new File(dossier.toFile(), "facture_vente_" + vente.getId() + ".pdf");
+        File fichierPDF = new File(dossier, "facture_vente_" + vente.getId() + ".pdf");
 
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage(PDRectangle.A5);
             document.addPage(page);
 
+            // Obtenir les polices de manière compatible avec différentes versions de PDFBox
+            PDFont fontBold;
+            PDFont fontRegular;
+            PDFont fontItalic;
+
+            try {
+                fontBold = GenerateurTicket.getHelveticaBoldFont();
+                fontRegular = GenerateurTicket.getHelveticaFont();
+                fontItalic = GenerateurTicket.getHelveticaObliqueFont();
+            } catch (Exception e) {
+                System.err.println("Erreur lors de l'obtention des polices: " + e.getMessage());
+                // Fallback sur les polices standard
+                fontBold = PDType1Font.HELVETICA_BOLD;
+                fontRegular = PDType1Font.HELVETICA;
+                fontItalic = PDType1Font.HELVETICA_OBLIQUE;
+            }
+
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                 contentStream.beginText();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
+                contentStream.setFont(fontBold, 12);
                 contentStream.setLeading(14f);
                 contentStream.newLineAtOffset(50, page.getMediaBox().getHeight() - 50);
 
                 contentStream.showText("PHARMACIE PHARMAGEST");
                 contentStream.newLine();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
+                contentStream.setFont(fontRegular, 10);
                 contentStream.showText("FACTURE N° : " + vente.getFacture().getNumeroFacture());
                 contentStream.newLine();
                 contentStream.showText("Date émission : " + new SimpleDateFormat("dd/MM/yyyy").format(vente.getFacture().getDateEmission()));
@@ -111,15 +135,20 @@ public class GenerateurPDF {
                 contentStream.newLine();
                 contentStream.newLine();
 
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
+                contentStream.setFont(fontBold, 10);
                 contentStream.showText("DÉTAILS DES MÉDICAMENTS :");
                 contentStream.newLine();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
+                contentStream.setFont(fontRegular, 10);
                 contentStream.showText(String.format("%-20s %-6s %-10s %-10s", "Nom", "Qté", "P.U (€)", "Total (€)"));
                 contentStream.newLine();
 
                 for (LigneVente ligne : lignes) {
                     String nom = ligne.getMedicament().getNom();
+                    // Tronquer le nom s'il est trop long
+                    if (nom.length() > 20) {
+                        nom = nom.substring(0, 17) + "...";
+                    }
+
                     int qte = ligne.getQuantiteVendu();
                     double pu = ligne.getPrixUnitaire();
                     double total = pu * qte;
@@ -129,7 +158,7 @@ public class GenerateurPDF {
                 }
 
                 contentStream.newLine();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
+                contentStream.setFont(fontBold, 10);
                 contentStream.showText(String.format("Montant total  : %.2f €", vente.getMontantTotal()));
                 contentStream.newLine();
                 contentStream.showText(String.format("Montant reçu   : %.2f €", montantRecu));
@@ -139,7 +168,7 @@ public class GenerateurPDF {
                 contentStream.newLine();
                 contentStream.newLine();
 
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_OBLIQUE), 9);
+                contentStream.setFont(fontItalic, 9);
                 contentStream.showText("Merci pour votre achat 🙏. Conservez cette facture.");
                 contentStream.endText();
             }
@@ -150,10 +179,8 @@ public class GenerateurPDF {
 
         } catch (IOException e) {
             System.err.println("Erreur génération facture PDF : " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
-
-
-
 }
